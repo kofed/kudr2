@@ -17,6 +17,14 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    void onLSaveROIButton();
+
+    void onRSaveROIButton();
+
+    void onLLoadDebugButton();
+
+    void onRLoadDebugButton();
 };
 
 #endif // MAINWINDOW_H
