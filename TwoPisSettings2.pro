@@ -26,11 +26,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    controller.cpp
+    controller.cpp \
+    sshcontroller.cpp
 
 HEADERS += \
         mainwindow.h \
-    controller.h
+    controller.h \
+    sshcontroller.h
 
 FORMS += \
         mainwindow.ui
