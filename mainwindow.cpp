@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QIntValidator>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -7,10 +8,18 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(lSaveROIButton, SIGNAL (released()), this, SLOT (onLSaveROIButton()));
-    connect(rSaveROIButton, SIGNAL (released()), this, SLOT (onRSaveROIButton()));
-    connect(lLoadDebugButton, SIGNAL (released()), this, SLOT (onLLoadDebugButton()));
-    connect(rLoadDebugButton, SIGNAL (released()), this, SLOT (onRLoadDebugButton()));
+    connect(ui->lSaveROIButton, SIGNAL (released()), this, SLOT (onLSaveROIButton()));
+    connect(ui->rSaveROIButton, SIGNAL (released()), this, SLOT (onRSaveROIButton()));
+    connect(ui->lLoadDebugButton, SIGNAL (released()), this, SLOT (onLLoadDebugButton()));
+    connect(ui->rLoadDebugButton, SIGNAL (released()), this, SLOT (onRLoadDebugButton()));
+    connect(ui->saveDoorNumButton, SIGNAL (released()), this, SLOT (onSaveDoorNumButton()));
+
+    ui->doorNumEdit->setValidator( new QIntValidator(1, 17, this) );
+
+    controller.init();
+
+    ui->lIpValueLabel->setText(controller.lIp);
+    ui->rIpValueLabel->setText(controller.rIp);
 }
 
 MainWindow::~MainWindow()
@@ -18,18 +27,22 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-MainWindow::onLSaveROIButton(){
+void MainWindow::onLSaveROIButton(){
 
 }
 
-MainWindow::onRSaveROIButton(){
+void MainWindow::onRSaveROIButton(){
 
 }
 
-MainWindow::onLLoadDebugButton(){
+void MainWindow::onLLoadDebugButton(){
 
 }
 
-MainWindow::onRLoadDebugButton(){
+void MainWindow::onRLoadDebugButton(){
 
+}
+
+void MainWindow::onSaveDoorNumButton(){
+    //controller.saveDoorNum(ui->doorNumEdit->text().toInt());
 }

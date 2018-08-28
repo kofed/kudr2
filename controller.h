@@ -1,21 +1,37 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
+#include "CameraIp.h"
+#include "sshcontroller.h"
+#include "pingcontroller.h"
+#include "CameraIp.h"
 
 class Controller
 {
-    enum CameraPosition {left, right};
+
 
 public:
     Controller();
 
-    void saveROI(const CameraPosition position);
+    void init();
 
-    void loadDebug(const CameraPosition position);
+    void saveROI(const CameraIp::CameraPosition position);
 
-    void loadShot(const CameraPosition position);
+    void loadDebug(const CameraIp::CameraPosition position);
 
-    void cameraOn(const CameraPosition position);
+    void loadShot(const CameraIp::CameraPosition position);
+
+    void cameraOn(const CameraIp::CameraPosition position);
+
+    void saveDoorNum(const int value);
+
+    QString lIp;
+    QString rIp;
+private:
+    PingController pingController;
+
+    SShController sshController;
+
 };
 
 #endif // CONTROLLER_H
