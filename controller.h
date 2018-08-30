@@ -9,7 +9,6 @@
 class Controller
 {
 
-
 public:
     Controller();
 
@@ -27,6 +26,9 @@ public:
 
     QString lIp;
     QString rIp;
+
+    QString lImage = "/tmp/left.png";
+    QString rImage = "/tmp/right.png";
 private:
     PingController pingController;
 
