@@ -22,10 +22,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->rIpValueLabel->setText(controller.rIp);
 
 
-    QPixmap pixmap(lImage);
-    ui->lPngLabel.setPixmap(lImage);
-    ui->lPngLabel.resize(pixmap.size());
-    ui->lPngLabel.show();
+    QPixmap pixmap(controller.lImage);
+    ui->lPngLabel->setPixmap(pixmap);
+    ui->lPngLabel->resize(pixmap.size());
+    ui->lPngLabel->show();
 }
 
 MainWindow::~MainWindow()

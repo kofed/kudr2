@@ -49,7 +49,6 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-li
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/debug/ -lssh2
 else:unix: LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/ -lssh2
 
-INCLUDEPATH += $$PWD/../../../usr/include
 DEPENDPATH += $$PWD/../../../usr/include
 
 win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../usr/lib/x86_64-linux-gnu/release/libssh2.a
