@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QIntValidator>
+#include "pngwidget.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,16 +17,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->doorNumEdit->setValidator( new QIntValidator(1, 17, this) );
 
+    ui->groupBox_3->setLayout(ui->verticalLayout_2);
+    ui->groupBox_2->setLayout(ui->verticalLayout_3);
+
+
     controller.init();
 
     ui->lIpValueLabel->setText(controller.lIp);
     ui->rIpValueLabel->setText(controller.rIp);
 
-
     QPixmap pixmap(controller.lImage);
+    PngWidget* lPng = new PngWidget(ui->lPngLabel);
     ui->lPngLabel->setPixmap(pixmap);
-    ui->lPngLabel->resize(pixmap.size());
-    ui->lPngLabel->show();
+    lPng->resize(pixmap.size());
+    lPng->show();
+
+
 }
 
 MainWindow::~MainWindow()

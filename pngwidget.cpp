@@ -5,16 +5,16 @@
 #include <QAction>
 #include <QFileDialog>
 
-PngWidget::PngWidget()
+PngWidget::PngWidget(QWidget *parent)
 : QLabel(parent)
 {
     selectionStarted=false;
 }
 
-void Widget::paintEvent(QPaintEvent *e)
+void PngWidget::paintEvent(QPaintEvent *e)
 {
-    QPainter painter(this);
     QLabel::paintEvent(e);
+    QPainter painter(this);
     painter.setPen(QPen(QBrush(QColor(0,0,0,180)),1,Qt::DashLine));
     painter.setBrush(QBrush(QColor(255,255,255,120)));
 
@@ -22,7 +22,7 @@ void Widget::paintEvent(QPaintEvent *e)
 
 }
 
-void Widget::mousePressEvent(QMouseEvent *e)
+void PngWidget::mousePressEvent(QMouseEvent *e)
 {
     if (e->button()==Qt::RightButton){
         if (selectionRect.contains(e->pos())) contextMenu.exec(this->mapToGlobal(e->pos()));
@@ -34,7 +34,7 @@ void Widget::mousePressEvent(QMouseEvent *e)
     }
 }
 
-void Widget::mouseMoveEvent(QMouseEvent *e)
+void PngWidget::mouseMoveEvent(QMouseEvent *e)
 {
     if (selectionStarted){
         selectionRect.setBottomRight(e->pos());
@@ -42,7 +42,7 @@ void Widget::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
-void Widget::mouseReleaseEvent(QMouseEvent *e)
+void PngWidget::mouseReleaseEvent(QMouseEvent *e)
 {
     selectionStarted=false;
 }

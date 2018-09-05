@@ -4,13 +4,12 @@
 #include <QLabel>
 #include <QMenu>
 
-class PngWidget
+class PngWidget : public QLabel
 {
     Q_OBJECT
-
 public:
     PngWidget(QWidget *parent = 0);
-    ~PngWidget();
+    virtual    ~PngWidget(){}
 protected:
     void paintEvent(QPaintEvent *e);
     void mousePressEvent(QMouseEvent *e);
