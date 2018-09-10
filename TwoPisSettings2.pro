@@ -43,11 +43,11 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
-
+CONFIG += c++11
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/release/ -lssh2
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/debug/ -lssh2
-else:unix: LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/ -lssh2
+else:unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -lssh2
 
 DEPENDPATH += $$PWD/../../../usr/include
 
@@ -55,4 +55,4 @@ win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../usr/l
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../usr/lib/x86_64-linux-gnu/debug/libssh2.a
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../../usr/lib/x86_64-linux-gnu/release/ssh2.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../../usr/lib/x86_64-linux-gnu/debug/ssh2.lib
-else:unix: PRE_TARGETDEPS += $$PWD/../../../usr/lib/x86_64-linux-gnu/libssh2.a
+else:unix: PRE_TARGETDEPS += /usr/lib/x86_64-linux-gnu/libssh2.a

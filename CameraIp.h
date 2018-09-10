@@ -19,7 +19,6 @@ public:
     static QString getOppositeIp(QString ip);
 private:
 
-    //192.168.7.1
     QString ip;
 
 
