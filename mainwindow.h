@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "controller.h"
+#include "pngwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,6 +21,14 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    PngWidget * lPngWidget;
+
+    PngWidget * rPngWidget;
+
+    void lUpdateImage();
+
+    void rUpdateImage();
 private slots:
     void onLSaveROIButton();
 
@@ -30,6 +39,10 @@ private slots:
     void onRLoadDebugButton();
 
     void onSaveDoorNumButton();
+
+    void onLShotButton();
+
+    void onRShotButton();
 };
 
 #endif // MAINWINDOW_H

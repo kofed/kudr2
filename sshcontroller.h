@@ -12,19 +12,17 @@
 #ifdef HAVE_WINSOCK2_H
 #include <winsock2.h>
 #endif
-#ifdef HAVE_SYS_SOCKET_H
-//#include <sys/socket.h>
-#endif
+
+#include <sys/socket.h>
+
 #include <netinet/in.h>
-#ifdef HAVE_UNISTD_H
+//#ifdef HAVE_UNISTD_H
 #include <unistd.h>
-#endif
-#ifdef HAVE_ARPA_INET_H
-//#include <arpa/inet.h>
-#endif
-#ifdef HAVE_SYS_TIME_H
+//#endif
+#include <arpa/inet.h>
+//#ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
-#endif
+//#endif
 
 class SShController
 {
@@ -32,6 +30,7 @@ public:
     SShController();
 
     void init(const QString & hostname, const QString & name = "pi", const QString & password = "raspberry" );
+    void file(const QString & src, const QString & dst);
     void command(const QString & command);
 
     void shutdown();

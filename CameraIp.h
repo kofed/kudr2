@@ -2,6 +2,7 @@
 #define CONST_H
 
 #include <QString>
+#include <array>
 
 using namespace std;
 
@@ -10,16 +11,24 @@ class CameraIp{
 public:
     CameraIp(const QString & _ip);
 
-    enum CameraPosition {left, right};
+    CameraIp(const array<int, 4> ip);
 
-    CameraPosition getPosition();
+    enum CameraPosition {left, right, notSet};
 
-    static CameraPosition getPosition(QString ip);
+    CameraPosition getPosition() const;
 
-    static QString getOppositeIp(QString ip);
+    QString toString() const;
+
+    CameraIp buildOpposite();
+
+    int getDoorNumber();
+
+    void setDoorNumber(const int number);
 private:
 
-    QString ip;
+    array<int, 4> ip;
+
+    CameraPosition position;
 
 
 };

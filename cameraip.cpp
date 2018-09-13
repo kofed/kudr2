@@ -1,37 +1,69 @@
 #include "CameraIp.h"
 #include <QStringList>
+#include <sstream>
+#include <QtDebug>
 
-CameraIp::CameraIp(const QString & _ip):ip(_ip){
-
-}
-
-CameraIp::CameraPosition CameraIp::getPosition(){
-    return getPosition(ip);
-}
-
-CameraIp::CameraPosition CameraIp::getPosition(QString _ip){
+CameraIp::CameraIp(const QString & _ip){
     QStringList list = _ip.split('.');
 
-    if(list.value(2) == CameraIp::CameraPosition::left){
-        return CameraIp::CameraPosition::left;
+    for(int i = 0; i < 4; ++i){
+        ip[i] = list[i].toInt();
     }
 
-    return CameraIp::CameraPosition::right;
+
 }
 
-QString CameraIp::getOppositeIp(const QString ip){
-    QStringList list = ip.split('.');
-    if(list.size() != 4){
-        return ip;
+CameraIp::CameraIp(array<int, 4> _ip){
+    ip = _ip;
+    switch(ip[3]){
+    case 0:
+        position = CameraIp::CameraPosition::left;
+        break;
+    case 1:
+        position = CameraIp::CameraPosition::right;
+        break;
+    default:
+        position = CameraIp::CameraPosition::notSet;
+        break;
+    }
+    qDebug() << "built cameraIp with ip = " <<  toString();
+}
+
+CameraIp::CameraPosition CameraIp::getPosition() const {
+    return position;
+}
+
+
+QString CameraIp::toString() const {
+    stringstream ss;
+    for(int i = 0; i < 4; ++i){
+        ss << ip[i];
+        if(i != 3){
+            ss << ".";
+        }
     }
 
-    if(list.at(3) == CameraIp::CameraPosition::left){
-        list.replace(3, QString(CameraIp::CameraPosition::right));
+    return QString(ss.str().c_str());
+}
+
+CameraIp CameraIp::buildOpposite(){
+    array<int, 4> opIp = ip;
+    switch(position){
+    case CameraIp::CameraPosition::left:
+        opIp[3] = CameraIp::CameraPosition::right;
+        break;
+    case CameraIp::CameraPosition::right:
+        opIp[3] = CameraIp::CameraPosition::left;
+        break;
     }
 
-    if(list.at(3) == CameraIp::CameraPosition::right){
-        list.replace(3, QString(CameraIp::CameraPosition::left));
-    }
+    return CameraIp(opIp);
+}
 
-    return list.join('.');
+int CameraIp::getDoorNumber(){
+    return ip[2];
+}
+
+void CameraIp::setDoorNumber(const int number){
+    ip[2] = number;
 }

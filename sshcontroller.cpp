@@ -85,7 +85,6 @@ void SShController::init(const QString & hostname, const QString & username, con
         if (libssh2_userauth_password(session, username.toStdString().c_str(), password.toStdString().c_str())) {
 
             fprintf(stderr, "Authentication by password failed.\n");
-            shutdown();
         }
     } else {
         /* Or by public key */
@@ -95,21 +94,8 @@ void SShController::init(const QString & hostname, const QString & username, con
                             "/home/username/.ssh/id_rsa",
                             password.toStdString().c_str())) {
             fprintf(stderr, "\tAuthentication by public key failed\n");
-            shutdown();
         }
     }
-
-    /* Request a file via SCP */
-  /*  channel = libssh2_scp_recv2(session, scppath, &fileinfo);
-
-    if (!channel) {
-        fprintf(stderr, "Unable to open a session: %d\n",
-                libssh2_session_last_errno(session));
-
-        shutdown();
-    }*/
-
-
 }
 
 void SShController::command(const QString & command){
@@ -121,6 +107,18 @@ void SShController::command(const QString & command){
             fprintf(stderr,"Error\n");
             exit( 1 );
         }
+
+    libssh2_channel_free(channel);
+}
+
+void SShController::file(const QString & src, const QString & dst){
+    /* Request a file via SCP */
+    LIBSSH2_CHANNEL * channel = libssh2_scp_recv2(session, src.toStdString().c_str(), &fileinfo);
+
+    if (!channel) {
+        fprintf(stderr, "Unable to open a session: %d\n",
+                libssh2_session_last_errno(session));
+    }
 
     libssh2_channel_free(channel);
 }

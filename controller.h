@@ -14,21 +14,22 @@ public:
 
     void init();
 
-    void saveROI(const CameraIp::CameraPosition position);
+    void saveROI(const CameraIp camera, const int x1, const int y1, const int x2, const int y2);
 
     void loadDebug(const CameraIp::CameraPosition position);
 
-    void loadShot(const CameraIp::CameraPosition position);
+    void loadShot(const CameraIp position);
 
     void cameraOn(const CameraIp::CameraPosition position);
 
     void saveDoorNum(const int value);
 
-    QString lIp;
-    QString rIp;
+    void saveDoorNum(const CameraIp camera, const int value);
 
-    QString lImage = "/tmp/left.png";
-    QString rImage = "/tmp/right.png";
+    CameraIp lCamera = CameraIp("0.0.0.0");
+    CameraIp rCamera = CameraIp("0.0.0.0");
+
+    QString imagePattern = "/tmp/shot%d.png";
 private:
     PingController pingController;
 
