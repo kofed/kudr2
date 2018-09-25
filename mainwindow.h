@@ -29,6 +29,10 @@ private:
     void lUpdateImage();
 
     void rUpdateImage();
+
+    void initIpsCombo();
+
+    void   update();
 private slots:
     void onLSaveROIButton();
 
@@ -43,6 +47,10 @@ private slots:
     void onLShotButton();
 
     void onRShotButton();
+
+    void onSearchButton();
+
+    void onIpsComboSelected(int);
 };
 
 #endif // MAINWINDOW_H

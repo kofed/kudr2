@@ -17,8 +17,8 @@ int PingController::ping(const QString & ip){
 
 void PingController::scan(){
 
-       /* for(int i = 10; i < 10 + MAX_DOOR; ++i ){
-            for(int j = CameraIp::CameraPosition::left; j != CameraIp::CameraPosition::right; ++j ){
+        for(int i = 1; i < MAX_DOOR; ++i ){
+            for(int j = CameraIp::CameraPosition::left; j != CameraIp::CameraPosition::notSet; ++j ){
                 QString ip = QString("192.168.43.%1%2").arg(i).arg(j);
                 if(ping(ip) == 0){
                     activeIps.insert(ip);
@@ -26,6 +26,6 @@ void PingController::scan(){
                 };
 
             }
-        }*/
-    activeIps.insert("192.168.43.200");
+        }
+   // activeIps.insert("192.168.43.200");
 }

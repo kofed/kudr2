@@ -9,28 +9,30 @@ using namespace std;
 class CameraIp{
 
 public:
+    const static QString IP_MASK;
+
     CameraIp(const QString & _ip);
 
     CameraIp(const array<int, 4> ip);
 
     enum CameraPosition {left, right, notSet};
 
+    CameraIp(const int doorNum, const CameraPosition position);
+
     CameraPosition getPosition() const;
 
     QString toString() const;
 
-    CameraIp buildOpposite();
+    CameraIp buildOpposite() const;
 
-    int getDoorNumber();
+    int getDoorNumber() const;
 
     void setDoorNumber(const int number);
 private:
 
     array<int, 4> ip;
 
-    CameraPosition position;
-
-
+    int doorNum;
 };
 
 

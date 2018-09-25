@@ -36,7 +36,7 @@ public:
     void shutdown();
 
 private:
-    LIBSSH2_SESSION *session;
+    LIBSSH2_SESSION *session = 0;
 
     int sock;
 };

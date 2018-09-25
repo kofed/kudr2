@@ -21,6 +21,30 @@
        <enum>QLayout::SetNoConstraint</enum>
       </property>
       <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,0,1">
+        <item>
+         <widget class="QPushButton" name="searchButton">
+          <property name="text">
+           <string>Искать</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>по номеру двери</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="searchDoorNum"/>
+        </item>
+        <item>
+         <widget class="QComboBox" name="ipsCombo"/>
+        </item>
+       </layout>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
         <item>
          <widget class="QGroupBox" name="groupBox_3">

@@ -8,29 +8,23 @@ Controller::Controller()
 
 void Controller::init(){
     //pings from 192.168.0.0 to 192.168.16.1
-    pingController.scan();
+    try{
+     //   pingController.scan();
 
-    if(pingController.activeIps.size() < 1){
-        return;
-    }
-
-    CameraIp camera = CameraIp(* pingController.activeIps.begin());
-    CameraIp opCamera = camera.buildOpposite();
-    if(camera.getPosition() == CameraIp::CameraPosition::left){
-        lCamera = camera;
-        if(pingController.activeIps.find(opCamera.toString()) != pingController.activeIps.end()){
-            rCamera = opCamera;
+        if(pingController.activeIps.size() < 1){
+            return;
         }
-    }else{
-        rCamera = opCamera;
-        if(pingController.activeIps.find(opCamera.toString()) != pingController.activeIps.end()){
-            rCamera = opCamera;
-        }
-    }
 
+        setCameras(CameraIp(* pingController.activeIps.begin()));
+    }catch(std::exception & e){
+
+    }
 }
 
-void Controller::saveROI(const CameraIp camera, const int x1, const int y1, const int x2, const int y2){
+void Controller::saveROI(const CameraIp * camera, const int x1, const int y1, const int x2, const int y2){
+    if(camera == NULL)
+        return;
+
     stringstream ss;
     ss << "echo \"";
     ss << x1 << "\n";
@@ -39,7 +33,7 @@ void Controller::saveROI(const CameraIp camera, const int x1, const int y1, cons
     ss << y2 << "\"";
     ss << " > /tmp/roi.xml";
 
-    sshController.init(camera.toString(), "pi", "raspberry");
+    sshController.init(camera->toString(), "pi", "raspberry");
     sshController.command(QString(ss.str().c_str()));
     sshController.shutdown();
 }
@@ -48,10 +42,13 @@ void Controller::loadDebug(const CameraIp::CameraPosition position){
 
 }
 
-void Controller::loadShot(const CameraIp camera){
-    QString file = imagePattern.arg(camera.getPosition());
-    sshController.init(camera.toString(), "pi", "raspberry");
-    sshController.command(QString("raspistill -o " + file));
+void Controller::loadShot(const CameraIp * camera){
+    if(camera == NULL)
+        return;
+
+    QString file = imagePattern.arg(camera->getPosition());
+    sshController.init(camera->toString(), "pi", "raspberry");
+    sshController.command(QString("raspistill -e png -w 640 -h 480 -o " + file));
     sshController.file(file, file);
     sshController.shutdown();
 }
@@ -65,10 +62,49 @@ void Controller::saveDoorNum(const int value){
     saveDoorNum(rCamera, value);
 }
 
-void Controller::saveDoorNum(const CameraIp camera, const int value){
-    sshController.init(camera.toString(), "pi", "raspberry");
-    lCamera.setDoorNumber(value);
-    sshController.command(QString("sed -e 's/address*.*.*.*/%s/g' /etc/network/interfaces").arg(camera.toString()));
-    sshController.command(QString("sed -e 's/address*.*.*.*/%s/g' /etc/dhcpcd.conf").arg(camera.toString()));
+void Controller::saveDoorNum(CameraIp * camera, const int value){
+    if(camera == NULL)
+        return;
+
+    sshController.init(camera->toString(), "pi", "raspberry");
+    camera->setDoorNumber(value);
+    sshController.command(QString("sed -i 's/address *.*.*.*/address %1/g' /etc/network/interfaces").arg(camera->toString()));
+    sshController.command(QString("sed -i 's/ip_address=*.*.*.*/ip_address=%1/g' /etc/dhcpcd.conf").arg(camera->toString()));
+    sshController.command("sudo /etc/init.d/networking restart");
     sshController.shutdown();
+}
+
+void Controller::searchOnDoorNum(int doorNum){
+    CameraIp _lcamera(doorNum, CameraIp::left);
+    CameraIp _rcamera(doorNum, CameraIp::right);
+
+    setCameras(_lcamera, _rcamera);
+
+}
+
+void Controller::setCameras(const CameraIp _camera){
+    CameraIp opCamera = _camera.buildOpposite();
+    if(_camera.getPosition() == CameraIp::left){
+        setCameras(_camera, opCamera);
+    }else{
+        setCameras(opCamera, _camera);
+    }
+}
+
+void Controller::setCameras(const CameraIp _lCamera, const CameraIp _rCamera){
+    if(lCamera != NULL){
+        delete lCamera;
+    }
+
+    if(rCamera != NULL){
+        delete rCamera;
+    }
+
+    if(pingController.ping(_lCamera.toString()) == 0){
+        lCamera = new CameraIp(_lCamera.toString());
+    }
+
+    if(pingController.ping(_rCamera.toString()) == 0){
+        rCamera = new CameraIp(_rCamera.toString());
+    }
 }

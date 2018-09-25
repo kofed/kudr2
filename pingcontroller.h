@@ -7,7 +7,7 @@
 
 class PingController
 {
-    const int MAX_DOOR = 16;
+    const int MAX_DOOR = 24;
 
 public:
     PingController();
