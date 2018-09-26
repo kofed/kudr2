@@ -18,7 +18,7 @@ public:
 
     void loadDebug(const CameraIp::CameraPosition position);
 
-    void loadShot(const CameraIp * position);
+    void loadShot(const CameraIp * position, const int width, const int height);
 
     void cameraOn(const CameraIp::CameraPosition position);
 

@@ -27,8 +27,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->groupBox_3->setLayout(ui->verticalLayout_2);
     ui->groupBox_2->setLayout(ui->verticalLayout_3);
 
+    ui->lResolutionEdit->setInputMask("9999\:9999");
     controller.init();
 
+    ui->lResolutionEdit->setText("640:480");
 
     //initIpsCombo();
     update();
@@ -121,7 +123,12 @@ void MainWindow::onRLoadDebugButton(){
 
 void MainWindow::onLShotButton(){
     try{
-        controller.loadShot(controller.lCamera);
+        QString sResolution = ui->lResolutionEdit->text();
+        QStringList slResolution = sResolution.split(":");
+        int width = QString(slResolution.at(0)).toInt();
+        int height = QString(slResolution.at(1)).toInt();
+
+        controller.loadShot(controller.lCamera, width, height);
         lUpdateImage();
     }
     catch(const std::exception & e){
@@ -131,7 +138,12 @@ void MainWindow::onLShotButton(){
 
 void MainWindow::onRShotButton(){
     try{
-        controller.loadShot(controller.rCamera);
+        QString sResolution = ui->lResolutionEdit->text();
+        QStringList slResolution = sResolution.split(":");
+        int width = QString(slResolution.at(0)).toInt();
+        int height = QString(slResolution.at(1)).toInt();
+
+        controller.loadShot(controller.rCamera, width, height);
         rUpdateImage();
     }
     catch(const std::exception & e){

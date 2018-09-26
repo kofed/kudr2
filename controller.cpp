@@ -42,13 +42,13 @@ void Controller::loadDebug(const CameraIp::CameraPosition position){
 
 }
 
-void Controller::loadShot(const CameraIp * camera){
-    if(camera == NULL)
+void Controller::loadShot(const CameraIp * camera, const int width, const int height){
+    if(camera == NULL || width < 0 || height < 0)
         return;
 
     QString file = imagePattern.arg(camera->getPosition());
     sshController.init(camera->toString(), "pi", "raspberry");
-    sshController.command(QString("raspistill -e png -w 640 -h 480 -o " + file));
+    sshController.command(QString("raspistill -e png -w %1 -h %2 -o %3").arg(width).arg(height).arg(file));
     sshController.file(file, file);
     sshController.shutdown();
 }
