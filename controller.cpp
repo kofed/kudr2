@@ -21,12 +21,15 @@ void Controller::init(){
     }
 }
 
-void Controller::saveROI(const CameraIp * camera, const int x1, const int y1, const int x2, const int y2){
+void Controller::saveROI(const CameraIp * camera,  const int resolutionWidth, const int resolutionHeight,
+                         const int x1, const int y1, const int x2, const int y2){
     if(camera == NULL)
         return;
 
     stringstream ss;
     ss << "echo \"";
+    ss << resolutionWidth << "\n";
+    ss << resolutionHeight << "\n";
     ss << x1 << "\n";
     ss << y1 << "\n";
     ss << x2 << "\n";
@@ -48,13 +51,15 @@ void Controller::loadShot(const CameraIp * camera, const int width, const int he
 
     QString file = imagePattern.arg(camera->getPosition());
     sshController.init(camera->toString(), "pi", "raspberry");
-    sshController.command(QString("raspistill -e png -w %1 -h %2 -o %3").arg(width).arg(height).arg(file));
-    sshController.file(file, file);
+    try{
+        sshController.command(QString("raspistill -e png -w %1 -h %2 -o %3").arg(width).arg(height).arg(file));
+        sshController.file(file, file);
+        sshController.command("rm %1").arg(file);
+    }catch(std::exception & e){
+        sshController.shutdown();
+        rethrow_exception(e);
+    }
     sshController.shutdown();
-}
-
-void Controller::cameraOn(const CameraIp::CameraPosition position){
-
 }
 
 void Controller::saveDoorNum(const int value){

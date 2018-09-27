@@ -131,12 +131,19 @@ void SShController::file(const QString & src, const QString & dst){
     LIBSSH2_CHANNEL * channel = libssh2_scp_recv2(session, src.toStdString().c_str(), &fileinfo);
 
     if (!channel) {
+        libssh2_channel_free(channel);
         throw std::runtime_error("Unable to open a channel: " + std::to_string(
                                         libssh2_session_last_errno(session)));
     }
 
+    if(fileinfo == NULL || fileinfo.st_size <= 0){
+        throw std::runtime_error("Файл на raspberry не существует");
+    }
+
     FILE * pFile;
     pFile = std::fopen (dst.toStdString().c_str(), "wb");
+
+
     while(got < fileinfo.st_size) {
             char mem[1024];
             int amount=sizeof(mem);
@@ -151,9 +158,9 @@ void SShController::file(const QString & src, const QString & dst){
                 fwrite(mem, sizeof(char), sizeof(mem), pFile);;
             }
             else if(rc < 0) {
-                fprintf(stderr, "libssh2_channel_read() failed: %d\n", rc);
-
-                break;
+                fclose (pFile);
+                libssh2_channel_free(channel);
+                throw std::runtime_error("libssh2_channel_read() failed: " + rc);
             }
             got += rc;
         }

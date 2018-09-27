@@ -94,6 +94,7 @@ void MainWindow::onLSaveROIButton(){
                            lPngWidget->selectionRect.top(),
                            lPngWidget->selectionRect.right(),
                            lPngWidget->selectionRect.bottom());
+        QMessageBox::warning(this, "Выполнено!", "Координаты сохранены");
     }catch(const std::exception & e){
         QMessageBox::warning(this, "error", e.what());
     }
@@ -106,6 +107,7 @@ void MainWindow::onRSaveROIButton(){
                        lPngWidget->selectionRect.top(),
                        lPngWidget->selectionRect.right(),
                        lPngWidget->selectionRect.bottom());
+        QMessageBox::warning(this, "Выполнено!", "Координаты сохранены");
     }
     catch(const std::exception & e){
         QMessageBox::warning(this, "error", e.what());

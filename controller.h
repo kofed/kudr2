@@ -14,13 +14,11 @@ public:
 
     void init();
 
-    void saveROI(const CameraIp * camera, const int x1, const int y1, const int x2, const int y2);
+    void saveROI(const CameraIp * camera, const int resolutionWidth, const int resolutionHeight, const int x1, const int y1, const int x2, const int y2);
 
     void loadDebug(const CameraIp::CameraPosition position);
 
     void loadShot(const CameraIp * position, const int width, const int height);
-
-    void cameraOn(const CameraIp::CameraPosition position);
 
     void saveDoorNum(const int value);
 
@@ -36,8 +34,6 @@ public:
     CameraIp * rCamera = NULL;
 
     QString imagePattern = "/tmp/shot%1.png";
-
-
 
     friend class MainWindow;
 private:
