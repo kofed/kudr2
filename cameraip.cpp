@@ -20,7 +20,7 @@ CameraIp::CameraIp(array<int, 4> _ip){
     qDebug() << "built cameraIp with ip = " <<  toString();
 }
 
-CameraIp::CameraIp(const int doorNum, const CameraIp::CameraPosition position){
+CameraIp::CameraIp(const int doorNum, const Position position){
     QString ipString = IP_MASK.arg(doorNum).arg(position);
 
     QStringList list = ipString.split('.');
@@ -31,15 +31,15 @@ CameraIp::CameraIp(const int doorNum, const CameraIp::CameraPosition position){
 
 }
 
-CameraIp::CameraPosition CameraIp::getPosition() const {
+Position CameraIp::getPosition() const {
 
     switch(ip[3] % 10){
     case 0:
-        return CameraIp::CameraPosition::left;
+        return LEFT;
     case 1:
-        return CameraIp::CameraPosition::right;
+        return RIGHT;
     default:
-        return CameraIp::CameraPosition::notSet;
+        return NOTSET;
     }
 }
 
@@ -59,11 +59,11 @@ QString CameraIp::toString() const {
 CameraIp CameraIp::buildOpposite() const{
     array<int, 4> opIp = ip;
     switch(getPosition()){
-    case CameraIp::CameraPosition::left:
-        opIp[3] = 10 * getDoorNumber() + CameraIp::CameraPosition::right;
+    case LEFT:
+        opIp[3] = 10 * getDoorNumber() + Position::RIGHT;
         break;
-    case CameraIp::CameraPosition::right:
-        opIp[3] = 10* getDoorNumber() + CameraIp::CameraPosition::left;
+    case RIGHT:
+        opIp[3] = 10* getDoorNumber() + Position::LEFT;
         break;
     }
 
@@ -72,8 +72,4 @@ CameraIp CameraIp::buildOpposite() const{
 
 int CameraIp::getDoorNumber() const {
     return ip[3]/10;
-}
-
-void CameraIp::setDoorNumber(const int number){
-    ip[3] = number * 10 + getPosition();
 }

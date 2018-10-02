@@ -38,7 +38,8 @@ HEADERS += \
     sshcontroller.h \
     pingcontroller.h \
     CameraIp.h \
-    pngwidget.h
+    pngwidget.h \
+    position.h
 
 FORMS += \
         mainwindow.ui

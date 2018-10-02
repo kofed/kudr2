@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "controller.h"
 #include "pngwidget.h"
+#include "position.h"
 
 namespace Ui {
 class MainWindow;
@@ -51,6 +52,10 @@ private slots:
     void onSearchButton();
 
     void onIpsComboSelected(int);
+
+    void onRResolutionEdit();
+
+    void onLResolutionEdit();
 };
 
 #endif // MAINWINDOW_H

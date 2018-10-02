@@ -12,6 +12,8 @@ SShController::SShController()
 }
 
 void SShController::init(const QString & hostname, const QString & username, const QString & password ){
+    qDebug() << "init ssh = " << hostname;
+
     int i, auth_pw = 1;
     struct sockaddr_in sin;
     const char *fingerprint;
@@ -136,7 +138,7 @@ void SShController::file(const QString & src, const QString & dst){
                                         libssh2_session_last_errno(session)));
     }
 
-    if(fileinfo == NULL || fileinfo.st_size <= 0){
+    if( fileinfo.st_size <= 0){
         throw std::runtime_error("Файл на raspberry не существует");
     }
 

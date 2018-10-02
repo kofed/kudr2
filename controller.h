@@ -12,31 +12,28 @@ class Controller
 public:
     Controller();
 
-    void init();
+    void saveROI(const Position pos, const int resolutionWidth, const int resolutionHeight, const int x1, const int y1, const int x2, const int y2);
 
-    void saveROI(const CameraIp * camera, const int resolutionWidth, const int resolutionHeight, const int x1, const int y1, const int x2, const int y2);
+    void loadDebug(const Position position);
 
-    void loadDebug(const CameraIp::CameraPosition position);
+    void loadShot(const Position pos, const int width, const int height);
 
-    void loadShot(const CameraIp * position, const int width, const int height);
+    void searchOnDoorNum(const int doorNum);
 
-    void saveDoorNum(const int value);
+    void saveCamera(const Position pos , const CameraIp & newCamera);
 
-    void saveDoorNum(CameraIp * camera, const int value);
+    void setCamera(const Position pos, const CameraIp & camera);
 
-    void searchOnDoorNum(int doorNum);
-
-    void setCameras(CameraIp camera);
-
-    void setCameras(CameraIp , CameraIp);
-
-    CameraIp * lCamera = NULL;
-    CameraIp * rCamera = NULL;
+    void setCameras(const CameraIp & camera);
 
     QString imagePattern = "/tmp/shot%1.png";
 
+    int lWidth, lHeight, rWidth, rHeight;
+
     friend class MainWindow;
 private:
+    CameraIp * cameras[2];
+
     PingController pingController;
 
     SShController sshController;

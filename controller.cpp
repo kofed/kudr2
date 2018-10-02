@@ -1,29 +1,16 @@
 #include "controller.h"
 #include <sstream>
+#include <QDebug>
 
 Controller::Controller()
 {
-
+    cameras[0] = NULL;
+    cameras[1] = NULL;
 }
 
-void Controller::init(){
-    //pings from 192.168.0.0 to 192.168.16.1
-    try{
-     //   pingController.scan();
-
-        if(pingController.activeIps.size() < 1){
-            return;
-        }
-
-        setCameras(CameraIp(* pingController.activeIps.begin()));
-    }catch(std::exception & e){
-
-    }
-}
-
-void Controller::saveROI(const CameraIp * camera,  const int resolutionWidth, const int resolutionHeight,
+void Controller::saveROI(const Position pos,  const int resolutionWidth, const int resolutionHeight,
                          const int x1, const int y1, const int x2, const int y2){
-    if(camera == NULL)
+    if(cameras[pos] == NULL)
         return;
 
     stringstream ss;
@@ -36,80 +23,59 @@ void Controller::saveROI(const CameraIp * camera,  const int resolutionWidth, co
     ss << y2 << "\"";
     ss << " > /tmp/roi.xml";
 
-    sshController.init(camera->toString(), "pi", "raspberry");
+    sshController.init(cameras[pos]->toString(), "pi", "raspberry");
     sshController.command(QString(ss.str().c_str()));
     sshController.shutdown();
 }
 
-void Controller::loadDebug(const CameraIp::CameraPosition position){
+void Controller::loadDebug(const Position position){
 
 }
 
-void Controller::loadShot(const CameraIp * camera, const int width, const int height){
-    if(camera == NULL || width < 0 || height < 0)
+void Controller::loadShot(const Position pos, const int width, const int height){
+    if(cameras[pos] == NULL || width < 0 || height < 0)
         return;
 
-    QString file = imagePattern.arg(camera->getPosition());
-    sshController.init(camera->toString(), "pi", "raspberry");
+    QString file = imagePattern.arg(pos);
+    sshController.init(cameras[pos]->toString(), "pi", "raspberry");
     try{
         sshController.command(QString("raspistill -e png -w %1 -h %2 -o %3").arg(width).arg(height).arg(file));
         sshController.file(file, file);
-        sshController.command("rm %1").arg(file);
+        sshController.command(QString("rm %1").arg(file));
     }catch(std::exception & e){
         sshController.shutdown();
-        rethrow_exception(e);
+        throw e;
     }
     sshController.shutdown();
 }
 
-void Controller::saveDoorNum(const int value){
-    saveDoorNum(lCamera, value);
-    saveDoorNum(rCamera, value);
-}
-
-void Controller::saveDoorNum(CameraIp * camera, const int value){
-    if(camera == NULL)
+void Controller::saveCamera(const Position pos, const CameraIp & cameraNew){
+    if(cameras[pos] == NULL)
         return;
 
-    sshController.init(camera->toString(), "pi", "raspberry");
-    camera->setDoorNumber(value);
-    sshController.command(QString("sed -i 's/address *.*.*.*/address %1/g' /etc/network/interfaces").arg(camera->toString()));
-    sshController.command(QString("sed -i 's/ip_address=*.*.*.*/ip_address=%1/g' /etc/dhcpcd.conf").arg(camera->toString()));
+    sshController.init(cameras[pos]->toString(), "pi", "raspberry");
+    sshController.command(QString("sed -i 's/address *.*.*.*/address %1/g' /etc/network/interfaces").arg(cameraNew.toString()));
+    sshController.command(QString("sed -i 's/ip_address=*.*.*.*/ip_address=%1/g' /etc/dhcpcd.conf").arg(cameraNew.toString()));
     sshController.command("sudo /etc/init.d/networking restart");
     sshController.shutdown();
+
+    setCamera(pos, cameraNew);
 }
 
-void Controller::searchOnDoorNum(int doorNum){
-    CameraIp _lcamera(doorNum, CameraIp::left);
-    CameraIp _rcamera(doorNum, CameraIp::right);
+void Controller::setCamera(const Position pos, const CameraIp & camera){
+    delete cameras[pos];
 
-    setCameras(_lcamera, _rcamera);
+    if(pingController.ping(camera.toString()) != 0){
+        qDebug() << (QString("ненайдено устройство с ip=%1").arg(camera.toString()));
+        return;
+    }
+
+    cameras[pos] = new CameraIp(camera.toString());
 
 }
 
-void Controller::setCameras(const CameraIp _camera){
-    CameraIp opCamera = _camera.buildOpposite();
-    if(_camera.getPosition() == CameraIp::left){
-        setCameras(_camera, opCamera);
-    }else{
-        setCameras(opCamera, _camera);
-    }
-}
-
-void Controller::setCameras(const CameraIp _lCamera, const CameraIp _rCamera){
-    if(lCamera != NULL){
-        delete lCamera;
-    }
-
-    if(rCamera != NULL){
-        delete rCamera;
-    }
-
-    if(pingController.ping(_lCamera.toString()) == 0){
-        lCamera = new CameraIp(_lCamera.toString());
-    }
-
-    if(pingController.ping(_rCamera.toString()) == 0){
-        rCamera = new CameraIp(_rCamera.toString());
-    }
+void Controller::setCameras(const CameraIp & camera){
+    setCamera(camera.getPosition(), camera);
+    CameraIp opCamera = camera.buildOpposite();
+    setCamera(opCamera.getPosition(), opCamera);
 }

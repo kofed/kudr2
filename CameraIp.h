@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <array>
+#include "position.h"
 
 using namespace std;
 
@@ -15,11 +16,11 @@ public:
 
     CameraIp(const array<int, 4> ip);
 
-    enum CameraPosition {left, right, notSet};
+    CameraIp(const int doorNum, const Position position);
 
-    CameraIp(const int doorNum, const CameraPosition position);
+    Position getPosition() const;
 
-    CameraPosition getPosition() const;
+    //void setCameraPosition(const CameraPosition posiotn);
 
     QString toString() const;
 
@@ -27,12 +28,10 @@ public:
 
     int getDoorNumber() const;
 
-    void setDoorNumber(const int number);
+    //void setDoorNumber(const int number);
 private:
 
     array<int, 4> ip;
-
-    int doorNum;
 };
 
 

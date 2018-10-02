@@ -17,9 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->saveDoorNumButton, SIGNAL (released()), this, SLOT (onSaveDoorNumButton()));
     connect(ui->lShotButton, SIGNAL (released()), this, SLOT (onLShotButton()));
     connect(ui->rShotButton, SIGNAL (released()), this, SLOT (onRShotButton()));
-    connect(ui->saveDoorNumButton, SIGNAL (released()), this, SLOT (onSaveDoorNumButton()));
     connect(ui->searchButton, SIGNAL(released()), this, SLOT(onSearchButton()));
     connect(ui->ipsCombo, SIGNAL(activated(int)), this, SLOT(onIpsComboSelected(int )));
+    connect(ui->rResolutionEdit, SIGNAL(editingFinished()), this, SLOT(onRResolutionEdit()));
+    connect(ui->lResolutionEdit, SIGNAL(editingFinished()), this, SLOT(onLResolutionEdit()));
 
     ui->doorNumEdit->setValidator( new QIntValidator(1, 17, this) );
     ui->searchDoorNum->setValidator(new QIntValidator(1, 17, this));
@@ -28,24 +29,39 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->groupBox_2->setLayout(ui->verticalLayout_3);
 
     ui->lResolutionEdit->setInputMask("9999\:9999");
-    controller.init();
-
     ui->lResolutionEdit->setText("640:480");
+    onLResolutionEdit();
 
+    ui->rResolutionEdit->setInputMask("9999\:9999");
+    ui->rResolutionEdit->setText("640:480");
+    onRResolutionEdit();
+
+    ui->lPositionCombo->addItem("Левая", LEFT);
+    ui->lPositionCombo->addItem("Правая", RIGHT);
+
+    ui->rPositionCombo->addItem("Левая", LEFT);
+    ui->rPositionCombo->addItem("Правая", RIGHT);
+
+    ui->rPositionCombo->setCurrentIndex(RIGHT);
     //initIpsCombo();
     update();
 
 }
 
 void MainWindow::update(){
-    if(controller.lCamera != NULL){
-        ui->lIpValueLabel->setText(controller.lCamera->toString());
-        ui->doorNumEdit->setText(QString::number(controller.lCamera->getDoorNumber()));
+    if(controller.cameras[LEFT] != NULL){
+        ui->lIpValueLabel->setText(controller.cameras[LEFT]->toString());
+        ui->doorNumEdit->setText(QString::number(controller.cameras[LEFT]->getDoorNumber()));
      }
-    if(controller.rCamera != NULL){
-        ui->rIpValueLabel->setText(controller.rCamera->toString());
-        ui->doorNumEdit->setText(QString::number(controller.lCamera->getDoorNumber()));
+    if(controller.cameras[RIGHT] != NULL){
+        ui->rIpValueLabel->setText(controller.cameras[RIGHT]->toString());
+        ui->doorNumEdit->setText(QString::number(controller.cameras[RIGHT]->getDoorNumber()));
     }
+
+    if(controller.cameras[LEFT] != NULL)
+        ui->lPositionCombo->setCurrentIndex(controller.cameras[LEFT]->getPosition());
+    if(controller.cameras[RIGHT] != NULL)
+        ui->rPositionCombo->setCurrentIndex(controller.cameras[RIGHT]->getPosition());
     //lUpdateImage();
     //rUpdateImage();
 }
@@ -58,28 +74,32 @@ void MainWindow::initIpsCombo(){
 }
 
 void MainWindow::lUpdateImage(){
-    if(controller.lCamera == NULL)
+    if(controller.cameras[LEFT] == NULL)
         return;
-    //QString imageFile = "/tmp/left.png";
-    QString imageFile = controller.imagePattern.arg(controller.lCamera->getPosition());
-    QPixmap pixmap(imageFile);
-    lPngWidget = new PngWidget(ui->lPngLabel);
-    ui->lPngLabel->setPixmap(pixmap);
-    lPngWidget->resize(pixmap.size());
-    lPngWidget->show();
-    qApp->processEvents();
+    try{
+        QString imageFile = controller.imagePattern.arg(controller.cameras[LEFT]->getPosition());
+        QPixmap pixmap(imageFile);
+        lPngWidget = new PngWidget(ui->lPngLabel);
+        ui->lPngLabel->setPixmap(pixmap);
+        lPngWidget->resize(pixmap.size());
+        lPngWidget->show();
+        qApp->processEvents();
+    }catch(const std::exception & e){
+            QMessageBox::warning(this, "Невозможно найти локальный файл", "Невозможно найти локальный файл. Возможно на устройстве он не был записан.");
+        }
 }
 
 void MainWindow::rUpdateImage(){
-    if(controller.rCamera == NULL){
-        return;
+    try{
+        QPixmap pixmap(controller.imagePattern.arg(RIGHT));
+        rPngWidget = new PngWidget(ui->rPngLabel);
+        ui->rPngLabel->setPixmap(pixmap);
+        rPngWidget->resize(pixmap.size());
+        rPngWidget->show();
+        qApp->processEvents();
+    }catch(const std::exception & e){
+         QMessageBox::warning(this, "Невозможно найти локальный файл", "Невозможно найти локальный файл. Возможно на устройстве он не был записан.");
     }
-    QPixmap pixmap(controller.imagePattern.arg(controller.rCamera->getPosition()));
-    rPngWidget = new PngWidget(ui->rPngLabel);
-    ui->rPngLabel->setPixmap(pixmap);
-    rPngWidget->resize(pixmap.size());
-    rPngWidget->show();
-    qApp->processEvents();
 }
 
 MainWindow::~MainWindow()
@@ -89,7 +109,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::onLSaveROIButton(){
     try{
-        controller.saveROI(controller.lCamera,
+        controller.saveROI(LEFT,
+                           controller.lWidth,
+                           controller.lHeight,
                            lPngWidget->selectionRect.left(),
                            lPngWidget->selectionRect.top(),
                            lPngWidget->selectionRect.right(),
@@ -102,11 +124,13 @@ void MainWindow::onLSaveROIButton(){
 
 void MainWindow::onRSaveROIButton(){
     try{
-        controller.saveROI(controller.lCamera,
-                       lPngWidget->selectionRect.left(),
-                       lPngWidget->selectionRect.top(),
-                       lPngWidget->selectionRect.right(),
-                       lPngWidget->selectionRect.bottom());
+        controller.saveROI(RIGHT,
+                           controller.rWidth,
+                           controller.rHeight,
+                           rPngWidget->selectionRect.left(),
+                           rPngWidget->selectionRect.top(),
+                           rPngWidget->selectionRect.right(),
+                           rPngWidget->selectionRect.bottom());
         QMessageBox::warning(this, "Выполнено!", "Координаты сохранены");
     }
     catch(const std::exception & e){
@@ -124,13 +148,8 @@ void MainWindow::onRLoadDebugButton(){
 
 
 void MainWindow::onLShotButton(){
-    try{
-        QString sResolution = ui->lResolutionEdit->text();
-        QStringList slResolution = sResolution.split(":");
-        int width = QString(slResolution.at(0)).toInt();
-        int height = QString(slResolution.at(1)).toInt();
-
-        controller.loadShot(controller.lCamera, width, height);
+    try{        
+        controller.loadShot(LEFT, controller.rWidth, controller.rHeight);
         lUpdateImage();
     }
     catch(const std::exception & e){
@@ -140,12 +159,7 @@ void MainWindow::onLShotButton(){
 
 void MainWindow::onRShotButton(){
     try{
-        QString sResolution = ui->lResolutionEdit->text();
-        QStringList slResolution = sResolution.split(":");
-        int width = QString(slResolution.at(0)).toInt();
-        int height = QString(slResolution.at(1)).toInt();
-
-        controller.loadShot(controller.rCamera, width, height);
+        controller.loadShot(RIGHT, controller.rWidth, controller.rHeight);
         rUpdateImage();
     }
     catch(const std::exception & e){
@@ -154,19 +168,33 @@ void MainWindow::onRShotButton(){
 }
 
 void MainWindow::onSaveDoorNumButton(){
-    try{
-        controller.saveDoorNum(ui->doorNumEdit->text().toInt());
+
+        int doorNumber = ui->doorNumEdit->text().toInt();
+
+        Position lPos = ui->lPositionCombo->currentData().value<Position>();
+        CameraIp newLeftCamera(doorNumber, lPos);
+
+        Position rPos = ui->rPositionCombo->currentData().value<Position>();
+        CameraIp newRightCamera(doorNumber, rPos);
+        try{
+            controller.saveCamera(LEFT, newLeftCamera);
+        }
+        catch(const std::exception & e){
+            QMessageBox::warning(this, "error", e.what());
+        }
+        try{
+            controller.saveCamera(RIGHT, newRightCamera);
+        }
+        catch(const std::exception & e){
+            QMessageBox::warning(this, "error", e.what());
+        }
         update();
-    }
-    catch(const std::exception & e){
-        QMessageBox::warning(this, "error", e.what());
-    }
 }
 
 void MainWindow::onSearchButton(){
     try{
         if(!ui->searchDoorNum->text().isEmpty()){
-           controller.searchOnDoorNum(ui->searchDoorNum->text().toInt());
+           controller.setCameras(CameraIp(ui->searchDoorNum->text().toInt(), LEFT));
            update();
         } else{
             controller.pingController.scan();
@@ -184,4 +212,21 @@ void MainWindow::onIpsComboSelected(int item){
     }catch(const std::exception & e){
         QMessageBox::warning(this, "error", e.what());
     }
+}
+
+
+void MainWindow::onRResolutionEdit(){
+    QString sResolution = ui->rResolutionEdit->text();
+    QStringList slResolution = sResolution.split(":");
+    controller.rWidth = QString(slResolution.at(0)).toInt();
+    controller.rHeight = QString(slResolution.at(1)).toInt();
+
+}
+
+void MainWindow::onLResolutionEdit(){
+    QString sResolution = ui->lResolutionEdit->text();
+    QStringList slResolution = sResolution.split(":");
+    controller.lWidth = QString(slResolution.at(0)).toInt();
+    controller.lHeight = QString(slResolution.at(1)).toInt();
+
 }
