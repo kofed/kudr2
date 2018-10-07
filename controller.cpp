@@ -2,7 +2,9 @@
 #include <sstream>
 #include <QDebug>
 
-Controller::Controller()
+Controller::Controller(Logger* & _logger):
+    logger(_logger),
+    pingController(_logger)
 {
     cameras[0] = NULL;
     cameras[1] = NULL;
@@ -34,7 +36,7 @@ void Controller::loadDebug(const Position position){
 
 void Controller::loadShot(const Position pos, const int width, const int height){
     if(cameras[pos] == NULL || width < 0 || height < 0)
-        return;
+        throw new std::runtime_error("Произведите поиск и выберите устройство");
 
     QString file = imagePattern.arg(pos);
     sshController.init(cameras[pos]->toString(), "pi", "raspberry");
@@ -46,6 +48,7 @@ void Controller::loadShot(const Position pos, const int width, const int height)
         sshController.shutdown();
         throw e;
     }
+
     sshController.shutdown();
 }
 
@@ -54,19 +57,20 @@ void Controller::saveCamera(const Position pos, const CameraIp & cameraNew){
         return;
 
     sshController.init(cameras[pos]->toString(), "pi", "raspberry");
-    sshController.command(QString("sed -i 's/address *.*.*.*/address %1/g' /etc/network/interfaces").arg(cameraNew.toString()));
-    sshController.command(QString("sed -i 's/ip_address=*.*.*.*/ip_address=%1/g' /etc/dhcpcd.conf").arg(cameraNew.toString()));
-    sshController.command("sudo /etc/init.d/networking restart");
+    sshController.command(QString("sudo sed -i 's/address *.*.*.*/address %1/g' /etc/network/interfaces").arg(cameraNew.toString()));
+    sshController.command(QString("sudo sed -i 's/ip_address=*.*.*.*/ip_address=%1/g' /etc/dhcpcd.conf").arg(cameraNew.toString()));
+    sshController.command("sudo reboot");
     sshController.shutdown();
 
-    setCamera(pos, cameraNew);
+    delete cameras[pos];
+    cameras[pos] = NULL;
 }
 
 void Controller::setCamera(const Position pos, const CameraIp & camera){
     delete cameras[pos];
 
     if(pingController.ping(camera.toString()) != 0){
-        qDebug() << (QString("ненайдено устройство с ip=%1").arg(camera.toString()));
+        logger->log(QString("ненайдено устройство с ip=%1").arg(camera.toString()));
         return;
     }
 

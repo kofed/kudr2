@@ -2,7 +2,8 @@
 #include "CameraIp.h"
 #include <QtDebug>
 
-PingController::PingController()
+PingController::PingController(Logger* & _logger):
+    logger(_logger)
 {
 
 }
@@ -16,13 +17,14 @@ int PingController::ping(const QString & ip){
 }
 
 void PingController::scan(){
-
+        activeIps.clear();
         for(int i = 1; i < MAX_DOOR; ++i ){
             for(int j = Position::LEFT; j != Position::NOTSET; ++j ){
                 QString ip = QString("192.168.43.%1%2").arg(i).arg(j);
+                logger->log(QString("проверяю устройство ") + ip);
                 if(ping(ip) == 0){
                     activeIps.insert(ip);
-                    qDebug() << "pinged " << ip;
+                    logger->log(QString("Найдено устройство ") + ip);
                 };
 
             }

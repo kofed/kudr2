@@ -27,6 +27,8 @@ private:
 
     PngWidget * rPngWidget;
 
+    Logger * logger;
+
     void lUpdateImage();
 
     void rUpdateImage();
@@ -53,9 +55,9 @@ private slots:
 
     void onIpsComboSelected(int);
 
-    void onRResolutionEdit();
+    void onRResolutionEdit(const QString &);
 
-    void onLResolutionEdit();
+    void onLResolutionEdit(const QString &);
 };
 
 #endif // MAINWINDOW_H

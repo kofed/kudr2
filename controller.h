@@ -5,12 +5,13 @@
 #include "sshcontroller.h"
 #include "pingcontroller.h"
 #include "CameraIp.h"
+#include "logger.h"
 
 class Controller
 {
 
 public:
-    Controller();
+    Controller(Logger* & _logger);
 
     void saveROI(const Position pos, const int resolutionWidth, const int resolutionHeight, const int x1, const int y1, const int x2, const int y2);
 
@@ -38,6 +39,7 @@ private:
 
     SShController sshController;
 
+    Logger* & logger;
 };
 
 #endif // CONTROLLER_H

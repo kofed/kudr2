@@ -3,14 +3,16 @@
 
 #include <set>
 #include <QProcess>
+#include "logger.h"
 
 
 class PingController
 {
     const int MAX_DOOR = 8;
 
+    Logger* & logger;
 public:
-    PingController();
+    PingController(Logger* & logger);
 
     std::set<QString> activeIps;
 

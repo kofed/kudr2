@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <QtDebug>
 #include <stdio.h>
+#include <QThread>
 
 SShController::SShController()
 {
@@ -175,6 +176,8 @@ void SShController::shutdown(){
     if(session == NULL){
         throw std::runtime_error("ssh session is not opened");
     }
+
+    QThread::sleep(1);
 
     libssh2_session_disconnect(session, "Normal Shutdown, Thank you for playing");
 

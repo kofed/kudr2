@@ -30,7 +30,8 @@ SOURCES += \
     sshcontroller.cpp \
     pingcontroller.cpp \
     cameraip.cpp \
-    pngwidget.cpp
+    pngwidget.cpp \
+    logger.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -39,7 +40,8 @@ HEADERS += \
     pingcontroller.h \
     CameraIp.h \
     pngwidget.h \
-    position.h
+    position.h \
+    logger.h
 
 FORMS += \
         mainwindow.ui

@@ -6,7 +6,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    controller(logger)
 {
     ui->setupUi(this);
 
@@ -19,8 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->rShotButton, SIGNAL (released()), this, SLOT (onRShotButton()));
     connect(ui->searchButton, SIGNAL(released()), this, SLOT(onSearchButton()));
     connect(ui->ipsCombo, SIGNAL(activated(int)), this, SLOT(onIpsComboSelected(int )));
-    connect(ui->rResolutionEdit, SIGNAL(editingFinished()), this, SLOT(onRResolutionEdit()));
-    connect(ui->lResolutionEdit, SIGNAL(editingFinished()), this, SLOT(onLResolutionEdit()));
+    connect(ui->rResolutionEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onRResolutionEdit(const QString &)));
+    connect(ui->lResolutionEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onLResolutionEdit(const QString &)));
 
     ui->doorNumEdit->setValidator( new QIntValidator(1, 17, this) );
     ui->searchDoorNum->setValidator(new QIntValidator(1, 17, this));
@@ -29,12 +30,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->groupBox_2->setLayout(ui->verticalLayout_3);
 
     ui->lResolutionEdit->setInputMask("9999\:9999");
-    ui->lResolutionEdit->setText("640:480");
-    onLResolutionEdit();
+    ui->lResolutionEdit->setText("400:300");
+    onLResolutionEdit("640:480");
 
     ui->rResolutionEdit->setInputMask("9999\:9999");
-    ui->rResolutionEdit->setText("640:480");
-    onRResolutionEdit();
+    ui->rResolutionEdit->setText("400:300");
+    onRResolutionEdit("640:480");
+
+    logger = new Logger(ui->logListWidget);
 
     ui->lPositionCombo->addItem("Левая", LEFT);
     ui->lPositionCombo->addItem("Правая", RIGHT);
@@ -43,25 +46,49 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->rPositionCombo->addItem("Правая", RIGHT);
 
     ui->rPositionCombo->setCurrentIndex(RIGHT);
-    //initIpsCombo();
+
     update();
+
+    logger->log("Добро пожаловать!");
 
 }
 
 void MainWindow::update(){
+    bool isLNull = controller.cameras[LEFT] == NULL;
+    bool isRNull = controller.cameras[RIGHT] == NULL;
+
+    ui->lSaveROIButton->setEnabled(!isLNull);
+    ui->lShotButton->setEnabled(!isLNull);
+    ui->lPositionCombo->setEnabled(!isLNull);
+    ui->lLoadDebugButton->setEnabled(!isLNull);
+
+    ui->rSaveROIButton->setEnabled(controller.cameras[RIGHT] != NULL);
+    ui->rShotButton->setEnabled(controller.cameras[RIGHT] != NULL);
+    ui->rPositionCombo->setEnabled(!isRNull);
+    ui->rPositionCombo->setEnabled(!isRNull);
+    ui->rLoadDebugButton->setEnabled(!isRNull);
+    ui->lPngLabel->clear();
+
+    ui->saveDoorNumButton->setEnabled(!isLNull || !isRNull);
     if(controller.cameras[LEFT] != NULL){
         ui->lIpValueLabel->setText(controller.cameras[LEFT]->toString());
-        ui->doorNumEdit->setText(QString::number(controller.cameras[LEFT]->getDoorNumber()));
-     }
+        ui->doorNumEdit->setText(QString::number(controller.cameras[LEFT]->getDoorNumber()));        
+        ui->lPositionCombo->setCurrentIndex(controller.cameras[LEFT]->getPosition());
+    }else{
+        ui->lIpValueLabel->setText("");
+
+    }
     if(controller.cameras[RIGHT] != NULL){
         ui->rIpValueLabel->setText(controller.cameras[RIGHT]->toString());
         ui->doorNumEdit->setText(QString::number(controller.cameras[RIGHT]->getDoorNumber()));
+        ui->rPositionCombo->setCurrentIndex(controller.cameras[RIGHT]->getPosition());
+
+    }else{
+        ui->rIpValueLabel->setText("");
+
     }
 
-    if(controller.cameras[LEFT] != NULL)
-        ui->lPositionCombo->setCurrentIndex(controller.cameras[LEFT]->getPosition());
-    if(controller.cameras[RIGHT] != NULL)
-        ui->rPositionCombo->setCurrentIndex(controller.cameras[RIGHT]->getPosition());
+    ui->ipsCombo->clear();
     //lUpdateImage();
     //rUpdateImage();
 }
@@ -104,10 +131,12 @@ void MainWindow::rUpdateImage(){
 
 MainWindow::~MainWindow()
 {
+    delete logger;
     delete ui;
 }
 
 void MainWindow::onLSaveROIButton(){
+    logger->log("Сохраняю область на левое устройство");
     try{
         controller.saveROI(LEFT,
                            controller.lWidth,
@@ -116,13 +145,15 @@ void MainWindow::onLSaveROIButton(){
                            lPngWidget->selectionRect.top(),
                            lPngWidget->selectionRect.right(),
                            lPngWidget->selectionRect.bottom());
-        QMessageBox::warning(this, "Выполнено!", "Координаты сохранены");
+       logger->log("Область сохранена");
     }catch(const std::exception & e){
         QMessageBox::warning(this, "error", e.what());
+        logger->log(QString("Область не сохранена. Ошибка: ") + e.what());
     }
 }
 
 void MainWindow::onRSaveROIButton(){
+    logger->log("Сохраняю область на правое устройство");
     try{
         controller.saveROI(RIGHT,
                            controller.rWidth,
@@ -131,10 +162,11 @@ void MainWindow::onRSaveROIButton(){
                            rPngWidget->selectionRect.top(),
                            rPngWidget->selectionRect.right(),
                            rPngWidget->selectionRect.bottom());
-        QMessageBox::warning(this, "Выполнено!", "Координаты сохранены");
+        logger->log("Область сохранена");
     }
     catch(const std::exception & e){
         QMessageBox::warning(this, "error", e.what());
+        logger->log(QString("Область не сохранена. Ошибка: ") + e.what());
     }
 }
 
@@ -148,27 +180,33 @@ void MainWindow::onRLoadDebugButton(){
 
 
 void MainWindow::onLShotButton(){
+    logger->log("Загружаю снимок с левого устройства");
     try{        
         controller.loadShot(LEFT, controller.rWidth, controller.rHeight);
         lUpdateImage();
+        logger->log("Загрузка снимка успешно завершена");
     }
     catch(const std::exception & e){
+        logger->log(QString("Не удалось загрузить снимок с устройства. Ошибка ") + e.what());
         QMessageBox::warning(this, "error", e.what());
     }
 }
 
 void MainWindow::onRShotButton(){
+    logger->log("Загружаю снимок с правого устройства");
     try{
         controller.loadShot(RIGHT, controller.rWidth, controller.rHeight);
         rUpdateImage();
+        logger->log("Загрузка снимка успешно завершена");
     }
     catch(const std::exception & e){
+        logger->log(QString("Не удалось загрузить снимок с устройства. Ошибка ") + e.what());
         QMessageBox::warning(this, "error", e.what());
     }
 }
 
 void MainWindow::onSaveDoorNumButton(){
-
+    logger->log("Сохраняю номер двери и позицию");
         int doorNumber = ui->doorNumEdit->text().toInt();
 
         Position lPos = ui->lPositionCombo->currentData().value<Position>();
@@ -176,29 +214,41 @@ void MainWindow::onSaveDoorNumButton(){
 
         Position rPos = ui->rPositionCombo->currentData().value<Position>();
         CameraIp newRightCamera(doorNumber, rPos);
+
+        logger->log("... на левую камеру");
         try{
             controller.saveCamera(LEFT, newLeftCamera);
+            logger->log("... успешно завершено");
         }
         catch(const std::exception & e){
             QMessageBox::warning(this, "error", e.what());
+            logger->log(QString("... произошла ошибка ") + e.what());
         }
+        logger->log("на правую камеру");
         try{
             controller.saveCamera(RIGHT, newRightCamera);
+            logger->log("... успешно завершено");
         }
         catch(const std::exception & e){
             QMessageBox::warning(this, "error", e.what());
+            logger->log(QString("... произошла ошибка ") + e.what());
         }
         update();
 }
 
 void MainWindow::onSearchButton(){
     try{
-        if(!ui->searchDoorNum->text().isEmpty()){
-           controller.setCameras(CameraIp(ui->searchDoorNum->text().toInt(), LEFT));
+        QString searchDoorNum = ui->searchDoorNum->text();
+        if(!searchDoorNum.isEmpty()){
+            logger->log("Ищу устройства с номером двери " + searchDoorNum);
+           controller.setCameras(CameraIp(searchDoorNum.toInt(), LEFT));
            update();
+           logger->log("... поиск завершен");
         } else{
+            logger->log("Выполняю сканирование по диапазону адресов");
             controller.pingController.scan();
-            initIpsCombo();
+            initIpsCombo();            
+            logger->log("Сканирование по диапазону адресов успешно завершено");
         }
     }catch(const std::exception & e){
         QMessageBox::warning(this, "error", e.what());
@@ -215,7 +265,7 @@ void MainWindow::onIpsComboSelected(int item){
 }
 
 
-void MainWindow::onRResolutionEdit(){
+void MainWindow::onRResolutionEdit(const QString &){
     QString sResolution = ui->rResolutionEdit->text();
     QStringList slResolution = sResolution.split(":");
     controller.rWidth = QString(slResolution.at(0)).toInt();
@@ -223,7 +273,7 @@ void MainWindow::onRResolutionEdit(){
 
 }
 
-void MainWindow::onLResolutionEdit(){
+void MainWindow::onLResolutionEdit(const QString &){
     QString sResolution = ui->lResolutionEdit->text();
     QStringList slResolution = sResolution.split(":");
     controller.lWidth = QString(slResolution.at(0)).toInt();

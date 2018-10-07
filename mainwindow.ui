@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1">
       <property name="sizeConstraint">
        <enum>QLayout::SetNoConstraint</enum>
       </property>
@@ -154,7 +154,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>TextLabel</string>
+               <string/>
               </property>
              </widget>
             </item>
@@ -197,9 +197,6 @@
            <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1,0">
             <item>
              <layout class="QGridLayout" name="gridLayout_2">
-              <item row="0" column="3">
-               <widget class="QLineEdit" name="lineEdit_4"/>
-              </item>
               <item row="3" column="1">
                <widget class="QLabel" name="label_9">
                 <property name="text">
@@ -228,13 +225,6 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="1">
-               <widget class="QLabel" name="label_6">
-                <property name="text">
-                 <string>TextLabel</string>
-                </property>
-               </widget>
-              </item>
               <item row="2" column="3">
                <widget class="QLineEdit" name="rResolutionEdit"/>
               </item>
@@ -248,29 +238,16 @@
               <item row="1" column="3">
                <widget class="QComboBox" name="rPositionCombo"/>
               </item>
+              <item row="0" column="3">
+               <widget class="QLineEdit" name="lineEdit"/>
+              </item>
              </layout>
             </item>
             <item>
-             <widget class="QFrame" name="frame_2">
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
+             <widget class="QLabel" name="rPngLabel">
+              <property name="text">
+               <string/>
               </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <widget class="QLabel" name="rPngLabel">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>4</y>
-                 <width>191</width>
-                 <height>171</height>
-                </rect>
-               </property>
-               <property name="text">
-                <string>TextLabel</string>
-               </property>
-              </widget>
              </widget>
             </item>
             <item>
@@ -300,8 +277,39 @@
       <item>
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
-         <string>Параметры</string>
+         <string>Лог</string>
         </property>
+        <widget class="QWidget" name="verticalLayoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>30</y>
+           <width>1101</width>
+           <height>331</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMaximumSize</enum>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QListWidget" name="logListWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
      </layout>
