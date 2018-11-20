@@ -31,7 +31,9 @@ SOURCES += \
     pingcontroller.cpp \
     cameraip.cpp \
     pngwidget.cpp \
-    logger.cpp
+    logger.cpp \
+    cvcontroller.cpp \
+    calibwidget.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -41,10 +43,13 @@ HEADERS += \
     CameraIp.h \
     pngwidget.h \
     position.h \
-    logger.h
+    logger.h \
+    cvcontroller.h \
+    calibwidget.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    3dcalibwidget.ui
 
 CONFIG += c++11
 
