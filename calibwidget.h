@@ -4,12 +4,15 @@
 #include <QWidget>
 #include <QString>
 #include <QTableWidget>
+#include <QPushButton>
 
 class CalibWidget {
- //   Q_OBJECT
+    enum{
+        COLUMN_FILE_NAME
+    };
 
 public:
-    CalibWidget( QTableWidget *table);
+    CalibWidget(const QTableWidget *table,  const QPushButton * _saveShotButton);
 
     ~CalibWidget();
 
@@ -17,6 +20,7 @@ public:
 
 private:
 
+    const QPushButton * saveShotButton;
 
     void listChessboardImages(const QString & name) const;
 };

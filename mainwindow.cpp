@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     searchButton->setText("Поиск");
     searchDoorNumLabel->setText("по номеру двери");
+    saveDoorNumButton->setText("Сохр. номер двери");
 
     ui->verticalLayout->addLayout(hLayout0);
     hLayout0->addLayout(vLayout0);
@@ -24,14 +25,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     vLayout0->addLayout(hSearchLayout);
     vLayout0->addWidget(ipsCombo);
+    vLayout0->addLayout(hSaveDoorNumLayout);
+
+    hSaveDoorNumLayout->addWidget(doorNumEdit);
+    hSaveDoorNumLayout->addWidget(saveDoorNumButton);
     hLayout0->addWidget((QWidget*) logger->logListWidget);
+
     logger->logListWidget->setMaximumHeight(100);
 
     connect(ui->lSaveROIButton, SIGNAL (released()), this, SLOT (onLSaveROIButton()));
     connect(ui->rSaveROIButton, SIGNAL (released()), this, SLOT (onRSaveROIButton()));
-    connect(ui->lLoadDebugButton, SIGNAL (released()), this, SLOT (onLLoadDebugButton()));
-    connect(ui->rLoadDebugButton, SIGNAL (released()), this, SLOT (onRLoadDebugButton()));
-    connect(ui->saveDoorNumButton, SIGNAL (released()), this, SLOT (onSaveDoorNumButton()));
+    //connect(ui->lLoadDebugButton, SIGNAL (released()), this, SLOT (onLLoadDebugButton()));
+    //connect(ui->rLoadDebugButton, SIGNAL (released()), this, SLOT (onRLoadDebugButton()));
+    connect(saveDoorNumButton, SIGNAL (released()), this, SLOT (onSaveDoorNumButton()));
     connect(ui->lShotButton, SIGNAL (released()), this, SLOT (onLShotButton()));
     connect(ui->rShotButton, SIGNAL (released()), this, SLOT (onRShotButton()));
     connect(searchButton, SIGNAL(released()), this, SLOT(onSearchButton()));
@@ -41,13 +47,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-    ui->doorNumEdit->setValidator( new QIntValidator(1, 17, this) );
+    doorNumEdit->setValidator( new QIntValidator(1, 17, this) );
     searchDoorNum->setValidator(new QIntValidator(1, 17, this));
 
     ui->groupBox_3->setLayout(ui->verticalLayout_2);
     ui->groupBox_2->setLayout(ui->verticalLayout_3);
 
-    lCalibWidget = new CalibWidget(new QTableWidget());
+    lCalibWidget = new CalibWidget(new QTableWidget(), saveShotButton);
     ui->verticalLayout_2->addWidget((QWidget*)lCalibWidget->table, 1);
 
     ui->lResolutionEdit->setInputMask("999\:999");
@@ -66,6 +72,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->rPositionCombo->setCurrentIndex(RIGHT);
 
+    ui->horizontalLayout_2->addWidget(saveShotButton);
+
     update();
 
     logger->log("Добро пожаловать!");
@@ -79,19 +87,19 @@ void MainWindow::update(){
     ui->lSaveROIButton->setEnabled(!isLNull);
     ui->lShotButton->setEnabled(!isLNull);
     ui->lPositionCombo->setEnabled(!isLNull);
-    ui->lLoadDebugButton->setEnabled(!isLNull);
+    //ui->lLoadDebugButton->setEnabled(!isLNull);
 
     ui->rSaveROIButton->setEnabled(controller.cameras[RIGHT] != NULL);
     ui->rShotButton->setEnabled(controller.cameras[RIGHT] != NULL);
     ui->rPositionCombo->setEnabled(!isRNull);
     ui->rPositionCombo->setEnabled(!isRNull);
-    ui->rLoadDebugButton->setEnabled(!isRNull);
+    //ui->rLoadDebugButton->setEnabled(!isRNull);
     ui->lPngLabel->clear();
 
-    ui->saveDoorNumButton->setEnabled(!isLNull || !isRNull);
+    //ui->saveDoorNumButton->setEnabled(!isLNull || !isRNull);
     if(controller.cameras[LEFT] != NULL){
         ui->lIpValueLabel->setText(controller.cameras[LEFT]->toString());
-        ui->doorNumEdit->setText(QString::number(controller.cameras[LEFT]->getDoorNumber()));        
+        doorNumEdit->setText(QString::number(controller.cameras[LEFT]->getDoorNumber()));
         ui->lPositionCombo->setCurrentIndex(controller.cameras[LEFT]->getPosition());
     }else{
         ui->lIpValueLabel->setText("");
@@ -99,7 +107,7 @@ void MainWindow::update(){
     }
     if(controller.cameras[RIGHT] != NULL){
         ui->rIpValueLabel->setText(controller.cameras[RIGHT]->toString());
-        ui->doorNumEdit->setText(QString::number(controller.cameras[RIGHT]->getDoorNumber()));
+        doorNumEdit->setText(QString::number(controller.cameras[RIGHT]->getDoorNumber()));
         ui->rPositionCombo->setCurrentIndex(controller.cameras[RIGHT]->getPosition());
 
     }else{
@@ -225,7 +233,7 @@ void MainWindow::onRShotButton(){
 
 void MainWindow::onSaveDoorNumButton(){
     logger->log("Сохраняю номер двери и позицию");
-        int doorNumber = ui->doorNumEdit->text().toInt();
+        int doorNumber = doorNumEdit->text().toInt();
 
         Position lPos = ui->lPositionCombo->currentData().value<Position>();
         CameraIp newLeftCamera(doorNumber, lPos);
