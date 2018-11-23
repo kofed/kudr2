@@ -32,8 +32,8 @@ SOURCES += \
     cameraip.cpp \
     pngwidget.cpp \
     logger.cpp \
-    cvcontroller.cpp \
-    calibwidget.cpp
+    calibwidget.cpp \
+    calibcontroller.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -44,18 +44,17 @@ HEADERS += \
     pngwidget.h \
     position.h \
     logger.h \
-    cvcontroller.h \
-    calibwidget.h
+    calibwidget.h \
+    calibcontroller.h
 
 FORMS += \
-        mainwindow.ui \
-    3dcalibwidget.ui
+        mainwindow.ui
 
 CONFIG += c++11
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/release/ -lssh2
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/debug/ -lssh2
-else:unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -lssh2
+else:unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -lssh2 -lopencv_calib3d -lopencv_core
 
 DEPENDPATH += $$PWD/../../../usr/include
 

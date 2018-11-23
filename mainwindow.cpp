@@ -3,13 +3,29 @@
 #include <QIntValidator>
 #include "pngwidget.h"
 #include <QMessageBox>
+#include <QTableWidget>
 
 MainWindow::MainWindow(QWidget *parent) :
+    logger(new Logger(this)),
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     controller(logger)
 {
     ui->setupUi(this);
+
+    searchButton->setText("Поиск");
+    searchDoorNumLabel->setText("по номеру двери");
+
+    ui->verticalLayout->addLayout(hLayout0);
+    hLayout0->addLayout(vLayout0);
+    hSearchLayout->addWidget(searchButton);
+    hSearchLayout->addWidget(searchDoorNumLabel);
+    hSearchLayout->addWidget(searchDoorNum);
+
+    vLayout0->addLayout(hSearchLayout);
+    vLayout0->addWidget(ipsCombo);
+    hLayout0->addWidget((QWidget*) logger->logListWidget);
+    logger->logListWidget->setMaximumHeight(100);
 
     connect(ui->lSaveROIButton, SIGNAL (released()), this, SLOT (onLSaveROIButton()));
     connect(ui->rSaveROIButton, SIGNAL (released()), this, SLOT (onRSaveROIButton()));
@@ -18,26 +34,29 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->saveDoorNumButton, SIGNAL (released()), this, SLOT (onSaveDoorNumButton()));
     connect(ui->lShotButton, SIGNAL (released()), this, SLOT (onLShotButton()));
     connect(ui->rShotButton, SIGNAL (released()), this, SLOT (onRShotButton()));
-    connect(ui->searchButton, SIGNAL(released()), this, SLOT(onSearchButton()));
-    connect(ui->ipsCombo, SIGNAL(activated(int)), this, SLOT(onIpsComboSelected(int )));
+    connect(searchButton, SIGNAL(released()), this, SLOT(onSearchButton()));
+    connect(ipsCombo, SIGNAL(activated(int)), this, SLOT(onIpsComboSelected(int )));
     connect(ui->rResolutionEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onRResolutionEdit(const QString &)));
     connect(ui->lResolutionEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onLResolutionEdit(const QString &)));
 
+
+
     ui->doorNumEdit->setValidator( new QIntValidator(1, 17, this) );
-    ui->searchDoorNum->setValidator(new QIntValidator(1, 17, this));
+    searchDoorNum->setValidator(new QIntValidator(1, 17, this));
 
     ui->groupBox_3->setLayout(ui->verticalLayout_2);
     ui->groupBox_2->setLayout(ui->verticalLayout_3);
 
-    ui->lResolutionEdit->setInputMask("9999\:9999");
+    lCalibWidget = new CalibWidget(new QTableWidget());
+    ui->verticalLayout_2->addWidget((QWidget*)lCalibWidget->table, 1);
+
+    ui->lResolutionEdit->setInputMask("999\:999");
     ui->lResolutionEdit->setText("400:300");
     onLResolutionEdit("640:480");
 
-    ui->rResolutionEdit->setInputMask("9999\:9999");
+    ui->rResolutionEdit->setInputMask("999\:999");
     ui->rResolutionEdit->setText("400:300");
     onRResolutionEdit("640:480");
-
-    logger = new Logger(ui->logListWidget);
 
     ui->lPositionCombo->addItem("Левая", LEFT);
     ui->lPositionCombo->addItem("Правая", RIGHT);
@@ -88,15 +107,14 @@ void MainWindow::update(){
 
     }
 
-    ui->ipsCombo->clear();
-    //lUpdateImage();
-    //rUpdateImage();
+    ipsCombo->clear();
+
 }
 
 void MainWindow::initIpsCombo(){
-    ui->ipsCombo->clear();
+    ipsCombo->clear();
     for(auto i : controller.pingController.activeIps){
-        ui->ipsCombo->addItem(i);
+        ipsCombo->addItem(i);
     }
 }
 
@@ -238,7 +256,7 @@ void MainWindow::onSaveDoorNumButton(){
 
 void MainWindow::onSearchButton(){
     try{
-        QString searchDoorNum = ui->searchDoorNum->text();
+        QString searchDoorNum /*= ui->searchDoorNum->text()*/;
         if(!searchDoorNum.isEmpty()){
             logger->log("Ищу устройства с номером двери " + searchDoorNum);
            controller.setCameras(CameraIp(searchDoorNum.toInt(), LEFT));
@@ -257,7 +275,7 @@ void MainWindow::onSearchButton(){
 
 void MainWindow::onIpsComboSelected(int item){
     try{
-        controller.setCameras(CameraIp(ui->ipsCombo->itemText(item)));
+        controller.setCameras(CameraIp(ipsCombo->itemText(item)));
         update();
     }catch(const std::exception & e){
         QMessageBox::warning(this, "error", e.what());

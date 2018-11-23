@@ -3,21 +3,22 @@
 
 #include <QWidget>
 #include <QString>
+#include <QTableWidget>
 
-namespace Ui {
-class CalibWidget;
-}
-
-class CalibWidget : public QWidget{
-    Q_OBJECT
+class CalibWidget {
+ //   Q_OBJECT
 
 public:
-    explicit CalibWidget(const QString& name, QWidget *parent = 0);
+    CalibWidget( QTableWidget *table);
 
     ~CalibWidget();
 
+    QTableWidget *table;
+
 private:
-    Ui::CalibWidget *ui;
-}
+
+
+    void listChessboardImages(const QString & name) const;
+};
 
 #endif // CALIBWIDGET_H

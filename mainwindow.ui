@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>558</width>
-    <height>348</height>
+    <width>842</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,33 +16,12 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_6">
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,1">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
       <property name="sizeConstraint">
        <enum>QLayout::SetNoConstraint</enum>
       </property>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,0,0,1">
-        <item>
-         <widget class="QPushButton" name="searchButton">
-          <property name="text">
-           <string>Искать</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>по номеру двери</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="searchDoorNum"/>
-        </item>
-        <item>
-         <widget class="QComboBox" name="ipsCombo"/>
-        </item>
-       </layout>
+       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch=""/>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
@@ -273,44 +252,6 @@
          </widget>
         </item>
        </layout>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="title">
-         <string>Лог</string>
-        </property>
-        <widget class="QWidget" name="verticalLayoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>190</y>
-           <width>1101</width>
-           <height>171</height>
-          </rect>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <property name="sizeConstraint">
-           <enum>QLayout::SetMaximumSize</enum>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QListWidget" name="logListWidget">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </widget>
       </item>
      </layout>
     </item>

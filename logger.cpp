@@ -1,7 +1,7 @@
 #include "logger.h"
 
-Logger::Logger(QListWidget * _logListWidget):
-    logListWidget(_logListWidget)
+Logger::Logger(QWidget * parent):
+    logListWidget(new QListWidget(parent))
 {
 
 }

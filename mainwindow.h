@@ -5,6 +5,11 @@
 #include "controller.h"
 #include "pngwidget.h"
 #include "position.h"
+#include "calibwidget.h"
+#include <QHBoxLayout>
+#include <QComboBox>
+#include <QPushButton>
+#include <QLineEdit>
 
 namespace Ui {
 class MainWindow;
@@ -23,9 +28,19 @@ public:
 private:
     Ui::MainWindow *ui;
 
+    QHBoxLayout * hLayout0 = new QHBoxLayout();
+    QHBoxLayout * hSearchLayout = new QHBoxLayout();
+    QVBoxLayout * vLayout0 = new QVBoxLayout();
+    QComboBox * ipsCombo = new QComboBox();
+    QPushButton * searchButton = new QPushButton();
+    QLabel * searchDoorNumLabel = new QLabel();
+    QLineEdit* searchDoorNum = new QLineEdit();
+
     PngWidget * lPngWidget;
 
     PngWidget * rPngWidget;
+
+   CalibWidget * lCalibWidget, *rCalibWidget;
 
     Logger * logger;
 

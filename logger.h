@@ -5,9 +5,11 @@
 
 class Logger
 {
-    QListWidget * logListWidget;
+
 public:
-    Logger(QListWidget * logListWidget);
+     QListWidget * logListWidget;
+
+    Logger(QWidget * parent);
 
     void log(QString message);
 };
