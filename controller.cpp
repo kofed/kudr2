@@ -34,22 +34,28 @@ void Controller::loadDebug(const Position position){
 
 }
 
-void Controller::loadShot(const Position pos, const int width, const int height){
-    if(cameras[pos] == NULL || width < 0 || height < 0)
+void Controller::loadShot( const int width, const int height){
+    if(cameras[LEFT] == NULL && cameras[RIGHT] == NULL || width < 0 || height < 0)
         throw new std::runtime_error("Произведите поиск и выберите устройство");
 
-    QString file = imagePattern.arg(pos);
-    sshController.init(cameras[pos]->toString(), "pi", "raspberry");
-    try{
-        sshController.command(QString("raspistill -e png -w %1 -h %2 -o %3").arg(width).arg(height).arg(file));
-        sshController.file(file, file);
-        sshController.command(QString("rm %1").arg(file));
-    }catch(std::exception & e){
+    for(auto pos : positions){
+        if(cameras[pos] == NULL){
+            continue;
+        }
+        QString file = imagePattern.arg(pos);
+        sshController.init(cameras[pos]->toString(), "pi", "raspberry");
+        try{
+            sshController.command(QString("raspistill -e png -w %1 -h %2 -o %3").arg(width).arg(height).arg(file));
+            sshController.file(file, file);
+            sshController.command(QString("rm %1").arg(file));
+        }catch(std::exception & e){
+            sshController.shutdown();
+            throw e;
+        }
+
         sshController.shutdown();
-        throw e;
     }
 
-    sshController.shutdown();
 }
 
 void Controller::saveCamera(const Position pos, const CameraIp & cameraNew){
@@ -82,4 +88,8 @@ void Controller::setCameras(const CameraIp & camera){
     setCamera(camera.getPosition(), camera);
     CameraIp opCamera = camera.buildOpposite();
     setCamera(opCamera.getPosition(), opCamera);
+}
+
+QString Controller::getImgFileName(const Position position){
+    return  "/tmp/right.png";//imagePattern.arg(position);
 }

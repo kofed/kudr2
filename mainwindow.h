@@ -28,6 +28,9 @@ public:
 private:
     Ui::MainWindow *ui;
 
+    QTableWidget * lCalibTable = new QTableWidget();
+    QTableWidget * rCalibTable = new QTableWidget();
+
     QHBoxLayout * hLayout0 = new QHBoxLayout();
     QHBoxLayout * hSearchLayout = new QHBoxLayout();
     QVBoxLayout * vLayout0 = new QVBoxLayout();
@@ -40,31 +43,25 @@ private:
 
     PngWidget * rPngWidget;
 
-   CalibWidget * lCalibWidget, *rCalibWidget;
+    CalibWidget * calibWidget;
 
     Logger * logger;
 
-    void lUpdateImage();
-
-    void rUpdateImage();
 
     void initIpsCombo();
 
     void   update();
 private slots:
+    void lUpdateImage();
+
+    void rUpdateImage();
+
+
     void onLSaveROIButton();
 
     void onRSaveROIButton();
 
-    void onLLoadDebugButton();
-
-    void onRLoadDebugButton();
-
     void onSaveDoorNumButton();
-
-    void onLShotButton();
-
-    void onRShotButton();
 
     void onSearchButton();
 
@@ -73,6 +70,7 @@ private slots:
     void onRResolutionEdit(const QString &);
 
     void onLResolutionEdit(const QString &);
+
 };
 
 #endif // MAINWINDOW_H

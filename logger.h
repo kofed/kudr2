@@ -5,13 +5,16 @@
 
 class Logger
 {
-
 public:
-     QListWidget * logListWidget;
-
-    Logger(QWidget * parent);
+    static Logger* me;
 
     void log(QString message);
+private:
+
+    Logger(QWidget * parent);
+    QListWidget * logListWidget;
+
+    friend class MainWindow;
 };
 
 #endif // LOGGER_H

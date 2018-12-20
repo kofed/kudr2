@@ -27,18 +27,18 @@ MainWindow::MainWindow(QWidget *parent) :
     hLayout0->addWidget((QWidget*) logger->logListWidget);
     logger->logListWidget->setMaximumHeight(100);
 
+    lCalibTable = new QTableWidget();
+    rCalibTable = new QTableWidget();
+    calibWidget = new CalibWidget(this, lCalibTable, rCalibTable, controller);
+
     connect(ui->lSaveROIButton, SIGNAL (released()), this, SLOT (onLSaveROIButton()));
     connect(ui->rSaveROIButton, SIGNAL (released()), this, SLOT (onRSaveROIButton()));
-    connect(ui->lLoadDebugButton, SIGNAL (released()), this, SLOT (onLLoadDebugButton()));
-    connect(ui->rLoadDebugButton, SIGNAL (released()), this, SLOT (onRLoadDebugButton()));
     connect(ui->saveDoorNumButton, SIGNAL (released()), this, SLOT (onSaveDoorNumButton()));
-    connect(ui->lShotButton, SIGNAL (released()), this, SLOT (onLShotButton()));
-    connect(ui->rShotButton, SIGNAL (released()), this, SLOT (onRShotButton()));
     connect(searchButton, SIGNAL(released()), this, SLOT(onSearchButton()));
     connect(ipsCombo, SIGNAL(activated(int)), this, SLOT(onIpsComboSelected(int )));
     connect(ui->rResolutionEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onRResolutionEdit(const QString &)));
     connect(ui->lResolutionEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onLResolutionEdit(const QString &)));
-
+    connect(calibWidget, SIGNAL(updateChessBoardImage()), this, SLOT(rUpdateImage()));
 
 
     ui->doorNumEdit->setValidator( new QIntValidator(1, 17, this) );
@@ -47,8 +47,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->groupBox_3->setLayout(ui->verticalLayout_2);
     ui->groupBox_2->setLayout(ui->verticalLayout_3);
 
-    lCalibWidget = new CalibWidget(new QTableWidget());
-    ui->verticalLayout_2->addWidget((QWidget*)lCalibWidget->table, 1);
+    ui->verticalLayout_2->addWidget(lCalibTable, 1);
+    ui->verticalLayout_3->addWidget(rCalibTable, 1);
+    ui->verticalLayout_2->addWidget((QWidget*)calibWidget);
 
     ui->lResolutionEdit->setInputMask("999\:999");
     ui->lResolutionEdit->setText("400:300");
@@ -77,16 +78,13 @@ void MainWindow::update(){
     bool isRNull = controller.cameras[RIGHT] == NULL;
 
     ui->lSaveROIButton->setEnabled(!isLNull);
-    ui->lShotButton->setEnabled(!isLNull);
     ui->lPositionCombo->setEnabled(!isLNull);
-    ui->lLoadDebugButton->setEnabled(!isLNull);
 
     ui->rSaveROIButton->setEnabled(controller.cameras[RIGHT] != NULL);
-    ui->rShotButton->setEnabled(controller.cameras[RIGHT] != NULL);
     ui->rPositionCombo->setEnabled(!isRNull);
     ui->rPositionCombo->setEnabled(!isRNull);
-    ui->rLoadDebugButton->setEnabled(!isRNull);
     ui->lPngLabel->clear();
+  //  calibWidget->setEnabled(!isLNull || !isRNull);
 
     ui->saveDoorNumButton->setEnabled(!isLNull || !isRNull);
     if(controller.cameras[LEFT] != NULL){
@@ -122,12 +120,13 @@ void MainWindow::lUpdateImage(){
     if(controller.cameras[LEFT] == NULL)
         return;
     try{
-        QString imageFile = controller.imagePattern.arg(controller.cameras[LEFT]->getPosition());
+        QString imageFile = "/tmp/left.png"; /*controller.getImgFileName(LEFT);*/
         QPixmap pixmap(imageFile);
         lPngWidget = new PngWidget(ui->lPngLabel);
         ui->lPngLabel->setPixmap(pixmap);
         lPngWidget->resize(pixmap.size());
         lPngWidget->show();
+        calibWidget->setEnabled(true);
         qApp->processEvents();
     }catch(const std::exception & e){
             QMessageBox::warning(this, "Невозможно найти локальный файл", "Невозможно найти локальный файл. Возможно на устройстве он не был записан.");
@@ -136,11 +135,13 @@ void MainWindow::lUpdateImage(){
 
 void MainWindow::rUpdateImage(){
     try{
-        QPixmap pixmap(controller.imagePattern.arg(RIGHT));
+        QString imageFile = "/tmp/right.png";//controller.imagePattern.arg(RIGHT)
+        QPixmap pixmap(imageFile);
         rPngWidget = new PngWidget(ui->rPngLabel);
         ui->rPngLabel->setPixmap(pixmap);
         rPngWidget->resize(pixmap.size());
         rPngWidget->show();
+        calibWidget->setEnabled(true);
         qApp->processEvents();
     }catch(const std::exception & e){
          QMessageBox::warning(this, "Невозможно найти локальный файл", "Невозможно найти локальный файл. Возможно на устройстве он не был записан.");
@@ -185,41 +186,6 @@ void MainWindow::onRSaveROIButton(){
     catch(const std::exception & e){
         QMessageBox::warning(this, "error", e.what());
         logger->log(QString("Область не сохранена. Ошибка: ") + e.what());
-    }
-}
-
-void MainWindow::onLLoadDebugButton(){
-
-}
-
-void MainWindow::onRLoadDebugButton(){
-
-}
-
-
-void MainWindow::onLShotButton(){
-    logger->log("Загружаю снимок с левого устройства");
-    try{        
-        controller.loadShot(LEFT, controller.rWidth, controller.rHeight);
-        lUpdateImage();
-        logger->log("Загрузка снимка успешно завершена");
-    }
-    catch(const std::exception & e){
-        logger->log(QString("Не удалось загрузить снимок с устройства. Ошибка ") + e.what());
-        QMessageBox::warning(this, "error", e.what());
-    }
-}
-
-void MainWindow::onRShotButton(){
-    logger->log("Загружаю снимок с правого устройства");
-    try{
-        controller.loadShot(RIGHT, controller.rWidth, controller.rHeight);
-        rUpdateImage();
-        logger->log("Загрузка снимка успешно завершена");
-    }
-    catch(const std::exception & e){
-        logger->log(QString("Не удалось загрузить снимок с устройства. Ошибка ") + e.what());
-        QMessageBox::warning(this, "error", e.what());
     }
 }
 

@@ -33,7 +33,8 @@ SOURCES += \
     pngwidget.cpp \
     logger.cpp \
     calibwidget.cpp \
-    calibcontroller.cpp
+    calibcontroller.cpp \
+    constants.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -54,7 +55,7 @@ CONFIG += c++11
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/release/ -lssh2
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/debug/ -lssh2
-else:unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -lssh2 -lopencv_calib3d -lopencv_core
+else:unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -lssh2 -lopencv_calib3d -lopencv_core -lopencv_imgcodecs
 
 DEPENDPATH += $$PWD/../../../usr/include
 

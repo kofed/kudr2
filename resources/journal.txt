@@ -1,9 +1,11 @@
 DONE 1. export calWidget to the main frame 36
 DONE 2. Find out how to calibrate a cam with a chess board 55
 DONE 3. no matching constructor for call to CalibWidget
-4. Remove log from scratch. And add via code. Put it at right up
-5. Left one Door Number edit
-6. After add Shot create line in the table.
-7. Left one resolution
-8. one get shot
-9. one save roi
+DONE 4. Remove log from scratch. And add via code. Put it at right up
+DONE 5. Left one Door Number edit
+DONE 6. After add Shot create line in the table.
+DONE 7. Left one resolution
+DONE 8. one get shot
+DONE 9. one save roi
+DONE a. Check file exists when loaded
+b. Draw chess board corners.

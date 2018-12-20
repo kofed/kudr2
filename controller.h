@@ -17,7 +17,7 @@ public:
 
     void loadDebug(const Position position);
 
-    void loadShot(const Position pos, const int width, const int height);
+    void loadShot( const int width, const int height);
 
     void searchOnDoorNum(const int doorNum);
 
@@ -26,6 +26,8 @@ public:
     void setCamera(const Position pos, const CameraIp & camera);
 
     void setCameras(const CameraIp & camera);
+
+    QString getImgFileName(const Position position);
 
     QString imagePattern = "/tmp/shot%1.png";
 
