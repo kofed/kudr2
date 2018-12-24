@@ -33,13 +33,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     logger->logListWidget->setMaximumHeight(100);
 
-    lCalibTable = new QTableWidget();
-    rCalibTable = new QTableWidget();
-    calibWidget = new CalibWidget(this, lCalibTable, rCalibTable, controller);
+    calibTable = new QTableWidget();
+    calibWidget = new CalibWidget(this, calibTable, controller);
 
     connect(ui->lSaveROIButton, SIGNAL (released()), this, SLOT (onLSaveROIButton()));
     connect(ui->rSaveROIButton, SIGNAL (released()), this, SLOT (onRSaveROIButton()));
-    connect(ui->saveDoorNumButton, SIGNAL (released()), this, SLOT (onSaveDoorNumButton()));
+    connect(saveDoorNumButton, SIGNAL (released()), this, SLOT (onSaveDoorNumButton()));
     connect(searchButton, SIGNAL(released()), this, SLOT(onSearchButton()));
     connect(ipsCombo, SIGNAL(activated(int)), this, SLOT(onIpsComboSelected(int )));
     connect(ui->rResolutionEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onRResolutionEdit(const QString &)));
@@ -53,8 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->groupBox_3->setLayout(ui->verticalLayout_2);
     ui->groupBox_2->setLayout(ui->verticalLayout_3);
 
-    ui->verticalLayout_2->addWidget(lCalibTable, 1);
-    ui->verticalLayout_3->addWidget(rCalibTable, 1);
+    ui->verticalLayout_2->addWidget(calibTable, 1);
     ui->verticalLayout_2->addWidget((QWidget*)calibWidget);
 
     ui->lResolutionEdit->setInputMask("999\:999");
@@ -73,7 +71,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->rPositionCombo->setCurrentIndex(RIGHT);
 
-    ui->horizontalLayout_2->addWidget(saveShotButton);
+    //ui->horizontalLayout_2->addWidget(saveShotButton);
+
+    saveDoorNumButton->setEnabled(false);
 
     update();
 
@@ -92,7 +92,7 @@ void MainWindow::update(){
     ui->rPositionCombo->setEnabled(!isRNull);
     ui->rPositionCombo->setEnabled(!isRNull);
     ui->lPngLabel->clear();
-  //  calibWidget->setEnabled(!isLNull || !isRNull);
+  calibWidget->setEnabled(true);//MOCK  calibWidget->setEnabled(!isLNull || !isRNull);
 
     //ui->saveDoorNumButton->setEnabled(!isLNull || !isRNull);
     if(controller.cameras[LEFT] != NULL){

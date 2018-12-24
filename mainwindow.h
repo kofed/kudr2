@@ -28,8 +28,7 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    QTableWidget * lCalibTable = new QTableWidget();
-    QTableWidget * rCalibTable = new QTableWidget();
+    QTableWidget * calibTable = new QTableWidget();
 
     QHBoxLayout * hLayout0 = new QHBoxLayout();
     QHBoxLayout * hSearchLayout = new QHBoxLayout();

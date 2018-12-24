@@ -1,14 +1,13 @@
 #include "calibwidget.h"
 #include "opencv2/opencv.hpp"
-<<<<<<< HEAD
 #include "logger.h"
 #include <QMessageBox>
+#include <sstream>
 
 CalibWidget::CalibWidget( QWidget* parent,
-                          QTableWidget * _lTable,
-                          QTableWidget * _rTable,
+                          QTableWidget * _table,
                           Controller & _controller)
-    :QWidget(parent), lTable(_lTable), rTable(_rTable),
+    :QWidget(parent), table(_table),
       controller(_controller) {
 
     shotButton = new QPushButton("Получить снимок", parent);
@@ -27,22 +26,15 @@ CalibWidget::CalibWidget( QWidget* parent,
     mainLayout->addWidget(sizeLabel);
     mainLayout->addWidget(sizeEdit);
 
-=======
-#include <QStringBuilder>
 
-CalibWidget::CalibWidget(const QTableWidget *_table, const QPushButton * _saveShotButton)
-    :table(_table), saveShotButton(_saveShotButton) {
->>>>>>> d58870f9eda900f74522601aad133ccef7334fbe
     QStringList headers;
-    headers.append(QString("файл"));
+    headers.append(QString("файл слева"));
+    headers.append(QString("файл справа"));
     headers.append(QString("Расст. м. пл."));
-    lTable->setColumnCount(2);
-    lTable->setHorizontalHeaderLabels(headers);
+    table->setColumnCount(3);
+    table->setHorizontalHeaderLabels(headers);
+    table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    rTable->setColumnCount(2);
-    rTable->setHorizontalHeaderLabels(headers);
-
-<<<<<<< HEAD
     connect(shotButton, SIGNAL(released()), this, SLOT(onShotButton()));
     connect(findCornersButton, SIGNAL (released()), this, SLOT (onFindCornersButton()));
     connect(addButton, SIGNAL (released()), this, SLOT (onAddButton()));
@@ -50,9 +42,7 @@ CalibWidget::CalibWidget(const QTableWidget *_table, const QPushButton * _saveSh
     connect(writeButton, SIGNAL (released()), this, SLOT (onWriteButton()));
 
     setEnabled(false);
-=======
-    connect(saveShotButton, SIGNAL (released()), this, SLOT (onLShotButton()));
->>>>>>> d58870f9eda900f74522601aad133ccef7334fbe
+
 }
 
 void CalibWidget::onFindCornersButton(){
@@ -80,28 +70,9 @@ void CalibWidget::onFindCornersButton(){
     Logger::me->log("Поиск углов шахматной доски успешно завершен");
 }
 
-void CalibWidget::onAddButton(){
-    //calibController->addCorners();
-
-    int pos = lTable->rowCount();
-    lTable->insertRow(pos);
-
-    lTable->setItem(pos, 0, new QTableWidgetItem("/tmp/1.png"));
-
-
-   /* Qt::ItemFlags flags = lTable->item(1, pos)->flags();
-    flags |= Qt::ItemIsEditable;
-    lTable->item(1, pos)->setFlags(flags);
-
-    rTable->insertRow(rTable->rowCount());
-
-    findCornersButton->setEnabled(false);*/
-
-    Logger::me->log("Углы сохранены");
-}
 
 void CalibWidget::onDeleteButton(){
-    int rowCount = lTable->rowCount();
+    int rowCount = table->rowCount();
     if(rowCount > 0)
         calibController->deleteCorners(--rowCount);
 }
@@ -110,16 +81,34 @@ void CalibWidget::onWriteButton(){
     calibController->saveYML();
 }
 
-QString generateFileName(){
-    QStringBuilder name("chessboard_");
-    name + "left_";
-    name + table.rowCount();
-    return name();
+QString CalibWidget::generateFileName(Position pos){
+    stringstream ss;
+    ss << "chessboard_";
+    ss << pos;
+    ss << "_";
+    ss << table->rowCount();
+    ss << ".png";
+    return QString(ss.str().c_str());
 }
 
-void CalibWidget::onSaveShotButton(){
-    QTableWidgetItem *itemFileName = new QTableWidgetItem(generateFileName());
-    table->setItem(COLUMN_FILE_NAME, table.rowCount(), itemFileName);
+void CalibWidget::onAddButton(){
+    table->setRowCount(table->rowCount() + 1);
+
+    QTableWidgetItem *itemLeftFileName = new QTableWidgetItem(generateFileName(LEFT));
+    itemLeftFileName->setFlags(itemLeftFileName->flags() ^ Qt::ItemIsEditable);
+    table->setItem(table->rowCount() - 1, 0, itemLeftFileName);
+
+    QTableWidgetItem *itemRightFileName = new QTableWidgetItem(generateFileName(RIGHT));
+    itemRightFileName->setFlags(itemRightFileName->flags() ^ Qt::ItemIsEditable);
+    table->setItem(table->rowCount() - 1, 1, itemRightFileName);
+
+    QTableWidgetItem *itemDist = new QTableWidgetItem();
+    itemDist->setFlags(Qt::ItemIsEditable);
+    table->setItem(2, table->rowCount(), itemRightFileName);
+
+    //findCornersButton->setEnabled(false);
+
+    Logger::me->log("Углы сохранены");
 }
 
 void CalibWidget::listChessboardImages(const QString & name) const{

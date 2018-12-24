@@ -15,19 +15,22 @@ class CalibWidget : public QWidget{
     Q_OBJECT
 
 public:
-    explicit CalibWidget( QWidget *parent,  QTableWidget *_lTable,
-                 QTableWidget *_rTable, Controller & _controller );
+    explicit CalibWidget( QWidget *parent,  QTableWidget *_table, Controller & _controller );
 
     virtual    ~CalibWidget(){}
 
-    QTableWidget *lTable, *rTable;
+    QTableWidget *table;
 
     CalibController* calibController = new CalibController();
+
 
 signals:
     void updateChessBoardImage();
 private:
     Controller & controller;
+
+    QString generateFileName(Position pos);
+
 
   //  QWidget *parent;
 
