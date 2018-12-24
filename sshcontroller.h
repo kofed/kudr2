@@ -24,13 +24,17 @@
 #include <sys/time.h>
 //#endif
 
+/*
+ * Создай новый SShController при каждом использовании
+ */
 class SShController
 {
 public:
     SShController();
 
     void init(const QString & hostname, const QString & name = "pi", const QString & password = "raspberry" );
-    void file(const QString & src, const QString & dst);
+    void fileFrom(const QString & src, const QString & dst);
+    void fileTo(const QString & src, const QString & dst);
     void command(const QString & command);
 
     void shutdown();

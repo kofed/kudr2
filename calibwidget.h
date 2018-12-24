@@ -21,7 +21,9 @@ public:
 
     QTableWidget *table;
 
-    CalibController* calibController = new CalibController();
+    CalibController* calibController;
+
+    void sendYML();
 
 
 signals:

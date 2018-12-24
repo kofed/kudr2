@@ -5,6 +5,7 @@
 #include "opencv2/opencv.hpp"
 #include <map>
 #include "position.h"
+#include "controller.h"
 
 using namespace cv;
 using namespace std;
@@ -35,8 +36,10 @@ class CalibController
 
     map<Position, CalibEntity> lastCorners;
 
+    const Controller & controller;
+
 public:
-    CalibController();
+    CalibController(const Controller & controller);
 
     void calibrateCamera();
 
@@ -47,6 +50,8 @@ public:
     void addCorners(const int distance);
 
     void saveYML();
+
+    void sendYML();
 };
 
 #endif // CVCONTROLLER_H

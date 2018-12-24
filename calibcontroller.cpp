@@ -1,6 +1,6 @@
 #include "calibcontroller.h"
 
-CalibController::CalibController()
+CalibController::CalibController(const Controller & _controller):controller(_controller)
 {
 
 }
@@ -38,4 +38,20 @@ void CalibController::saveYML(){
         }
     }
     fs.release();
+}
+
+void CalibController::sendYML(){
+    for(auto camera : controller.cameras){
+        if(camera == NULL){
+            continue;
+        }
+        SShController sshController;
+        try{
+            sshController.init(camera->toString());
+            sshController.fileTo("chessboard.yml", "/tmp/chessboard.yml");
+        }catch(std::exception & e){
+            sshController.shutdown();
+            throw e;
+        }
+    }
 }

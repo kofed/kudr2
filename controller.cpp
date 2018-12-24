@@ -46,7 +46,7 @@ void Controller::loadShot( const int width, const int height){
         sshController.init(cameras[pos]->toString(), "pi", "raspberry");
         try{
             sshController.command(QString("raspistill -e png -w %1 -h %2 -o %3").arg(width).arg(height).arg(file));
-            sshController.file(file, file);
+            sshController.fileFrom(file, file);
             sshController.command(QString("rm %1").arg(file));
         }catch(std::exception & e){
             sshController.shutdown();

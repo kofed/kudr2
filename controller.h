@@ -33,13 +33,14 @@ public:
 
     int lWidth, lHeight, rWidth, rHeight;
 
-    friend class MainWindow;
-private:
     CameraIp * cameras[2];
 
-    PingController pingController;
+    friend class MainWindow;
+private:
 
     SShController sshController;
+
+    PingController pingController;
 
     Logger* & logger;
 };

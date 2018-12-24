@@ -59,7 +59,6 @@ private slots:
 
     void rUpdateImage();
 
-
     void onLSaveROIButton();
 
     void onRSaveROIButton();

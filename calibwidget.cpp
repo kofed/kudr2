@@ -10,6 +10,7 @@ CalibWidget::CalibWidget( QWidget* parent,
     :QWidget(parent), table(_table),
       controller(_controller) {
 
+    calibController = new CalibController(controller);
     shotButton = new QPushButton("Получить снимок", parent);
     findCornersButton = new QPushButton("Найти углы", parent);
     addButton = new QPushButton("Добавить", parent);
@@ -79,6 +80,7 @@ void CalibWidget::onDeleteButton(){
 
 void CalibWidget::onWriteButton(){
     calibController->saveYML();
+    calibController->sendYML();
 }
 
 QString CalibWidget::generateFileName(Position pos){
@@ -142,4 +144,6 @@ void CalibWidget::onShotButton(){
         QMessageBox::warning(this, "error", e.what());
     }
 }
+
+
 

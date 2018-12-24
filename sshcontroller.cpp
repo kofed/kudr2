@@ -119,7 +119,7 @@ void SShController::command(const QString & command){
     libssh2_channel_free(channel);
 }
 
-void SShController::file(const QString & src, const QString & dst){
+void SShController::fileFrom(const QString & src, const QString & dst){
     qDebug() << "file: " << src << " " << dst;
 
     if(session == NULL){
@@ -170,6 +170,76 @@ void SShController::file(const QString & src, const QString & dst){
 
     fclose (pFile);
     libssh2_channel_free(channel);
+}
+
+void SShController::fileTo(const QString & src, const QString & dst){
+    qDebug() << "file: " << src << " " << dst;
+
+    if(session == NULL){
+        throw std::runtime_error("ssh session is not opened");
+    }
+
+    size_t nread;
+    struct stat fileinfo;
+    char mem[1024];
+    FILE *local;
+    char *ptr;
+    int rc;
+
+    local = fopen(src.toStdString().c_str(), "rb");
+        if (!local) {
+            throw std::runtime_error("Can't open local file " + src.toStdString());
+        }
+
+    LIBSSH2_CHANNEL *  channel = libssh2_scp_send(session, dst.toStdString().c_str(), fileinfo.st_mode & 0777,
+
+                                   (unsigned long)fileinfo.st_size);
+
+        if (!channel) {
+            libssh2_channel_free(channel);
+            throw std::runtime_error("Unable to open a channel: " + std::to_string(
+                                            libssh2_session_last_errno(session)));
+        }
+
+        fprintf(stderr, "SCP session waiting to send file\n");
+        do {
+            nread = fread(mem, 1, sizeof(mem), local);
+            if (nread <= 0) {
+                /* end of file */
+                break;
+            }
+            ptr = mem;
+
+            do {
+                /* write the same data over and over, until error or completion */
+                rc = libssh2_channel_write(channel, ptr, nread);
+
+                if (rc < 0) {
+                    throw std::runtime_error("ERROR %d\n");
+                    break;
+                }
+                else {
+                    /* rc indicates how many bytes were written this time */
+                    ptr += rc;
+                    nread -= rc;
+                }
+            } while (nread);
+
+        } while (1);
+
+        fprintf(stderr, "Sending EOF\n");
+        libssh2_channel_send_eof(channel);
+
+
+        fprintf(stderr, "Waiting for EOF\n");
+        libssh2_channel_wait_eof(channel);
+
+
+        fprintf(stderr, "Waiting for channel to close\n");
+        libssh2_channel_wait_closed(channel);
+
+
+        libssh2_channel_free(channel);
 }
 
 void SShController::shutdown(){
