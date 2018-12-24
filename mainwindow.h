@@ -33,11 +33,15 @@ private:
 
     QHBoxLayout * hLayout0 = new QHBoxLayout();
     QHBoxLayout * hSearchLayout = new QHBoxLayout();
+    QHBoxLayout * hSaveDoorNumLayout = new QHBoxLayout();
     QVBoxLayout * vLayout0 = new QVBoxLayout();
     QComboBox * ipsCombo = new QComboBox();
     QPushButton * searchButton = new QPushButton();
+    QPushButton * saveDoorNumButton = new QPushButton();
+    QPushButton * saveShotButton = new QPushButton("сохр. снимок");
     QLabel * searchDoorNumLabel = new QLabel();
     QLineEdit* searchDoorNum = new QLineEdit();
+    QLineEdit* doorNumEdit = new QLineEdit();
 
     PngWidget * lPngWidget;
 

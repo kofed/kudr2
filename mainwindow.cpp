@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     searchButton->setText("Поиск");
     searchDoorNumLabel->setText("по номеру двери");
+    saveDoorNumButton->setText("Сохр. номер двери");
 
     ui->verticalLayout->addLayout(hLayout0);
     hLayout0->addLayout(vLayout0);
@@ -24,7 +25,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     vLayout0->addLayout(hSearchLayout);
     vLayout0->addWidget(ipsCombo);
+    vLayout0->addLayout(hSaveDoorNumLayout);
+
+    hSaveDoorNumLayout->addWidget(doorNumEdit);
+    hSaveDoorNumLayout->addWidget(saveDoorNumButton);
     hLayout0->addWidget((QWidget*) logger->logListWidget);
+
     logger->logListWidget->setMaximumHeight(100);
 
     lCalibTable = new QTableWidget();
@@ -41,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(calibWidget, SIGNAL(updateChessBoardImage()), this, SLOT(rUpdateImage()));
 
 
-    ui->doorNumEdit->setValidator( new QIntValidator(1, 17, this) );
+    doorNumEdit->setValidator( new QIntValidator(1, 17, this) );
     searchDoorNum->setValidator(new QIntValidator(1, 17, this));
 
     ui->groupBox_3->setLayout(ui->verticalLayout_2);
@@ -67,6 +73,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->rPositionCombo->setCurrentIndex(RIGHT);
 
+    ui->horizontalLayout_2->addWidget(saveShotButton);
+
     update();
 
     logger->log("Добро пожаловать!");
@@ -86,10 +94,10 @@ void MainWindow::update(){
     ui->lPngLabel->clear();
   //  calibWidget->setEnabled(!isLNull || !isRNull);
 
-    ui->saveDoorNumButton->setEnabled(!isLNull || !isRNull);
+    //ui->saveDoorNumButton->setEnabled(!isLNull || !isRNull);
     if(controller.cameras[LEFT] != NULL){
         ui->lIpValueLabel->setText(controller.cameras[LEFT]->toString());
-        ui->doorNumEdit->setText(QString::number(controller.cameras[LEFT]->getDoorNumber()));        
+        doorNumEdit->setText(QString::number(controller.cameras[LEFT]->getDoorNumber()));
         ui->lPositionCombo->setCurrentIndex(controller.cameras[LEFT]->getPosition());
     }else{
         ui->lIpValueLabel->setText("");
@@ -97,7 +105,7 @@ void MainWindow::update(){
     }
     if(controller.cameras[RIGHT] != NULL){
         ui->rIpValueLabel->setText(controller.cameras[RIGHT]->toString());
-        ui->doorNumEdit->setText(QString::number(controller.cameras[RIGHT]->getDoorNumber()));
+        doorNumEdit->setText(QString::number(controller.cameras[RIGHT]->getDoorNumber()));
         ui->rPositionCombo->setCurrentIndex(controller.cameras[RIGHT]->getPosition());
 
     }else{
@@ -191,7 +199,7 @@ void MainWindow::onRSaveROIButton(){
 
 void MainWindow::onSaveDoorNumButton(){
     logger->log("Сохраняю номер двери и позицию");
-        int doorNumber = ui->doorNumEdit->text().toInt();
+        int doorNumber = doorNumEdit->text().toInt();
 
         Position lPos = ui->lPositionCombo->currentData().value<Position>();
         CameraIp newLeftCamera(doorNumber, lPos);

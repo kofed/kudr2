@@ -1,5 +1,6 @@
 #include "calibwidget.h"
 #include "opencv2/opencv.hpp"
+<<<<<<< HEAD
 #include "logger.h"
 #include <QMessageBox>
 
@@ -26,6 +27,12 @@ CalibWidget::CalibWidget( QWidget* parent,
     mainLayout->addWidget(sizeLabel);
     mainLayout->addWidget(sizeEdit);
 
+=======
+#include <QStringBuilder>
+
+CalibWidget::CalibWidget(const QTableWidget *_table, const QPushButton * _saveShotButton)
+    :table(_table), saveShotButton(_saveShotButton) {
+>>>>>>> d58870f9eda900f74522601aad133ccef7334fbe
     QStringList headers;
     headers.append(QString("файл"));
     headers.append(QString("Расст. м. пл."));
@@ -35,6 +42,7 @@ CalibWidget::CalibWidget( QWidget* parent,
     rTable->setColumnCount(2);
     rTable->setHorizontalHeaderLabels(headers);
 
+<<<<<<< HEAD
     connect(shotButton, SIGNAL(released()), this, SLOT(onShotButton()));
     connect(findCornersButton, SIGNAL (released()), this, SLOT (onFindCornersButton()));
     connect(addButton, SIGNAL (released()), this, SLOT (onAddButton()));
@@ -42,6 +50,9 @@ CalibWidget::CalibWidget( QWidget* parent,
     connect(writeButton, SIGNAL (released()), this, SLOT (onWriteButton()));
 
     setEnabled(false);
+=======
+    connect(saveShotButton, SIGNAL (released()), this, SLOT (onLShotButton()));
+>>>>>>> d58870f9eda900f74522601aad133ccef7334fbe
 }
 
 void CalibWidget::onFindCornersButton(){
@@ -97,6 +108,18 @@ void CalibWidget::onDeleteButton(){
 
 void CalibWidget::onWriteButton(){
     calibController->saveYML();
+}
+
+QString generateFileName(){
+    QStringBuilder name("chessboard_");
+    name + "left_";
+    name + table.rowCount();
+    return name();
+}
+
+void CalibWidget::onSaveShotButton(){
+    QTableWidgetItem *itemFileName = new QTableWidgetItem(generateFileName());
+    table->setItem(COLUMN_FILE_NAME, table.rowCount(), itemFileName);
 }
 
 void CalibWidget::listChessboardImages(const QString & name) const{
