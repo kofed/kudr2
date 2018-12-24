@@ -79,8 +79,17 @@ void CalibWidget::onDeleteButton(){
 }
 
 void CalibWidget::onWriteButton(){
-    calibController->saveYML();
-    calibController->sendYML();
+     try{
+            calibController->saveYML();
+            calibController->sendYML();
+            Logger::me->log("Углы сохранены");
+
+        }catch(const std::exception & e){
+        QMessageBox::warning(this, e.what(), e.what());
+        Logger::me->log("ошибка при сохранении углов");
+         return;
+    }
+
 }
 
 QString CalibWidget::generateFileName(Position pos){
