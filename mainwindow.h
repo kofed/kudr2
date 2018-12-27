@@ -28,6 +28,10 @@ public:
 private:
     Ui::MainWindow *ui;
 
+    QTabWidget* tabWidget;
+    QWidget* shotTab;
+    QWidget* settingsTab;
+
     QTableWidget * calibTable = new QTableWidget();
 
     QHBoxLayout * hLayout0 = new QHBoxLayout();
@@ -52,6 +56,10 @@ private:
 
 
     void initIpsCombo();
+
+    void initSettingsTab();
+
+    void initShotTab();
 
     void   update();
 private slots:

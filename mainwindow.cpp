@@ -11,17 +11,30 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     controller(logger)
 {
-    ui->setupUi(this);
+    //ui->setupUi(this);
 
-    searchButton->setText("Поиск");
-    searchDoorNumLabel->setText("по номеру двери");
-    saveDoorNumButton->setText("Сохр. номер двери");
+    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    this->setLayout(mainLayout);
+    mainLayout->setStretch(0, 1);
+    tabWidget = new QTabWidget(this);
+    initSettingsTab();
+    initShotTab();
+    tabWidget->addTab(settingsTab, "Параметры");
+    tabWidget->addTab(shotTab, "Снимки");
+    mainLayout->addWidget(tabWidget);
+
+
+
+
+
+
+
+
+
+  /*
 
     ui->verticalLayout->addLayout(hLayout0);
-    hLayout0->addLayout(vLayout0);
-    hSearchLayout->addWidget(searchButton);
-    hSearchLayout->addWidget(searchDoorNumLabel);
-    hSearchLayout->addWidget(searchDoorNum);
+
 
     vLayout0->addLayout(hSearchLayout);
     vLayout0->addWidget(ipsCombo);
@@ -31,12 +44,11 @@ MainWindow::MainWindow(QWidget *parent) :
     hSaveDoorNumLayout->addWidget(saveDoorNumButton);
     hLayout0->addWidget((QWidget*) logger->logListWidget);
 
-    logger->logListWidget->setMaximumHeight(100);
+    logger->logListWidget->setMaximumHeight(100);*/
 
-    calibTable = new QTableWidget();
-    calibWidget = new CalibWidget(this, calibTable, controller);
 
-    connect(ui->lSaveROIButton, SIGNAL (released()), this, SLOT (onLSaveROIButton()));
+
+  /*  connect(ui->lSaveROIButton, SIGNAL (released()), this, SLOT (onLSaveROIButton()));
     connect(ui->rSaveROIButton, SIGNAL (released()), this, SLOT (onRSaveROIButton()));
     connect(saveDoorNumButton, SIGNAL (released()), this, SLOT (onSaveDoorNumButton()));
     connect(searchButton, SIGNAL(released()), this, SLOT(onSearchButton()));
@@ -52,8 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->groupBox_3->setLayout(ui->verticalLayout_2);
     ui->groupBox_2->setLayout(ui->verticalLayout_3);
 
-    ui->verticalLayout_2->addWidget(calibTable, 1);
-    ui->verticalLayout_2->addWidget((QWidget*)calibWidget);
+
 
     ui->lResolutionEdit->setInputMask("999\:999");
     ui->lResolutionEdit->setText("400:300");
@@ -77,7 +88,47 @@ MainWindow::MainWindow(QWidget *parent) :
 
     update();
 
-    logger->log("Добро пожаловать!");
+    logger->log("Добро пожаловать!");*/
+
+}
+
+void MainWindow::initShotTab(){
+    shotTab = new QWidget(this);
+    QHBoxLayout* shotLayout = new QHBoxLayout(shotTab);
+    shotTab->setLayout(shotLayout);
+
+    QLabel* lPngLabel = new QLabel(shotTab);
+    shotLayout->addWidget(lPngLabel);
+
+    QLabel* rPngLabel = new QLabel(shotTab);
+    shotLayout->addWidget(rPngLabel);
+}
+
+void MainWindow::initSettingsTab(){
+    settingsTab = new QWidget(this);
+
+    QVBoxLayout* settingsLayout = new QVBoxLayout(settingsTab);
+
+
+    calibTable = new QTableWidget(settingsTab);
+    calibWidget = new CalibWidget(settingsTab, calibTable, controller);
+
+    settingsLayout->addWidget(calibTable, 1);
+    settingsLayout->addWidget((QWidget*)calibWidget);
+
+    searchButton->setText("Поиск");
+        searchDoorNumLabel->setText("по номеру двери");
+        saveDoorNumButton->setText("Сохр. номер двери");
+
+        hLayout0->addLayout(vLayout0);
+        hSearchLayout->addWidget(searchButton);
+        hSearchLayout->addWidget(searchDoorNumLabel);
+        hSearchLayout->addWidget(searchDoorNum);
+         settingsLayout->addStretch(1);
+
+        settingsLayout->addLayout(hLayout0);
+
+        settingsTab->setLayout(settingsLayout);
 
 }
 
