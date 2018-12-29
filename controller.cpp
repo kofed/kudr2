@@ -4,7 +4,7 @@
 
 Controller::Controller(Logger* & _logger):
     logger(_logger),
-    pingController(_logger)
+    pingController()
 {
     cameras[0] = NULL;
     cameras[1] = NULL;
@@ -88,6 +88,8 @@ void Controller::setCameras(const CameraIp & camera){
     setCamera(camera.getPosition(), camera);
     CameraIp opCamera = camera.buildOpposite();
     setCamera(opCamera.getPosition(), opCamera);
+
+    emit cameraUpdated();
 }
 
 QString Controller::getImgFileName(const Position position){

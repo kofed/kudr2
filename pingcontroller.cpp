@@ -2,10 +2,9 @@
 #include "CameraIp.h"
 #include <QtDebug>
 
-PingController::PingController(Logger* & _logger):
-    logger(_logger)
+PingController::PingController()
 {
-
+    logger = Logger::me;
 }
 
 int PingController::ping(const QString & ip){

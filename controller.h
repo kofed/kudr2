@@ -7,6 +7,9 @@
 #include "CameraIp.h"
 #include "logger.h"
 
+/**
+ * Контроллер графического интерфейса. Модель
+ */
 class Controller
 {
 
@@ -43,6 +46,12 @@ private:
     PingController pingController;
 
     Logger* & logger;
+
+signals:
+
+    void shotUpdated();
+
+    void cameraUpdated();
 };
 
 #endif // CONTROLLER_H

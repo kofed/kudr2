@@ -10,9 +10,9 @@ class PingController
 {
     const int MAX_DOOR = 8;
 
-    Logger* & logger;
+    Logger* logger;
 public:
-    PingController(Logger* & logger);
+    PingController();
 
     std::set<QString> activeIps;
 

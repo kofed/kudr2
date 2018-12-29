@@ -8,4 +8,5 @@ DONE 7. Left one resolution
 DONE 8. one get shot
 DONE 9. one save roi
 DONE a. Check file exists when loaded
-b. Draw chess board corners.
+DONE b. Draw chess board corners.
+c. add method 

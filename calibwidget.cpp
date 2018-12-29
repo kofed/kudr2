@@ -4,10 +4,8 @@
 #include <QMessageBox>
 #include <sstream>
 
-CalibWidget::CalibWidget( QWidget* parent,
-                          QTableWidget * _table,
-                          Controller & _controller)
-    :QWidget(parent), table(_table),
+CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
+    :QWidget(parent),
       controller(_controller) {
 
     calibController = new CalibController(controller);
@@ -18,14 +16,18 @@ CalibWidget::CalibWidget( QWidget* parent,
     writeButton = new QPushButton("Записать", parent);
     sizeEdit->setInputMask("99\:99");
 
-    setLayout(mainLayout);
-    mainLayout->addWidget(shotButton);
-    mainLayout->addWidget(findCornersButton);
-    mainLayout->addWidget(addButton);
-    mainLayout->addWidget(deleteButton);
-    mainLayout->addWidget(writeButton);
-    mainLayout->addWidget(sizeLabel);
-    mainLayout->addWidget(sizeEdit);
+    QVBoxLayout* layout = new QVBoxLayout;
+    setLayout(layout);
+    layout->addWidget(table);
+
+    QHBoxLayout * buttonsLayout = new QHBoxLayout();
+    buttonsLayout->addWidget(shotButton);
+    buttonsLayout->addWidget(findCornersButton);
+    buttonsLayout->addWidget(addButton);
+    buttonsLayout->addWidget(deleteButton);
+    buttonsLayout->addWidget(writeButton);
+    buttonsLayout->addWidget(sizeLabel);
+    buttonsLayout->addWidget(sizeEdit);
 
 
     QStringList headers;
@@ -47,8 +49,6 @@ CalibWidget::CalibWidget( QWidget* parent,
 }
 
 void CalibWidget::onFindCornersButton(){
-
-
     Logger::me->log("Поиск углов шахматной доски");
     try{
        for(auto p : positions){
@@ -144,7 +144,7 @@ Size CalibWidget::parseSize(){
 void CalibWidget::onShotButton(){
     Logger::me->log("Загружаю снимок с левого устройства");
     try{
-        controller.loadShot(controller.rWidth, controller.rHeight);
+   //     controller.loadShot(controller.rWidth, controller.rHeight);
 //        lUpdateImage();
         Logger::me->log("Загрузка снимка успешно завершена");
     }

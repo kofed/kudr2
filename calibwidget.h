@@ -15,11 +15,11 @@ class CalibWidget : public QWidget{
     Q_OBJECT
 
 public:
-    explicit CalibWidget( QWidget *parent,  QTableWidget *_table, Controller & _controller );
+    explicit CalibWidget(Controller & _controller, QWidget *parent = 0 );
 
     virtual    ~CalibWidget(){}
 
-    QTableWidget *table;
+    QTableWidget *table = new QTableWidget;
 
     CalibController* calibController;
 
@@ -33,10 +33,6 @@ private:
 
     QString generateFileName(Position pos);
 
-
-  //  QWidget *parent;
-
-    QHBoxLayout * mainLayout = new QHBoxLayout();
     QPushButton * findCornersButton;
     QPushButton * addButton;
     QPushButton * deleteButton;

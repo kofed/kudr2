@@ -34,7 +34,11 @@ SOURCES += \
     logger.cpp \
     calibwidget.cpp \
     calibcontroller.cpp \
-    constants.cpp
+    constants.cpp \
+    settingswidget.cpp \
+    shotwidget.cpp \
+    camerasearchwidget.cpp \
+    ipwidget.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -46,7 +50,11 @@ HEADERS += \
     position.h \
     logger.h \
     calibwidget.h \
-    calibcontroller.h
+    calibcontroller.h \
+    settingswidget.h \
+    shotwidget.h \
+    camerasearchwidget.h \
+    ipwidget.h
 
 FORMS += \
         mainwindow.ui
@@ -55,7 +63,7 @@ CONFIG += c++11
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/release/ -lssh2
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/debug/ -lssh2
-else:unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -lssh2 -lopencv_calib3d -lopencv_core -lopencv_imgcodecs
+else:unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -lssh2 -lopencv_calib3d -lopencv_core -lopencv_highgui
 
 DEPENDPATH += $$PWD/../../../usr/include
 

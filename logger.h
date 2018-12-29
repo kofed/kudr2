@@ -8,6 +8,8 @@ class Logger
 public:
     static Logger* me;
 
+    static void logSt(const QString & message);
+
     void log(QString message);
 private:
 

@@ -10,6 +10,7 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QLineEdit>
+#include "shotwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -28,27 +29,9 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    QTabWidget* tabWidget;
-    QWidget* shotTab;
-    QWidget* settingsTab;
-
-    QTableWidget * calibTable = new QTableWidget();
-
-    QHBoxLayout * hLayout0 = new QHBoxLayout();
-    QHBoxLayout * hSearchLayout = new QHBoxLayout();
-    QHBoxLayout * hSaveDoorNumLayout = new QHBoxLayout();
-    QVBoxLayout * vLayout0 = new QVBoxLayout();
-    QComboBox * ipsCombo = new QComboBox();
-    QPushButton * searchButton = new QPushButton();
     QPushButton * saveDoorNumButton = new QPushButton();
     QPushButton * saveShotButton = new QPushButton("сохр. снимок");
     QLabel * searchDoorNumLabel = new QLabel();
-    QLineEdit* searchDoorNum = new QLineEdit();
-    QLineEdit* doorNumEdit = new QLineEdit();
-
-    PngWidget * lPngWidget;
-
-    PngWidget * rPngWidget;
 
     CalibWidget * calibWidget;
 
@@ -63,23 +46,11 @@ private:
 
     void   update();
 private slots:
-    void lUpdateImage();
-
-    void rUpdateImage();
-
-    void onLSaveROIButton();
-
-    void onRSaveROIButton();
-
-    void onSaveDoorNumButton();
-
-    void onSearchButton();
-
-    void onIpsComboSelected(int);
-
     void onRResolutionEdit(const QString &);
 
     void onLResolutionEdit(const QString &);
+
+    void onIpchanged(const QString & ip);
 
 };
 
