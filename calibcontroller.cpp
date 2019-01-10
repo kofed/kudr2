@@ -9,15 +9,15 @@ bool ChessBoardCenterIterator::next(){
     int d = phi / step;
 
     if(d >= 0 && d <= 2){
-        iX = iX0 + step;
+        iX = center.x + step;
     }else if(d >= 4 && d <= 6){
-        iX = iX0 - step;
+        iX = center.x - step;
     }
 
     if(d >= 2 && d <= 4){
-        iY = iY0 + step;
+        iY = center.y + step;
     }else if(d >= 6 && d <= 8){
-        iY = iY0 - step;
+        iY = center.y - step;
     }
 
     if(iX < 0 || iY < 0){
@@ -34,7 +34,7 @@ int ChessBoardCenterIterator::getIY(){
     return iY;
 }
 
-void CalibController::findChessboardCorners(Mat & image, const Size & size){
+vector<vector<Point2f>> CalibController::findChessboardCorners(Mat & image, const Size & size){
     if(size.height < 1 || size.width < 1){
         throw std::runtime_error("Размер доски меньше нуля\n");
     }
@@ -57,10 +57,9 @@ void CalibController::findChessboardCorners(const Size & sizeL, const Size & siz
 
     Mat imageL = imread(fnameL);
     Mat imageR = imread(fnameR);
-         if(!imageL.data || !imageR.data){
-             throw runtime_error("Отсутствует файл с изображением шахматной доски");
-             continue;
-         }
+    if(!imageL.data || !imageR.data){
+        throw runtime_error("Отсутствует файл с изображением шахматной доски");
+    }
 
     corners[LEFT] = findChessboardCorners(imageL, sizeL);
 
@@ -72,14 +71,17 @@ void CalibController::findChessboardCorners(const Size & sizeL, const Size & siz
 }
 
 void CalibController::deleteCorners(){
-    corners[LEFT] = vector<Point2f>;
-    corners[RIGHT] = vector<Point2f>;
+   /* corners[LEFT] = vector<Point2f>(0);
+    corners[RIGHT] = vector<Point2f>(0);*/
 }
 
 void CalibController::addCalibEntities(const Point2i centerIdx, const int h){
     ChessBoardCenterIterator it(centerIdx);
     while(it.next()){
-        cache.push_back(CalibEntity(h, corners[LEFT][it.getIX()], corners[RIGHT][it.getIY()]));
+        cache.push_back(
+                    CalibEntity(h,
+                                corners[LEFT][it.getIX()][it.getIY()],
+                corners[RIGHT][it.getIX()][it.getIY()]));
     }
 
 }

@@ -81,7 +81,7 @@ public:
 
     void deleteCorners();
 
-    void addCalibEntities(const int h);
+    void addCalibEntities(const Point2i centerIdx, const int h);
 
     void saveYML();
 

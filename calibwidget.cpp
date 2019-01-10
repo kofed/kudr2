@@ -64,7 +64,7 @@ void CalibWidget::setEnabled(){
 void CalibWidget::onFindCornersButton(){
     Logger::me->log("Поиск углов шахматной доски");
     try{
-       calibController->findChessboardCorners(parseSize());
+       calibController->findChessboardCorners(sizeEdits[LEFT]->getSize(), sizeEdits[RIGHT]->getSize());
        findCornersButton->setEnabled(false);
        emit updateChessBoardImage();
     }catch(const std::exception & e){
@@ -76,9 +76,9 @@ void CalibWidget::onFindCornersButton(){
 
 
 void CalibWidget::onDeleteButton(){
-    int rowCount = table->rowCount();
+    /*int rowCount = table->rowCount();
     if(rowCount > 0)
-        calibController->deleteCorners(--rowCount);
+        calibController->deleteCorners(--rowCount);*/
 }
 
 void CalibWidget::onWriteButton(){

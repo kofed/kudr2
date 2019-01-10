@@ -97,7 +97,7 @@ void Controller::setCameras(const CameraIp & camera){
     emit cameraChanged();
 }
 
-QString Controller::getImgFileName(const Position position){
+QString Controller::getImgFileName(const Position position) const {
     return  "/tmp/right.png";//imagePattern.arg(position);
 }
 

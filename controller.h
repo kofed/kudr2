@@ -32,7 +32,7 @@ public:
 
     bool hasCameras();
 
-    QString getImgFileName(const Position position);
+    QString getImgFileName(const Position position) const;
 
     QString imagePattern = "/tmp/shot%1.png";
 

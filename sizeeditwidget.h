@@ -2,6 +2,9 @@
 #define SIZEEDITWIDGET_H
 
 #include <QLineEdit>
+#include "opencv2/opencv.hpp"
+
+using namespace cv;
 
 class SizeEditWidget : public QLineEdit
 {

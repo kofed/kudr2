@@ -10,6 +10,7 @@
 #include "calibcontroller.h"
 #include "controller.h"
 #include <QLineEdit>
+#include <sizeeditwidget.h>
 
 class CalibWidget : public QWidget{
     Q_OBJECT
@@ -48,7 +49,7 @@ private:
 
     void listChessboardImages(const QString & name) const;
 
-    Size parseSize();
+    Size parseSize(const Position pos);
 private slots:
     void onFindCornersButton();
     void onAddButton();
