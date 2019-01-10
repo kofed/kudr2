@@ -3,17 +3,17 @@
 
 #include <QListWidget>
 
-class Logger
+class Logger : public QListWidget
 {
 public:
     static Logger* me;
 
-    static void logSt(const QString & message);
+    static void log(const QString & message);
 
-    void log(QString message);
+    void _log(QString message);
 private:
 
-    Logger(QWidget * parent);
+    Logger(QWidget * parent = 0);
     QListWidget * logListWidget;
 
     friend class MainWindow;

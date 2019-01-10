@@ -3,15 +3,13 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include "position.h"
+#include <QMessageBox>
 
 IpWidget::IpWidget(Controller & _controller):
     controller(_controller), QWidget()
 {
-    QComboBox * lCombo = new QComboBox;
-    QComboBox * rCombo = new QComboBox;
     QPushButton* saveButton = new QPushButton("Сохр. номер двери");
 
-    QLineEdit* doorNumEdit = new QLineEdit();
     doorNumEdit->setValidator( new QIntValidator(1, 17, this) );
 
     QHBoxLayout * layout = new QHBoxLayout();
@@ -34,32 +32,32 @@ IpWidget::IpWidget(Controller & _controller):
 }
 
 void IpWidget::onSaveDoorNumButton(){
-    logger->log("Сохраняю номер двери и позицию");
+    Logger::log("Сохраняю номер двери и позицию");
         int doorNumber = doorNumEdit->text().toInt();
 
-        Position lPos = ui->lPositionCombo->currentData().value<Position>();
+        Position lPos = lCombo->currentData().value<Position>();
         CameraIp newLeftCamera(doorNumber, lPos);
 
-        Position rPos = ui->rPositionCombo->currentData().value<Position>();
+        Position rPos = rCombo->currentData().value<Position>();
         CameraIp newRightCamera(doorNumber, rPos);
 
-        logger->log("... на левую камеру");
+        Logger::log("... на левую камеру");
         try{
             controller.saveCamera(LEFT, newLeftCamera);
-            logger->log("... успешно завершено");
+            Logger::log("... успешно завершено");
         }
         catch(const std::exception & e){
             QMessageBox::warning(this, "error", e.what());
-            logger->log(QString("... произошла ошибка ") + e.what());
+            Logger::log(QString("... произошла ошибка ") + e.what());
         }
-        logger->log("на правую камеру");
+        Logger::log("на правую камеру");
         try{
             controller.saveCamera(RIGHT, newRightCamera);
-            logger->log("... успешно завершено");
+            Logger::log("... успешно завершено");
         }
         catch(const std::exception & e){
             QMessageBox::warning(this, "error", e.what());
-            logger->log(QString("... произошла ошибка ") + e.what());
+            Logger::log(QString("... произошла ошибка ") + e.what());
         }
        // update();
 }

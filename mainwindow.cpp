@@ -8,33 +8,41 @@
 #include "settingswidget.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    logger(new Logger(this)),
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     controller(logger)
 {
     ui->setupUi(this);
 
+    logger = new Logger;
+
+    CameraSearchWidget *searchWidget = new CameraSearchWidget(controller);
+    CalibWidget *calibWidget = new CalibWidget(controller);
+
     QVBoxLayout* settingsLayout = new QVBoxLayout();
     ui->settingsWidget->setLayout(settingsLayout);
-    settingsLayout->addWidget(new CameraSearchWidget(controller));
-    settingsLayout->addWidget(new SettingsWidget(controller));
-    settingsLayout->addWidget(new CalibWidget(controller));
+    settingsLayout->addWidget(searchWidget);
+    SettingsWidget* settingsWidget = new SettingsWidget(controller);
+    settingsLayout->addWidget(settingsWidget);
+    settingsLayout->addWidget(calibWidget);
+    settingsLayout->addWidget(logger);
 
     QVBoxLayout* shotLayout = new QVBoxLayout();
     ui->shotWidget->setLayout(shotLayout);
-    shotLayout->addWidget(new ShotWidget(controller));
 
-      /*
-    connect(calibWidget, SIGNAL(updateChessBoardImage()), this, SLOT(rUpdateImage()));
+    ShotWidget *shotWidget = new ShotWidget(controller);
+    shotLayout->addWidget(shotWidget);
 
-
+    connect(searchWidget, SIGNAL(ipSelected()), calibWidget, SLOT(setEnabled()));
+    connect(searchWidget, SIGNAL(ipSelected()), settingsWidget, SLOT(setEnabled()));
+    connect(searchWidget, SIGNAL(ipSelected()), shotWidget, SLOT(updateIpLabels()));
+    connect(calibWidget, SIGNAL(updateChessBoardImage()), shotWidget, SLOT(update()));
 
     //ui->horizontalLayout_2->addWidget(saveShotButton);
 
-    update();
+    //update();
 
-    logger->log("Добро пожаловать!");*/
+    Logger::log("Добро пожаловать!");
 
 }
 

@@ -28,11 +28,15 @@ private:
 
     void initIpsCombo();
 
-    void onIpsComboSelected(int idx);
+
 
 private slots:
     void onSearchButton();
 
+    void onIpsComboSelected(int idx);
+
+signals:
+    void ipSelected();
 };
 
 #endif // CAMERASEARCHWIDGET_H

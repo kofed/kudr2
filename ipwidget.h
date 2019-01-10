@@ -3,6 +3,8 @@
 
 #include <QComboBox>
 #include <QWidget>
+#include "controller.h"
+#include <QLineEdit>
 
 class IpWidget : public QWidget
 {
@@ -10,6 +12,9 @@ class IpWidget : public QWidget
 
 private:
     Controller & controller;
+    QLineEdit* doorNumEdit = new QLineEdit();
+    QComboBox * lCombo = new QComboBox;
+    QComboBox * rCombo = new QComboBox;
 
 private slots:
     void onSaveDoorNumButton();

@@ -10,6 +10,8 @@ SettingsWidget::SettingsWidget(Controller & _controller):
     QLineEdit* resolutionEdit = new QLineEdit();
     resolutionEdit->setInputMask("999\:999");
     resolutionEdit->setText("400:300");
+    resolutionEdit->setFixedWidth(70);
+    resolutionEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     QHBoxLayout *layout = new QHBoxLayout();
     layout->addWidget(saveROIButton);
@@ -18,10 +20,17 @@ SettingsWidget::SettingsWidget(Controller & _controller):
     connect(saveROIButton, SIGNAL (released()), this, SLOT (onSaveROIButton()));
     connect(resolutionEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onResolutionEdit(const QString &)));
 
+    QWidget::setEnabled(false);
+    setLayout(layout);
+}
+
+void SettingsWidget::setEnabled(){
+    if(controller.hasCameras())
+        QWidget::setEnabled(true);
 }
 
 void SettingsWidget::onSaveROIButton(){
-    Logger::logSt("Сохраняю область на левое устройство");
+    Logger::log("Сохраняю область на левое устройство");
     /*logger->log("Сохраняю область на левое устройство");
     try{
         controller.saveROI(LEFT,
@@ -36,7 +45,7 @@ void SettingsWidget::onSaveROIButton(){
         QMessageBox::warning(this, "error", e.what());
         logger->log(QString("Область не сохранена. Ошибка: ") + e.what());
     }*/
-    Logger::logSt("Область сохранена");
+    Logger::log("Область сохранена");
 }
 
 void SettingsWidget::onResolutionEdit(){

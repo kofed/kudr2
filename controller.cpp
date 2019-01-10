@@ -34,7 +34,7 @@ void Controller::loadDebug(const Position position){
 
 }
 
-void Controller::loadShot( const int width, const int height){
+void Controller::loadShot( ){
     if(cameras[LEFT] == NULL && cameras[RIGHT] == NULL || width < 0 || height < 0)
         throw new std::runtime_error("Произведите поиск и выберите устройство");
 
@@ -43,19 +43,23 @@ void Controller::loadShot( const int width, const int height){
             continue;
         }
         QString file = imagePattern.arg(pos);
-        sshController.init(cameras[pos]->toString(), "pi", "raspberry");
+        QString ip = cameras[pos]->toString();
+        sshController.init(ip, "pi", "raspberry");
         try{
             sshController.command(QString("raspistill -e png -w %1 -h %2 -o %3").arg(width).arg(height).arg(file));
             sshController.fileFrom(file, file);
             sshController.command(QString("rm %1").arg(file));
         }catch(std::exception & e){
-            sshController.shutdown();
-            throw e;
+            Logger::log(QString("Невозможно получить снимок для %1").arg(ip));
         }
 
         sshController.shutdown();
     }
 
+}
+
+bool Controller::hasCameras(){
+    return cameras[LEFT] != NULL || cameras[RIGHT] != NULL;
 }
 
 void Controller::saveCamera(const Position pos, const CameraIp & cameraNew){
@@ -81,6 +85,7 @@ void Controller::setCamera(const Position pos, const CameraIp & camera){
     }
 
     cameras[pos] = new CameraIp(camera.toString());
+    Logger::log(QString("найдено устройство с ip=%1").arg(camera.toString()));
 
 }
 
@@ -89,9 +94,10 @@ void Controller::setCameras(const CameraIp & camera){
     CameraIp opCamera = camera.buildOpposite();
     setCamera(opCamera.getPosition(), opCamera);
 
-    emit cameraUpdated();
+    emit cameraChanged();
 }
 
 QString Controller::getImgFileName(const Position position){
     return  "/tmp/right.png";//imagePattern.arg(position);
 }
+

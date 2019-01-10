@@ -20,7 +20,7 @@ public:
 
     void loadDebug(const Position position);
 
-    void loadShot( const int width, const int height);
+    void loadShot( );
 
     void searchOnDoorNum(const int doorNum);
 
@@ -30,11 +30,13 @@ public:
 
     void setCameras(const CameraIp & camera);
 
+    bool hasCameras();
+
     QString getImgFileName(const Position position);
 
     QString imagePattern = "/tmp/shot%1.png";
 
-    int lWidth, lHeight, rWidth, rHeight;
+    int width = 400, height = 300;
 
     CameraIp * cameras[2];
 
@@ -49,9 +51,9 @@ private:
 
 signals:
 
-    void shotUpdated();
+    void shotUpdated(){}
 
-    void cameraUpdated();
+    void cameraChanged(){}
 };
 
 #endif // CONTROLLER_H

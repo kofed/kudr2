@@ -38,7 +38,8 @@ SOURCES += \
     settingswidget.cpp \
     shotwidget.cpp \
     camerasearchwidget.cpp \
-    ipwidget.cpp
+    ipwidget.cpp \
+    sizeeditwidget.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -54,7 +55,8 @@ HEADERS += \
     settingswidget.h \
     shotwidget.h \
     camerasearchwidget.h \
-    ipwidget.h
+    ipwidget.h \
+    sizeeditwidget.h
 
 FORMS += \
         mainwindow.ui

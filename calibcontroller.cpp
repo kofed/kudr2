@@ -1,13 +1,45 @@
 #include "calibcontroller.h"
 
-CalibController::CalibController(const Controller & _controller):controller(_controller)
-{
+bool ChessBoardCenterIterator::next(){
+    if(++phi == step * 8){
+        ++step;
+        phi = 0;
+    }
 
+    int d = phi / step;
+
+    if(d >= 0 && d <= 2){
+        iX = iX0 + step;
+    }else if(d >= 4 && d <= 6){
+        iX = iX0 - step;
+    }
+
+    if(d >= 2 && d <= 4){
+        iY = iY0 + step;
+    }else if(d >= 6 && d <= 8){
+        iY = iY0 - step;
+    }
+
+    if(iX < 0 || iY < 0){
+        return false;
+    }
+    return true;
 }
 
-vector<vector<cv::Point2f>> & CalibController::findChessboardCorners(Position pos, Mat & image, const Size & size){
+int ChessBoardCenterIterator::getIX(){
+    return iX;
+}
+
+int ChessBoardCenterIterator::getIY(){
+    return iY;
+}
+
+void CalibController::findChessboardCorners(Mat & image, const Size & size){
     if(size.height < 1 || size.width < 1){
         throw std::runtime_error("Размер доски меньше нуля\n");
+    }
+    if(image.cols < 1 || image.rows < 1){
+        throw runtime_error("изображение отсутствует.");
     }
     vector<vector<cv::Point2f>> corners(1);
     bool patternWasFound =
@@ -15,27 +47,47 @@ vector<vector<cv::Point2f>> & CalibController::findChessboardCorners(Position po
 
     drawChessboardCorners(image, size, Mat(corners[0]), patternWasFound);
   //  lastCorners[pos] = corners;
+
     return corners;
 }
 
-void CalibController::deleteCorners(int pos){
-    lastCorners.clear();
+void CalibController::findChessboardCorners(const Size & sizeL, const Size & sizeR){
+    string fnameL = controller.getImgFileName(LEFT).toStdString();
+    string fnameR = controller.getImgFileName(RIGHT).toStdString();
+
+    Mat imageL = imread(fnameL);
+    Mat imageR = imread(fnameR);
+         if(!imageL.data || !imageR.data){
+             throw runtime_error("Отсутствует файл с изображением шахматной доски");
+             continue;
+         }
+
+    corners[LEFT] = findChessboardCorners(imageL, sizeL);
+
+    corners[RIGHT] = findChessboardCorners(imageR, sizeR);
+
+    imwrite(fnameL, imageL);
+    imwrite(fnameR, imageR);
+
 }
 
-void CalibController::addCorners(const int distance){
-    Position positions[] = {Position::LEFT, Position::RIGHT};
-    for(auto p : positions){
-        cache[p].push_back(lastCorners[p]);
+void CalibController::deleteCorners(){
+    corners[LEFT] = vector<Point2f>;
+    corners[RIGHT] = vector<Point2f>;
+}
+
+void CalibController::addCalibEntities(const Point2i centerIdx, const int h){
+    ChessBoardCenterIterator it(centerIdx);
+    while(it.next()){
+        cache.push_back(CalibEntity(h, corners[LEFT][it.getIX()], corners[RIGHT][it.getIY()]));
     }
+
 }
 
 void CalibController::saveYML(){
     FileStorage fs("chessboard.yml", FileStorage::WRITE);
-    Position positions[] = {Position::LEFT, Position::RIGHT};
-    for(auto p : positions){
-        for(auto entity : cache[p] ){
+    for(auto entity : cache ){
             entity.toYml(fs);
-        }
     }
     fs.release();
 }

@@ -1,13 +1,14 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include "shotwidget.h"
+#include <QMessageBox>
+#include <QApplication>
 
 ShotWidget::ShotWidget(Controller & _controller):
     controller(_controller), QWidget()
 {
-    QLabel l;
-    pngLabels.insert(std::pair<Position, QLabel> (LEFT, l));
-    pngLabels[RIGHT] = QLabel();
+    pngLabels.insert(std::pair<Position, QLabel*> (LEFT, new QLabel));
+    pngLabels[RIGHT] = new QLabel();
 
     QVBoxLayout * layout = new QVBoxLayout();
     QHBoxLayout * labelLayout = new QHBoxLayout();
@@ -21,28 +22,46 @@ ShotWidget::ShotWidget(Controller & _controller):
     pngLayout->addWidget(pngLabels[RIGHT]);
 
     QHBoxLayout * ipLayout = new QHBoxLayout();
-    ipLayout->addWidget(lIpLabel);
-    ipLayout->addWidget(rIpLabel);
+    for(auto p : positions){
+        ipLabels[p] = new QLabel;
+        ipLayout->addWidget(ipLabels[p]);
+    }
     layout->addLayout(ipLayout);
 
     setLayout(layout);
+
+    initPngWidgets();
 }
 
-void MainWindow::updateImage(){
+void ShotWidget::initPngWidgets(){
     for(auto p : positions){
-       if(controller.cameras[LEFT] == NULL)
-            return;
+        pngWidgets[p] = new PngWidget(pngLabels[p]);
+    }
+}
+
+void ShotWidget::update(){
+    for(auto p : positions){
+       if(controller.cameras[p] == NULL)
+            continue;
         try{
             QString imageFile = controller.getImgFileName(p);
             QPixmap pixmap(imageFile);
-            pngWidgets[p] = PngWidget(pngLabels[p]);
+
             pngLabels[p]->setPixmap(pixmap);
             pngWidgets[p]->resize(pixmap.size());
             pngWidgets[p]->show();
-            qApp->processEvents();
+           QApplication::processEvents();
             emit imageUpdated();
         }catch(const std::exception & e){
             QMessageBox::warning(this, "Невозможно найти локальный файл", "Невозможно найти локальный файл. Возможно на устройстве он не был записан.");
         }
+    }
+}
+
+void ShotWidget::updateIpLabels(){
+    for(auto p : positions){
+        CameraIp* cameraIp = controller.cameras[p];
+        if(cameraIp != NULL)
+            ipLabels[p]->setText(cameraIp->toString());
     }
 }

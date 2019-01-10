@@ -6,19 +6,13 @@
 #include "pngwidget.h"
 #include "controller.h"
 #include "position.h"
+#include <utility>
+
+using namespace std;
 
 class ShotWidget : public QWidget
 {
     Q_OBJECT
-
-private:
-    Controller & controller;
-    std::map<Position, QLabel> pngLabels;
-    std::map<Position, PngWidget> pngWidgets;
-
-    QLabel* lIpLabel = new QLabel();
-
-    QLabel* rIpLabel = new QLabel();
 public:
     explicit ShotWidget(Controller & _controller);
 
@@ -26,8 +20,19 @@ public:
 
 signals:
     void imageUpdated();
+
 public slots:
-    void ipChanged();
+    void updateIpLabels();
+    void update();
+
+private:
+    Controller & controller;
+    map<Position, QLabel*> pngLabels;
+    map<Position, PngWidget*> pngWidgets;
+    map<Position, QLabel*> ipLabels;
+
+
+    void initPngWidgets();
 
 };
 

@@ -11,14 +11,16 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     calibController = new CalibController(controller);
     shotButton = new QPushButton("Получить снимок", parent);
     findCornersButton = new QPushButton("Найти углы", parent);
+    findCornersButton->setEnabled(false);
     addButton = new QPushButton("Добавить", parent);
+    addButton->setEnabled(false);
     deleteButton = new QPushButton("Удалить", parent);
+    deleteButton->setEnabled(false);
     writeButton = new QPushButton("Записать", parent);
-    sizeEdit->setInputMask("99\:99");
+    writeButton->setEnabled(false);
+
 
     QVBoxLayout* layout = new QVBoxLayout;
-    setLayout(layout);
-    layout->addWidget(table);
 
     QHBoxLayout * buttonsLayout = new QHBoxLayout();
     buttonsLayout->addWidget(shotButton);
@@ -27,8 +29,11 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     buttonsLayout->addWidget(deleteButton);
     buttonsLayout->addWidget(writeButton);
     buttonsLayout->addWidget(sizeLabel);
-    buttonsLayout->addWidget(sizeEdit);
 
+    for(auto p : positions){
+        sizeEdits[p] = new SizeEditWidget();
+        buttonsLayout->addWidget(sizeEdits[p]);
+    }
 
     QStringList headers;
     headers.append(QString("файл слева"));
@@ -44,30 +49,28 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     connect(deleteButton, SIGNAL (released()), this, SLOT (onDeleteButton()));
     connect(writeButton, SIGNAL (released()), this, SLOT (onWriteButton()));
 
-    setEnabled(false);
+    QWidget::setEnabled(false);
+    layout->addLayout(buttonsLayout);
+    layout->addWidget(table);
+    setLayout(layout);
 
+}
+
+void CalibWidget::setEnabled(){
+    if(controller.hasCameras())
+        QWidget::setEnabled(true);
 }
 
 void CalibWidget::onFindCornersButton(){
     Logger::me->log("Поиск углов шахматной доски");
     try{
-       for(auto p : positions){
-            string fname = controller.getImgFileName(p).toStdString();
-            Mat image = imread(fname);
-            if(!image.data){
-                Logger::me->log("Отсутствует файл с изображением шахматной доски");
-                continue;
-            }
-            calibController->findChessboardCorners(p, image, parseSize());
-            imwrite(fname, image);
-        }
+       calibController->findChessboardCorners(parseSize());
        findCornersButton->setEnabled(false);
+       emit updateChessBoardImage();
     }catch(const std::exception & e){
         QMessageBox::warning(this, e.what(), e.what());
         return;
     }
-
-    emit updateChessBoardImage();
     Logger::me->log("Поиск углов шахматной доски успешно завершен");
 }
 
@@ -122,31 +125,15 @@ void CalibWidget::onAddButton(){
     Logger::me->log("Углы сохранены");
 }
 
-void CalibWidget::listChessboardImages(const QString & name) const{
-    //Use opencv yml
-
-    /*for (int i=0;i< ui->tableWidget->rowCount();i++) {
-            for (int j=0;j< ui->tableWidget->columnCount();j++) {
-                QTableWidgetItem *item =  ui->tableWidget->item(i,j);
-                item->setFlags(Qt::NoItemFlags);
-            }
-        }*/
-}
-
-Size CalibWidget::parseSize(){
-    QStringList sl = sizeEdit->text().split(":");
-    if(sl.size() != 2){
-        throw std::runtime_error("заполните размер шахматной доски");
-    }
-    return Size(sl.at(0).toInt(), sl.at(1).toInt());
-}
 
 void CalibWidget::onShotButton(){
-    Logger::me->log("Загружаю снимок с левого устройства");
+    Logger::me->log("Загружаю снимки");
     try{
-   //     controller.loadShot(controller.rWidth, controller.rHeight);
+        controller.loadShot();
+        emit updateChessBoardImage();
 //        lUpdateImage();
-        Logger::me->log("Загрузка снимка успешно завершена");
+        findCornersButton->setEnabled(true);
+        Logger::me->log("Загрузка снимков завершена");
     }
     catch(const std::exception & e){
         Logger::me->log(QString("Не удалось загрузить снимок с устройства. Ошибка ") + e.what());

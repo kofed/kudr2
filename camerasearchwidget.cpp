@@ -25,25 +25,30 @@ CameraSearchWidget::CameraSearchWidget(Controller & _controller, QWidget *parent
 }
 
 void CameraSearchWidget::onSearchButton(){
-    Logger::logSt("поиск устройств");
+    Logger::log("поиск устройств");
     try{
         QString doorNum = doorNumEdit->text();
         if(doorNum.isEmpty()){
             pingController.scan();
             initIpsCombo();
         }else{
-            emit ipChanged((CameraIp(doorNum.toInt(), LEFT)).toString());
+            CameraIp cam = CameraIp(doorNum.toInt(), LEFT);
+            controller.setCameras(cam);
+            emit ipSelected();
         }
 
     }catch(std::exception & e){
         QMessageBox::warning(this, "ошибка при поиске устройств", e.what());
         return;
     }
-    Logger::logSt("поиск устройств завершен");
+    Logger::log("поиск устройств завершен");
 }
 
 void CameraSearchWidget::onIpsComboSelected(int idx){
-    controller.setCameras(CameraIp(ipsCombo->currentText()));
+    if(!ipsCombo->currentText().isEmpty()){
+        controller.setCameras(CameraIp(ipsCombo->currentText()));
+        emit ipSelected();
+    }
 }
 
 void CameraSearchWidget::initIpsCombo(){

@@ -6,6 +6,18 @@
 
 class SettingsWidget: public QWidget
 {
+    Q_OBJECT
+
+public:
+    SettingsWidget(Controller & _controller);
+
+    virtual ~SettingsWidget(){}
+
+public slots:
+    void setEnabled();
+
+
+
 private:
     Controller & controller;
 private slots:
@@ -14,8 +26,6 @@ private slots:
     void onResolutionEdit();
 
 
-public:
-    SettingsWidget(Controller & _controller);
 };
 
 #endif // SETTINGSWIDGET_H

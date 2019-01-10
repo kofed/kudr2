@@ -10,48 +10,85 @@
 using namespace cv;
 using namespace std;
 
-class CalibEntity{
-
-    vector<vector<cv::Point2f>> corners;
-
-    int distance;
+class ChessBoardCenterIterator{
 
 public:
-    CalibEntity(const int _distance, vector<vector<cv::Point2f>> & _corners)
-        :distance(_distance), corners(_corners){
+    ChessBoardCenterIterator(Point2i _center):center(_center), step(0), phi(0){
+
+    }
+
+    bool next();
+
+    int getIX();
+
+    int getIY();
+
+private:
+    //индекс центральной точки на шахматной доске
+    const Point2i center;
+
+    //отступ от центра в клетках
+    int step;
+    //шаг отсутупа
+    int phi;
+    //абсолютные индексы для итерации вокруг центра
+    int iX;
+    int iY;
+
+};
+
+class CalibEntity{
+
+    //расстояние между плоскостями введенное оператором
+    int h;
+    //угол на левой/правой камере
+    Point2f pointL, pointR;
+    //disparity расчетное
+    //int disparity;
+
+public:
+    CalibEntity(const int _h, const Point2f & _pointL, const Point2f & _pointR)
+        :h(_h), pointL(_pointL), pointR(_pointR){
 
     }
 
     CalibEntity(){}
 
     void toYml(FileStorage & yml){
-        yml << distance;
-        yml << corners;
+        yml << h;
+        yml << pointL;
+        yml << pointR;
     }
 };
 
 class CalibController
 {
-    map<Position, vector<CalibEntity>> cache;
+    // кеш калибровачный данных
+    vector<CalibEntity> cache;
 
-    map<Position, CalibEntity> lastCorners;
+    //координаты углов на камере слева/справа
+    map<Position, vector<vector<Point2f>>> corners;
+
 
     const Controller & controller;
 
 public:
-    CalibController(const Controller & controller);
+    CalibController(Controller & _controller):controller(_controller){}
 
     void calibrateCamera();
 
-    vector<vector<cv::Point2f>> & findChessboardCorners(Position pos, Mat & image,const Size & size);
+    void findChessboardCorners(const Size & sizeL, const Size & sizeR);
 
-    void deleteCorners(const int pos);
+    void deleteCorners();
 
-    void addCorners(const int distance);
+    void addCalibEntities(const int h);
 
     void saveYML();
 
     void sendYML();
+
+private:
+    vector<vector<Point2f>> findChessboardCorners(Mat & image,const Size & size);
 };
 
 #endif // CVCONTROLLER_H

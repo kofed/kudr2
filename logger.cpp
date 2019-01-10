@@ -3,18 +3,18 @@
 Logger* Logger::me = NULL;
 
 Logger::Logger(QWidget * parent):
-    logListWidget(new QListWidget(parent))
+    QListWidget(parent)
 {
     me = this;
-    logListWidget->setMaximumHeight(100);
+    setMaximumHeight(100);
 }
 
-void Logger::log(QString message){
+void Logger::_log(QString message){
     QListWidgetItem* item = new QListWidgetItem(message);
-    logListWidget->addItem(item);
-    logListWidget->setCurrentItem(item);
+    addItem(item);
+    setCurrentItem(item);
 }
 
-void Logger::logSt(const QString & message){
-    me->log(message);
+void Logger::log(const QString & message){
+    me->_log(message);
 }
