@@ -20,12 +20,18 @@ void PngWidget::paintEvent(QPaintEvent *e)
 
     painter.drawRect(selectionRect);
 
+    if(center != NULL)
+        drawCircle(*center);
 }
 
 void PngWidget::mousePressEvent(QMouseEvent *e)
 {
     if (e->button()==Qt::RightButton){
-        if (selectionRect.contains(e->pos())) contextMenu.exec(this->mapToGlobal(e->pos()));
+        if(center == NULL)
+            center = new QPoint;
+        center->setX(e->x());
+        center->setY(e->y());
+        repaint();
     }
     else{
         selectionStarted=true;
@@ -45,6 +51,14 @@ void PngWidget::mouseMoveEvent(QMouseEvent *e)
 void PngWidget::mouseReleaseEvent(QMouseEvent *e)
 {
     selectionStarted=false;
+}
+
+void PngWidget::drawCircle(QPoint & center){
+    const int diameter = 15;
+    QPainter painter(this);
+    painter.setPen(QPen(QBrush(QColor(255,0,0,180)),1,Qt::DashLine));
+    painter.setBrush(QBrush(QColor(255,0,255,120)));
+    painter.drawEllipse(QRect(center.x() - diameter/2, center.y() -diameter / 2, diameter, diameter));
 }
 
 /*

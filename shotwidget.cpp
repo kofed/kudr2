@@ -31,6 +31,8 @@ ShotWidget::ShotWidget(Controller & _controller):
     setLayout(layout);
 
     initPngWidgets();
+
+    update();//DELETE THIS LINE
 }
 
 void ShotWidget::initPngWidgets(){
@@ -41,8 +43,8 @@ void ShotWidget::initPngWidgets(){
 
 void ShotWidget::update(){
     for(auto p : positions){
-       if(controller.cameras[p] == NULL)
-            continue;
+       //if(controller.cameras[p] == NULL) UNCOMMENT THIS LINE
+       //     continue; UNCOMMENT THIS LINE
         try{
             QString imageFile = controller.getImgFileName(p);
             QPixmap pixmap(imageFile);

@@ -120,6 +120,7 @@ void CalibWidget::onAddButton(){
     itemDist->setFlags(Qt::ItemIsEditable);
     table->setItem(2, table->rowCount(), itemRightFileName);
 
+    calibController->addCalibEntities();
     //findCornersButton->setEnabled(false);
 
     Logger::me->log("Углы сохранены");

@@ -75,13 +75,14 @@ void CalibController::deleteCorners(){
     corners[RIGHT] = vector<Point2f>(0);*/
 }
 
-void CalibController::addCalibEntities(const Point2i centerIdx, const int h){
-    ChessBoardCenterIterator it(centerIdx);
+void CalibController::addCalibEntities(const Point2i lCenterIndex, const Point2i rCenterIndex, const int h){
+    ChessBoardCenterIterator itL(lCenterIndex);
+    ChessBoardCenterIterator itR(rCenterIndex);
     while(it.next()){
         cache.push_back(
                     CalibEntity(h,
-                                corners[LEFT][it.getIX()][it.getIY()],
-                corners[RIGHT][it.getIX()][it.getIY()]));
+                                corners[LEFT][itL.getIX()][itL.getIY()],
+                corners[RIGHT][itR.getIX()][itR.getIY()]));
     }
 
 }
@@ -107,5 +108,13 @@ void CalibController::sendYML(){
             sshController.shutdown();
             throw e;
         }
+    }
+}
+//Возвращает индексы угла по координатам
+Point2i CalibController::findClosestCornerIndex(const Point2i & point, const Position & pos){
+    Point2i index(0, 0);
+    int ix = 0, iy = 0;
+    while(true){
+      //  if(point.)
     }
 }

@@ -67,12 +67,13 @@ class CalibController
     vector<CalibEntity> cache;
 
     //координаты углов на камере слева/справа
-    map<Position, vector<vector<Point2f>>> corners;
-
+    map<Position, vector<vector<Point2f>>> corners;    
 
     const Controller & controller;
 
 public:
+    map<Position, Point2i> centers;
+
     CalibController(Controller & _controller):controller(_controller){}
 
     void calibrateCamera();

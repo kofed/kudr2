@@ -12,6 +12,8 @@ public:
 
     QRect selectionRect;
 
+    QPoint* getCenter();
+
     virtual    ~PngWidget(){}
 protected:
     void paintEvent(QPaintEvent *e);
@@ -21,8 +23,9 @@ protected:
 private:
 
     bool selectionStarted;
+    void drawCircle(QPoint & center);
+    QPoint  * center = NULL;
 
-    QMenu contextMenu;
 //private slots:
 //    void saveSlot();
 
