@@ -82,7 +82,7 @@ public:
 
     void deleteCorners();
 
-    void addCalibEntities(const Point2i centerIdx, const int h);
+    void addCalibEntities(const Point2i & lCenterIndex, const Point2i & rCenterIndex, const int h);
 
     void saveYML();
 
@@ -90,6 +90,8 @@ public:
 
 private:
     vector<vector<Point2f>> findChessboardCorners(Mat & image,const Size & size);
+
+    Point2i findClosestCornerIndex(const Point2i & point, const Position & pos);
 };
 
 #endif // CVCONTROLLER_H

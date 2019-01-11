@@ -3,16 +3,17 @@
 
 #include <QLabel>
 #include <QMenu>
+#include "calibcontroller.h"
 
 class PngWidget : public QLabel
 {
     Q_OBJECT
 public:
-    PngWidget(QWidget *parent = 0);
+    PngWidget(Point2i & _center, QWidget *parent = 0);
 
     QRect selectionRect;
 
-    QPoint* getCenter();
+    Point2i & center;
 
     virtual    ~PngWidget(){}
 protected:
@@ -23,9 +24,7 @@ protected:
 private:
 
     bool selectionStarted;
-    void drawCircle(QPoint & center);
-    QPoint  * center = NULL;
-
+    void drawCircle();
 //private slots:
 //    void saveSlot();
 

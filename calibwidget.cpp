@@ -118,9 +118,16 @@ void CalibWidget::onAddButton(){
 
     QTableWidgetItem *itemDist = new QTableWidgetItem();
     itemDist->setFlags(Qt::ItemIsEditable);
+    int h;
+    try{
+        h = itemDist->text().toInt();
+    }catch(exception & e){
+        QMessageBox::warning(this, "Ошибка", "Укажите расстояние между плоскостями");
+    }
+
     table->setItem(2, table->rowCount(), itemRightFileName);
 
-    calibController->addCalibEntities();
+    calibController->addCalibEntities(calibController->centers[LEFT], calibController->centers[RIGHT], h);
     //findCornersButton->setEnabled(false);
 
     Logger::me->log("Углы сохранены");

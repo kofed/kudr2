@@ -37,7 +37,7 @@ ShotWidget::ShotWidget(Controller & _controller):
 
 void ShotWidget::initPngWidgets(){
     for(auto p : positions){
-        pngWidgets[p] = new PngWidget(pngLabels[p]);
+        pngWidgets[p] = new PngWidget(calibController.centers[p], pngLabels[p]);
     }
 }
 

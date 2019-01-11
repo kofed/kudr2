@@ -75,10 +75,10 @@ void CalibController::deleteCorners(){
     corners[RIGHT] = vector<Point2f>(0);*/
 }
 
-void CalibController::addCalibEntities(const Point2i lCenterIndex, const Point2i rCenterIndex, const int h){
+void CalibController::addCalibEntities(const Point2i & lCenterIndex, const Point2i & rCenterIndex, const int h){
     ChessBoardCenterIterator itL(lCenterIndex);
     ChessBoardCenterIterator itR(rCenterIndex);
-    while(it.next()){
+    while(itL.next() || itR.next()){
         cache.push_back(
                     CalibEntity(h,
                                 corners[LEFT][itL.getIX()][itL.getIY()],
@@ -114,7 +114,26 @@ void CalibController::sendYML(){
 Point2i CalibController::findClosestCornerIndex(const Point2i & point, const Position & pos){
     Point2i index(0, 0);
     int ix = 0, iy = 0;
+    int d = 10000;
+
+    auto cornersPos = corners[pos];
     while(true){
-      //  if(point.)
+        Point2i p = cornersPos[ix][iy];
+        int _d = (point.x - p.x)^2 + (point.y - p.y)^2;
+        if(_d < d){
+            d = _d;
+            index.x = ix;
+            index.y = iy;
+        }
+        ++iy;
+        if(iy == cornersPos[ix].size()){
+            iy = 0;
+            ++ix;
+        }
+        if(ix == cornersPos.size()){
+            break;
+        }
     }
+    return index;
 }
+
