@@ -14,7 +14,7 @@ class ShotWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ShotWidget(Controller & _controller);
+    explicit ShotWidget(Controller & _controller, CalibController & _calibController);
 
     virtual ~ShotWidget(){}
 
@@ -27,6 +27,7 @@ public slots:
 
 private:
     Controller & controller;
+    CalibController & calibController;
     map<Position, QLabel*> pngLabels;
     map<Position, PngWidget*> pngWidgets;
     map<Position, QLabel*> ipLabels;

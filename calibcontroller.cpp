@@ -9,15 +9,15 @@ bool ChessBoardCenterIterator::next(){
     int d = phi / step;
 
     if(d >= 0 && d <= 2){
-        iX = center.x + step;
+        iX += step;
     }else if(d >= 4 && d <= 6){
-        iX = center.x - step;
+        iX -=  step;
     }
 
     if(d >= 2 && d <= 4){
-        iY = center.y + step;
+        iY += step;
     }else if(d >= 6 && d <= 8){
-        iY = center.y - step;
+        iY -= step;
     }
 
     if(iX < 0 || iY < 0){
@@ -51,7 +51,7 @@ vector<vector<Point2f>> CalibController::findChessboardCorners(Mat & image, cons
     return corners;
 }
 
-void CalibController::findChessboardCorners(const Size & sizeL, const Size & sizeR){
+void CalibController::findChessboardCorners(){
     string fnameL = controller.getImgFileName(LEFT).toStdString();
     string fnameR = controller.getImgFileName(RIGHT).toStdString();
 
@@ -61,9 +61,9 @@ void CalibController::findChessboardCorners(const Size & sizeL, const Size & siz
         throw runtime_error("Отсутствует файл с изображением шахматной доски");
     }
 
-    corners[LEFT] = findChessboardCorners(imageL, sizeL);
+    corners[LEFT] = findChessboardCorners(imageL, sizes[LEFT]);
 
-    corners[RIGHT] = findChessboardCorners(imageR, sizeR);
+    corners[RIGHT] = findChessboardCorners(imageR, sizes[RIGHT]);
 
     imwrite(fnameL, imageL);
     imwrite(fnameR, imageR);
@@ -81,14 +81,14 @@ void CalibController::addCalibEntities(const Point2i & lCenterIndex, const Point
     while(itL.next() || itR.next()){
         cache.push_back(
                     CalibEntity(h,
-                                corners[LEFT][itL.getIX()][itL.getIY()],
-                corners[RIGHT][itR.getIX()][itR.getIY()]));
+                                corners[LEFT][0][itL.getIX()*sizes[LEFT].width + itL.getIY()],
+                corners[RIGHT][0][itR.getIX()*sizes[RIGHT].width + itR.getIY()]));
     }
 
 }
 
 void CalibController::saveYML(){
-    FileStorage fs("chessboard.yml", FileStorage::WRITE);
+    FileStorage fs("/tmp/chessboard.yml", FileStorage::WRITE);
     for(auto entity : cache ){
             entity.toYml(fs);
     }
@@ -103,7 +103,7 @@ void CalibController::sendYML(){
         SShController sshController;
         try{
             sshController.init(camera->toString());
-            sshController.fileTo("chessboard.yml", "/tmp/chessboard.yml");
+            sshController.fileTo("/tmp/chessboard.yml", "/tmp/chessboard.yml");
         }catch(std::exception & e){
             sshController.shutdown();
             throw e;

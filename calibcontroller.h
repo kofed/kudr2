@@ -13,7 +13,7 @@ using namespace std;
 class ChessBoardCenterIterator{
 
 public:
-    ChessBoardCenterIterator(Point2i _center):center(_center), step(0), phi(0){
+    ChessBoardCenterIterator(Point2i _center):step(1), phi(0), iX(_center.x), iY(_center.y){
 
     }
 
@@ -24,9 +24,6 @@ public:
     int getIY();
 
 private:
-    //индекс центральной точки на шахматной доске
-    const Point2i center;
-
     //отступ от центра в клетках
     int step;
     //шаг отсутупа
@@ -40,9 +37,9 @@ private:
 class CalibEntity{
 
     //расстояние между плоскостями введенное оператором
-    int h;
+    const int h;
     //угол на левой/правой камере
-    Point2f pointL, pointR;
+    const Point2f pointL, pointR;
     //disparity расчетное
     //int disparity;
 
@@ -52,12 +49,12 @@ public:
 
     }
 
-    CalibEntity(){}
+    //CalibEntity(){}
 
-    void toYml(FileStorage & yml){
-        yml << h;
-        yml << pointL;
-        yml << pointR;
+    void toYml(FileStorage & yml) const {
+        yml << "h" << h;
+        yml << "pointL" << pointL;
+        yml << "pointR" << pointR;
     }
 };
 
@@ -67,18 +64,19 @@ class CalibController
     vector<CalibEntity> cache;
 
     //координаты углов на камере слева/справа
-    map<Position, vector<vector<Point2f>>> corners;    
+    map<Position, vector<vector<Point2f>>> corners;
 
     const Controller & controller;
 
 public:
     map<Position, Point2i> centers;
+    map<Position, Size> sizes;
 
     CalibController(Controller & _controller):controller(_controller){}
 
     void calibrateCamera();
 
-    void findChessboardCorners(const Size & sizeL, const Size & sizeR);
+    void findChessboardCorners();
 
     void deleteCorners();
 

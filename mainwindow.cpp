@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QVBoxLayout* shotLayout = new QVBoxLayout();
     ui->shotWidget->setLayout(shotLayout);
 
-    ShotWidget *shotWidget = new ShotWidget(controller);
+    ShotWidget *shotWidget = new ShotWidget(controller, *(calibWidget->calibController));
     shotLayout->addWidget(shotWidget);
 
     connect(searchWidget, SIGNAL(ipSelected()), calibWidget, SLOT(setEnabled()));

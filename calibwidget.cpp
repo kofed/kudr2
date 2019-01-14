@@ -64,7 +64,11 @@ void CalibWidget::setEnabled(){
 void CalibWidget::onFindCornersButton(){
     Logger::me->log("Поиск углов шахматной доски");
     try{
-       calibController->findChessboardCorners(sizeEdits[LEFT]->getSize(), sizeEdits[RIGHT]->getSize());
+        for(auto p : positions){
+            calibController->sizes[p] = sizeEdits[p]->getSize();
+        }
+
+       calibController->findChessboardCorners();
        findCornersButton->setEnabled(false);
        emit updateChessBoardImage();
     }catch(const std::exception & e){
@@ -84,7 +88,7 @@ void CalibWidget::onDeleteButton(){
 void CalibWidget::onWriteButton(){
      try{
             calibController->saveYML();
-            calibController->sendYML();
+  //          calibController->sendYML(); UNCOMMENT THIS LINE
             Logger::me->log("Углы сохранены");
 
         }catch(const std::exception & e){
@@ -128,9 +132,9 @@ void CalibWidget::onAddButton(){
     table->setItem(2, table->rowCount(), itemRightFileName);
 
     calibController->addCalibEntities(calibController->centers[LEFT], calibController->centers[RIGHT], h);
-    //findCornersButton->setEnabled(false);
+    writeButton->setEnabled(true);
 
-    Logger::me->log("Углы сохранены");
+    Logger::me->log("Углы добавлены. Укажите расстояние между плоскостями");
 }
 
 
@@ -141,6 +145,7 @@ void CalibWidget::onShotButton(){
         emit updateChessBoardImage();
 //        lUpdateImage();
         findCornersButton->setEnabled(true);
+        addButton->setEnabled(true);
         Logger::me->log("Загрузка снимков завершена");
     }
     catch(const std::exception & e){

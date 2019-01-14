@@ -4,8 +4,8 @@
 #include <QMessageBox>
 #include <QApplication>
 
-ShotWidget::ShotWidget(Controller & _controller):
-    controller(_controller), QWidget()
+ShotWidget::ShotWidget(Controller & _controller, CalibController & _calibController):
+    controller(_controller), calibController(_calibController), QWidget()
 {
     pngLabels.insert(std::pair<Position, QLabel*> (LEFT, new QLabel));
     pngLabels[RIGHT] = new QLabel();
@@ -37,7 +37,7 @@ ShotWidget::ShotWidget(Controller & _controller):
 
 void ShotWidget::initPngWidgets(){
     for(auto p : positions){
-        pngWidgets[p] = new PngWidget(controller.c.centers[p], pngLabels[p]);
+        pngWidgets[p] = new PngWidget(calibController.centers[p], pngLabels[p]);
     }
 }
 
