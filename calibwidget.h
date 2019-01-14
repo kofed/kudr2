@@ -21,6 +21,7 @@ public:
     virtual    ~CalibWidget(){}
 
     QTableWidget *table = new QTableWidget;
+    QLineEdit* hEdit = new QLineEdit;
 
     CalibController* calibController;
 

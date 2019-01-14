@@ -36,7 +36,7 @@ void Controller::loadDebug(const Position position){
 
 void Controller::loadShot( ){
     if(cameras[LEFT] == NULL && cameras[RIGHT] == NULL || width < 0 || height < 0)
-        throw new std::runtime_error("Произведите поиск и выберите устройство");
+        throw std::runtime_error("Произведите поиск и выберите устройство");
 
     for(auto pos : positions){
         if(cameras[pos] == NULL){

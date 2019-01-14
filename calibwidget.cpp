@@ -13,11 +13,14 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     findCornersButton = new QPushButton("Найти углы", parent);
     findCornersButton->setEnabled(false);
     addButton = new QPushButton("Добавить", parent);
-    addButton->setEnabled(false);
+    //addButton->setEnabled(false); UNCOMMENT THIS LINE
     deleteButton = new QPushButton("Удалить", parent);
     deleteButton->setEnabled(false);
     writeButton = new QPushButton("Записать", parent);
     writeButton->setEnabled(false);
+
+    QLabel* hLabel = new QLabel("Высота");
+    hEdit->setInputMask("999");;
 
 
     QVBoxLayout* layout = new QVBoxLayout;
@@ -29,11 +32,12 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     buttonsLayout->addWidget(deleteButton);
     buttonsLayout->addWidget(writeButton);
     buttonsLayout->addWidget(sizeLabel);
-
     for(auto p : positions){
         sizeEdits[p] = new SizeEditWidget();
         buttonsLayout->addWidget(sizeEdits[p]);
     }
+    buttonsLayout->addWidget(hLabel);
+    buttonsLayout->addWidget(hEdit);
 
     QStringList headers;
     headers.append(QString("файл слева"));
@@ -49,7 +53,7 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     connect(deleteButton, SIGNAL (released()), this, SLOT (onDeleteButton()));
     connect(writeButton, SIGNAL (released()), this, SLOT (onWriteButton()));
 
-    QWidget::setEnabled(false);
+  //  QWidget::setEnabled(false); UNCOMMENT THIS LINE
     layout->addLayout(buttonsLayout);
     layout->addWidget(table);
     setLayout(layout);
@@ -87,7 +91,11 @@ void CalibWidget::onDeleteButton(){
 
 void CalibWidget::onWriteButton(){
      try{
-            calibController->saveYML();
+
+
+
+
+        calibController->saveYML();
   //          calibController->sendYML(); UNCOMMENT THIS LINE
             Logger::me->log("Углы сохранены");
 
@@ -110,26 +118,32 @@ QString CalibWidget::generateFileName(Position pos){
 }
 
 void CalibWidget::onAddButton(){
+    int h;
+    try{
+        h = hEdit->text().toInt();
+    }catch(exception & e){
+        QMessageBox::warning(this, "Ошибка", "Укажите расстояние между плоскостями");
+        Logger::log("Укажите расстояние между плоскостями");
+        return;
+    }
     table->setRowCount(table->rowCount() + 1);
 
     QTableWidgetItem *itemLeftFileName = new QTableWidgetItem(generateFileName(LEFT));
-    itemLeftFileName->setFlags(itemLeftFileName->flags() ^ Qt::ItemIsEditable);
+//    itemLeftFileName->setFlags(itemLeftFileName->flags() ^ Qt::ItemIsEditable);
     table->setItem(table->rowCount() - 1, 0, itemLeftFileName);
 
     QTableWidgetItem *itemRightFileName = new QTableWidgetItem(generateFileName(RIGHT));
-    itemRightFileName->setFlags(itemRightFileName->flags() ^ Qt::ItemIsEditable);
+//    itemRightFileName->setFlags(itemRightFileName->flags() ^ Qt::ItemIsEditable);
     table->setItem(table->rowCount() - 1, 1, itemRightFileName);
 
-    QTableWidgetItem *itemDist = new QTableWidgetItem();
-    itemDist->setFlags(Qt::ItemIsEditable);
-    int h;
-    try{
-        h = itemDist->text().toInt();
-    }catch(exception & e){
-        QMessageBox::warning(this, "Ошибка", "Укажите расстояние между плоскостями");
-    }
+    QTableWidgetItem* itemH = new QTableWidgetItem(h);
+    table->setItem(table->rowCount() - 1, 2, itemH);
 
-    table->setItem(2, table->rowCount(), itemRightFileName);
+    QTableWidgetItem* itemSizeLeft = new QTableWidgetItem(calibController->sizes[LEFT]);
+    table->setItem(table->rowCount() - 1, 3, itemSizeLeft);
+
+    QTableWidgetItem* itemSizeRight = new QTableWidgetItem(calibController->sizes[RIGHT]);
+    table->setItem(table->rowCount() - 1, 4, itemSizeRight);
 
     calibController->addCalibEntities(calibController->centers[LEFT], calibController->centers[RIGHT], h);
     writeButton->setEnabled(true);
