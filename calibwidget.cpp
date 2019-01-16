@@ -126,6 +126,11 @@ void CalibWidget::onAddButton(){
         Logger::log("Укажите расстояние между плоскостями");
         return;
     }
+    if(h <= 0){
+        QMessageBox::warning(this, "Ошибка", "Укажите расстояние между плоскостями");
+        Logger::log("Укажите расстояние между плоскостями");
+        return;
+    }
     table->setRowCount(table->rowCount() + 1);
 
     QTableWidgetItem *itemLeftFileName = new QTableWidgetItem(generateFileName(LEFT));
@@ -136,16 +141,20 @@ void CalibWidget::onAddButton(){
 //    itemRightFileName->setFlags(itemRightFileName->flags() ^ Qt::ItemIsEditable);
     table->setItem(table->rowCount() - 1, 1, itemRightFileName);
 
-    QTableWidgetItem* itemH = new QTableWidgetItem(h);
+    QTableWidgetItem* itemH = new QTableWidgetItem(hEdit->text());
     table->setItem(table->rowCount() - 1, 2, itemH);
 
-    QTableWidgetItem* itemSizeLeft = new QTableWidgetItem(calibController->sizes[LEFT]);
-    table->setItem(table->rowCount() - 1, 3, itemSizeLeft);
+  //  QTableWidgetItem* itemSizeLeft = new QTableWidgetItem(calibController->sizes[LEFT]);
+  //  table->setItem(table->rowCount() - 1, 3, itemSizeLeft);
 
-    QTableWidgetItem* itemSizeRight = new QTableWidgetItem(calibController->sizes[RIGHT]);
-    table->setItem(table->rowCount() - 1, 4, itemSizeRight);
+    //QTableWidgetItem* itemSizeRight = new QTableWidgetItem(calibController->sizes[RIGHT]);
+    //table->setItem(table->rowCount() - 1, 4, itemSizeRight);
 
-    calibController->addCalibEntities(calibController->centers[LEFT], calibController->centers[RIGHT], h);
+    calibController->addCalibEntities(h);
+    hEdit->clear();
+    for(auto p : positions){
+        sizeEdits[p]->clear();
+    }
     writeButton->setEnabled(true);
 
     Logger::me->log("Углы добавлены. Укажите расстояние между плоскостями");

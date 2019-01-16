@@ -13,7 +13,7 @@ using namespace std;
 class ChessBoardCenterIterator{
 
 public:
-    ChessBoardCenterIterator(Point2i _center):step(1), phi(0), iX(_center.x), iY(_center.y){
+    ChessBoardCenterIterator(Point2i _center):step(1), phi(0), center(_center){
 
     }
 
@@ -24,6 +24,8 @@ public:
     int getIY();
 
 private:
+    Point2i center;
+
     //отступ от центра в клетках
     int step;
     //шаг отсутупа
@@ -80,7 +82,7 @@ public:
 
     void deleteCorners();
 
-    void addCalibEntities(const Point2i & lCenterIndex, const Point2i & rCenterIndex, const int h);
+    void addCalibEntities(const int h);
 
     void saveYML();
 

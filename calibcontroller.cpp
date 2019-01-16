@@ -1,6 +1,10 @@
 #include "calibcontroller.h"
+#include <iostream>
 
 bool ChessBoardCenterIterator::next(){
+    iX = center.x;
+    iY = center.y;
+
     if(++phi == step * 8){
         ++step;
         phi = 0;
@@ -19,6 +23,8 @@ bool ChessBoardCenterIterator::next(){
     }else if(d >= 6 && d <= 8){
         iY -= step;
     }
+
+    cout << phi << " " << step << " " << iX << " " << iY << endl;
 
     if(iX < 0 || iY < 0){
         return false;
@@ -75,15 +81,20 @@ void CalibController::deleteCorners(){
     corners[RIGHT] = vector<Point2f>(0);*/
 }
 
-void CalibController::addCalibEntities(const Point2i & lCenterIndex, const Point2i & rCenterIndex, const int h){
-    ChessBoardCenterIterator itL(lCenterIndex);
-    ChessBoardCenterIterator itR(rCenterIndex);
-    while(itL.next() || itR.next()){
+void CalibController::addCalibEntities(const int h){
+    if(corners.size() <= 0){
+        throw runtime_error("Произвидите поиск углов");
+    }
+
+    ChessBoardCenterIterator itL(centers[LEFT]);
+    ChessBoardCenterIterator itR(centers[RIGHT]);
+    while(itL.next() | itR.next()){
         cache.push_back(
                     CalibEntity(h,
                                 corners[LEFT][0][itL.getIX()*sizes[LEFT].width + itL.getIY()],
                 corners[RIGHT][0][itR.getIX()*sizes[RIGHT].width + itR.getIY()]));
     }
+    corners.clear();
 
 }
 
