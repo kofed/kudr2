@@ -96,19 +96,3 @@ void MainWindow::onIpchanged(const QString & ip){
     }
 }
 
-
-void MainWindow::onRResolutionEdit(const QString &){
-    /*QString sResolution = ui->rResolutionEdit->text();
-    QStringList slResolution = sResolution.split(":");
-    controller.rWidth = QString(slResolution.at(0)).toInt();
-    controller.rHeight = QString(slResolution.at(1)).toInt();
-*/
-}
-
-void MainWindow::onLResolutionEdit(const QString &){
-    /*QString sResolution = ui->lResolutionEdit->text();
-    QStringList slResolution = sResolution.split(":");
-    controller.lWidth = QString(slResolution.at(0)).toInt();
-    controller.lHeight = QString(slResolution.at(1)).toInt();
-*/
-}

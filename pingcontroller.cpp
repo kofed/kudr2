@@ -28,5 +28,4 @@ void PingController::scan(){
 
             }
         }
-   // activeIps.insert("192.168.43.200");
 }

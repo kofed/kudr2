@@ -13,7 +13,7 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     findCornersButton = new QPushButton("Найти углы", parent);
     findCornersButton->setEnabled(false);
     addButton = new QPushButton("Добавить", parent);
-    //addButton->setEnabled(false); UNCOMMENT THIS LINE
+    addButton->setEnabled(false);
     deleteButton = new QPushButton("Удалить", parent);
     deleteButton->setEnabled(false);
     writeButton = new QPushButton("Записать", parent);
@@ -43,6 +43,8 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     headers.append(QString("файл слева"));
     headers.append(QString("файл справа"));
     headers.append(QString("Расст. м. пл."));
+    headers.append(QString("Размер доски слева"));
+    headers.append(QString("Размер доски справа"));
     table->setColumnCount(3);
     table->setHorizontalHeaderLabels(headers);
     table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -53,7 +55,7 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     connect(deleteButton, SIGNAL (released()), this, SLOT (onDeleteButton()));
     connect(writeButton, SIGNAL (released()), this, SLOT (onWriteButton()));
 
-  //  QWidget::setEnabled(false); UNCOMMENT THIS LINE
+    QWidget::setEnabled(false);
     layout->addLayout(buttonsLayout);
     layout->addWidget(table);
     setLayout(layout);
@@ -84,25 +86,20 @@ void CalibWidget::onFindCornersButton(){
 
 
 void CalibWidget::onDeleteButton(){
-    /*int rowCount = table->rowCount();
-    if(rowCount > 0)
-        calibController->deleteCorners(--rowCount);*/
+    calibController->deleteCorners();
+    deleteButton->setEnabled(false);
 }
 
 void CalibWidget::onWriteButton(){
      try{
-
-
-
-
-        calibController->saveYML();
-  //          calibController->sendYML(); UNCOMMENT THIS LINE
+            calibController->saveYML();
+            calibController->sendYML();
             Logger::me->log("Углы сохранены");
 
         }catch(const std::exception & e){
-        QMessageBox::warning(this, e.what(), e.what());
-        Logger::me->log("ошибка при сохранении углов");
-         return;
+            QMessageBox::warning(this, e.what(), e.what());
+            Logger::me->log("ошибка при сохранении углов");
+            return;
     }
 
 }
@@ -144,11 +141,11 @@ void CalibWidget::onAddButton(){
     QTableWidgetItem* itemH = new QTableWidgetItem(hEdit->text());
     table->setItem(table->rowCount() - 1, 2, itemH);
 
-  //  QTableWidgetItem* itemSizeLeft = new QTableWidgetItem(calibController->sizes[LEFT]);
-  //  table->setItem(table->rowCount() - 1, 3, itemSizeLeft);
+    QTableWidgetItem* itemSizeLeft = new QTableWidgetItem(sizeEdits[LEFT]->text());
+    table->setItem(table->rowCount() - 1, 3, itemSizeLeft);
 
-    //QTableWidgetItem* itemSizeRight = new QTableWidgetItem(calibController->sizes[RIGHT]);
-    //table->setItem(table->rowCount() - 1, 4, itemSizeRight);
+    QTableWidgetItem* itemSizeRight = new QTableWidgetItem(sizeEdits[RIGHT]->text());
+    table->setItem(table->rowCount() - 1, 4, itemSizeRight);
 
     calibController->addCalibEntities(h);
     hEdit->clear();

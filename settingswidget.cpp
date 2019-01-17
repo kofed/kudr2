@@ -31,7 +31,7 @@ void SettingsWidget::setEnabled(){
 
 void SettingsWidget::onSaveROIButton(){
     Logger::log("Сохраняю область на левое устройство");
-    /*logger->log("Сохраняю область на левое устройство");
+    logger->log("Сохраняю область на левое устройство");
     try{
         controller.saveROI(LEFT,
                            controller.lWidth,
@@ -44,7 +44,7 @@ void SettingsWidget::onSaveROIButton(){
     }catch(const std::exception & e){
         QMessageBox::warning(this, "error", e.what());
         logger->log(QString("Область не сохранена. Ошибка: ") + e.what());
-    }*/
+    }
     Logger::log("Область сохранена");
 }
 

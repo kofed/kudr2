@@ -57,12 +57,3 @@ void PngWidget::drawCircle(){
     painter.setBrush(QBrush(QColor(255,0,255,120)));
     painter.drawEllipse(QRect(center.x - diameter/2, center.y -diameter / 2, diameter, diameter));
 }
-
-/*
-void Widget::saveSlot()
-{
-    QString fileName = QFileDialog::getSaveFileName(this, QObject::tr("Save File"),
-    "/home",
-    QObject::tr("Images (*.jpg)"));
-    this->pixmap()->copy(selectionRect).save(fileName);
-}*/

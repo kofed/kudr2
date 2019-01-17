@@ -52,7 +52,6 @@ vector<vector<Point2f>> CalibController::findChessboardCorners(Mat & image, cons
             cv::findChessboardCorners( image, size, corners[0], CV_CALIB_CB_ADAPTIVE_THRESH );
 
     drawChessboardCorners(image, size, Mat(corners[0]), patternWasFound);
-  //  lastCorners[pos] = corners;
 
     return corners;
 }
@@ -77,8 +76,7 @@ void CalibController::findChessboardCorners(){
 }
 
 void CalibController::deleteCorners(){
-   /* corners[LEFT] = vector<Point2f>(0);
-    corners[RIGHT] = vector<Point2f>(0);*/
+    corners.clear();
 }
 
 void CalibController::addCalibEntities(const int h){

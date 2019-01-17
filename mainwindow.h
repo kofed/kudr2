@@ -46,10 +46,6 @@ private:
 
     void   update();
 private slots:
-    void onRResolutionEdit(const QString &);
-
-    void onLResolutionEdit(const QString &);
-
     void onIpchanged(const QString & ip);
 
 };

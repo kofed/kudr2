@@ -98,6 +98,6 @@ void Controller::setCameras(const CameraIp & camera){
 }
 
 QString Controller::getImgFileName(const Position position) const {
-    return  "/tmp/right.png";//imagePattern.arg(position);
+    return  imagePattern.arg(position);
 }
 
