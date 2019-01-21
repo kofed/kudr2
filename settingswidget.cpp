@@ -2,11 +2,16 @@
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include "logger.h"
+#include <QMessageBox>
+#include <QFileDialog>
 
 SettingsWidget::SettingsWidget(Controller & _controller):
     controller(_controller), QWidget()
 {
     QPushButton* saveROIButton = new QPushButton("сохр ROI");
+    QPushButton* loadImageButton = new QPushButton("Загрузить изображение");
+    shotButton = new QPushButton("Получить снимок");
+
     QLineEdit* resolutionEdit = new QLineEdit();
     resolutionEdit->setInputMask("999\:999");
     resolutionEdit->setText("400:300");
@@ -14,13 +19,20 @@ SettingsWidget::SettingsWidget(Controller & _controller):
     resolutionEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     QHBoxLayout *layout = new QHBoxLayout();
+    layout->addWidget(loadImageButton);
+    layout->addWidget(shotButton);
     layout->addWidget(saveROIButton);
     layout->addWidget(resolutionEdit);
 
+
     connect(saveROIButton, SIGNAL (released()), this, SLOT (onSaveROIButton()));
     connect(resolutionEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onResolutionEdit(const QString &)));
+    connect(loadImageButton, SIGNAL(released()), this, SLOT(openFile()));
+    connect(shotButton, SIGNAL(released()), this, SLOT(onShotButton()));
 
-    QWidget::setEnabled(false);
+    saveROIButton->setEnabled(false);
+    resolutionEdit->setEnabled(false);
+    shotButton->setEnabled(false);
     setLayout(layout);
 }
 
@@ -31,23 +43,46 @@ void SettingsWidget::setEnabled(){
 
 void SettingsWidget::onSaveROIButton(){
     Logger::log("Сохраняю область на левое устройство");
-    logger->log("Сохраняю область на левое устройство");
     try{
-        controller.saveROI(LEFT,
-                           controller.lWidth,
-                           controller.lHeight,
-                           lPngWidget->selectionRect.left(),
-                           lPngWidget->selectionRect.top(),
-                           lPngWidget->selectionRect.right(),
-                           lPngWidget->selectionRect.bottom());
-       logger->log("Область сохранена");
+        controller.saveROI();
+       Logger::log("Область сохранена");
     }catch(const std::exception & e){
         QMessageBox::warning(this, "error", e.what());
-        logger->log(QString("Область не сохранена. Ошибка: ") + e.what());
+        Logger::log(QString("Область не сохранена. Ошибка: ") + e.what());
     }
     Logger::log("Область сохранена");
 }
 
 void SettingsWidget::onResolutionEdit(){
 
+}
+
+void SettingsWidget::openFile(){
+    QFileDialog fileOpenDialog(this);
+    fileOpenDialog.setWindowTitle(tr("Выберите файл с изображением с левой камеры"));
+    fileOpenDialog.setViewMode(QFileDialog::Detail);
+    fileOpenDialog.setFileMode(QFileDialog::AnyFile);
+    fileOpenDialog.setOption(QFileDialog::DontUseNativeDialog);
+    fileOpenDialog.setNameFilter(tr("Изображение (*.png)"));
+
+    if(fileOpenDialog.exec())
+        QStringList selectedFiles1 = fileOpenDialog.selectedFiles();
+
+    fileOpenDialog.setWindowTitle(tr("Выберите файл с изображением с правой камеры"));
+    if(fileOpenDialog.exec())
+        QStringList selectedFiles2 = fileOpenDialog.selectedFiles();
+}
+
+void SettingsWidget::onShotButton(){
+    Logger::me->log("Загружаю снимки");
+    try{
+        controller.loadShot();
+        emit updateChessBoardImage();
+//        lUpdateImage();
+        Logger::me->log("Загрузка снимков завершена");
+    }
+    catch(const std::exception & e){
+        Logger::me->log(QString("Не удалось загрузить снимок с устройства. Ошибка ") + e.what());
+        QMessageBox::warning(this, "error", e.what());
+    }
 }

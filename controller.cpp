@@ -2,32 +2,40 @@
 #include <sstream>
 #include <QDebug>
 
-Controller::Controller(Logger* & _logger):
-    logger(_logger),
-    pingController()
+Controller::Controller()
 {
     cameras[0] = NULL;
     cameras[1] = NULL;
+
+    images[LEFT] = "/tmp/shot0.png";
+    images[RIGHT] = "/tmp/shot1.png";
 }
 
-void Controller::saveROI(const Position pos,  const int resolutionWidth, const int resolutionHeight,
-                         const int x1, const int y1, const int x2, const int y2){
-    if(cameras[pos] == NULL)
-        return;
+void Controller::saveROI(){
+    for(auto pos : positions){
+        Rect & roi = rois[pos];
+        if(cameras[pos] == NULL || roi.width <= 0 || roi.height <= 0)
+            return;
 
-    stringstream ss;
-    ss << "echo \"";
-    ss << resolutionWidth << "\n";
-    ss << resolutionHeight << "\n";
-    ss << x1 << "\n";
-    ss << y1 << "\n";
-    ss << x2 << "\n";
-    ss << y2 << "\"";
-    ss << " > /tmp/roi.xml";
+        Logger::log("Сохраняю рабочую область на устройство");
 
-    sshController.init(cameras[pos]->toString(), "pi", "raspberry");
-    sshController.command(QString(ss.str().c_str()));
-    sshController.shutdown();
+        stringstream ss;
+        ss << "echo \"";
+        ss << resolution.width << "\n";
+        ss << resolution.height << "\n";
+        ss << roi.x << "\n";
+        ss << roi.y << "\n";
+        ss << roi.width << "\n";
+        ss << roi.height << "\"";
+        ss << " > /tmp/roi.xml";
+
+        sshController.init(cameras[pos]->toString(), "pi", "raspberry");
+        sshController.command(QString(ss.str().c_str()));
+        sshController.shutdown();
+
+        Logger::log("Рабочая область сорхранена");
+    }
+
 }
 
 void Controller::loadDebug(const Position position){
@@ -35,25 +43,25 @@ void Controller::loadDebug(const Position position){
 }
 
 void Controller::loadShot( ){
-    if(cameras[LEFT] == NULL && cameras[RIGHT] == NULL || width < 0 || height < 0)
+    if(cameras[LEFT] == NULL && cameras[RIGHT] == NULL || resolution.width < 0 || resolution.height < 0)
         throw std::runtime_error("Произведите поиск и выберите устройство");
 
     for(auto pos : positions){
         if(cameras[pos] == NULL){
             continue;
         }
-        QString file = imagePattern.arg(pos);
+        QString & file = images[pos];
         QString ip = cameras[pos]->toString();
-        sshController.init(ip, "pi", "raspberry");
+//UNCOMMENT        sshController.init(ip, "pi", "raspberry");
         try{
-            sshController.command(QString("raspistill -e png -w %1 -h %2 -o %3").arg(width).arg(height).arg(file));
-            sshController.fileFrom(file, file);
-            sshController.command(QString("rm %1").arg(file));
+//UNCOMMENT            sshController.command(QString("raspistill -e png -w %1 -h %2 -o %3").arg(resolution.width).arg(resolution.height).arg(file));
+//UNCOMMENT            sshController.fileFrom(file, file);
+//UNCOMMENT            sshController.command(QString("rm %1").arg(file));
         }catch(std::exception & e){
             Logger::log(QString("Невозможно получить снимок для %1").arg(ip));
         }
 
-        sshController.shutdown();
+//UNCOMMENT         sshController.shutdown();
     }
 
 }
@@ -80,7 +88,7 @@ void Controller::setCamera(const Position pos, const CameraIp & camera){
     delete cameras[pos];
 
     if(pingController.ping(camera.toString()) != 0){
-        logger->log(QString("ненайдено устройство с ip=%1").arg(camera.toString()));
+        Logger::log(QString("ненайдено устройство с ip=%1").arg(camera.toString()));
         return;
     }
 
@@ -97,7 +105,4 @@ void Controller::setCameras(const CameraIp & camera){
     emit cameraChanged();
 }
 
-QString Controller::getImgFileName(const Position position) const {
-    return  imagePattern.arg(position);
-}
 

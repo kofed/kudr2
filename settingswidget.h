@@ -16,15 +16,21 @@ public:
 public slots:
     void setEnabled();
 
-
-
 private:
     Controller & controller;
+
+    QPushButton * shotButton;
+
 private slots:
     void onSaveROIButton();
 
     void onResolutionEdit();
 
+    void onShotButton();
+
+    void openFile();
+signals:
+    void updateChessBoardImage();
 
 };
 

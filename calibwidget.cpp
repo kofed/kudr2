@@ -9,9 +9,8 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
       controller(_controller) {
 
     calibController = new CalibController(controller);
-    shotButton = new QPushButton("Получить снимок", parent);
     findCornersButton = new QPushButton("Найти углы", parent);
-    findCornersButton->setEnabled(false);
+    findCornersButton->setEnabled(true);
     addButton = new QPushButton("Добавить", parent);
     addButton->setEnabled(false);
     deleteButton = new QPushButton("Удалить", parent);
@@ -26,7 +25,6 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     QVBoxLayout* layout = new QVBoxLayout;
 
     QHBoxLayout * buttonsLayout = new QHBoxLayout();
-    buttonsLayout->addWidget(shotButton);
     buttonsLayout->addWidget(findCornersButton);
     buttonsLayout->addWidget(addButton);
     buttonsLayout->addWidget(deleteButton);
@@ -38,18 +36,21 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     }
     buttonsLayout->addWidget(hLabel);
     buttonsLayout->addWidget(hEdit);
+    buttonsLayout->addWidget(new QLabel("размер клетки"));
 
+    buttonsLayout->addWidget(cellSizeEdit);
+    cellSizeEdit->setValidator(new QIntValidator(10, 1000, this));
     QStringList headers;
     headers.append(QString("файл слева"));
     headers.append(QString("файл справа"));
     headers.append(QString("Расст. м. пл."));
     headers.append(QString("Размер доски слева"));
     headers.append(QString("Размер доски справа"));
-    table->setColumnCount(3);
+    headers.append(QString("Размер клетки"));
+    table->setColumnCount(6);
     table->setHorizontalHeaderLabels(headers);
     table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    connect(shotButton, SIGNAL(released()), this, SLOT(onShotButton()));
     connect(findCornersButton, SIGNAL (released()), this, SLOT (onFindCornersButton()));
     connect(addButton, SIGNAL (released()), this, SLOT (onAddButton()));
     connect(deleteButton, SIGNAL (released()), this, SLOT (onDeleteButton()));
@@ -76,6 +77,7 @@ void CalibWidget::onFindCornersButton(){
 
        calibController->findChessboardCorners();
        findCornersButton->setEnabled(false);
+       addButton->setEnabled(true);
        emit updateChessBoardImage();
     }catch(const std::exception & e){
         QMessageBox::warning(this, e.what(), e.what());
@@ -123,11 +125,19 @@ void CalibWidget::onAddButton(){
         Logger::log("Укажите расстояние между плоскостями");
         return;
     }
-    if(h <= 0){
-        QMessageBox::warning(this, "Ошибка", "Укажите расстояние между плоскостями");
-        Logger::log("Укажите расстояние между плоскостями");
+
+
+    int cellSize = cellSizeEdit->text().toInt();
+
+    try{
+        calibController->addCalibEntities(h, cellSize);
+    }catch(exception & e){
+        QMessageBox::warning(this, e.what(), e.what());
+        Logger::me->log("ошибка при добавлении углов");
         return;
     }
+
+
     table->setRowCount(table->rowCount() + 1);
 
     QTableWidgetItem *itemLeftFileName = new QTableWidgetItem(generateFileName(LEFT));
@@ -147,31 +157,17 @@ void CalibWidget::onAddButton(){
     QTableWidgetItem* itemSizeRight = new QTableWidgetItem(sizeEdits[RIGHT]->text());
     table->setItem(table->rowCount() - 1, 4, itemSizeRight);
 
-    calibController->addCalibEntities(h);
+    QTableWidgetItem* itemCellSize = new QTableWidgetItem(cellSizeEdit->text());
+    table->setItem(table->rowCount() - 1, 5, itemCellSize);
+
     hEdit->clear();
     for(auto p : positions){
         sizeEdits[p]->clear();
     }
     writeButton->setEnabled(true);
+    addButton->setEnabled(false);
 
     Logger::me->log("Углы добавлены. Укажите расстояние между плоскостями");
-}
-
-
-void CalibWidget::onShotButton(){
-    Logger::me->log("Загружаю снимки");
-    try{
-        controller.loadShot();
-        emit updateChessBoardImage();
-//        lUpdateImage();
-        findCornersButton->setEnabled(true);
-        addButton->setEnabled(true);
-        Logger::me->log("Загрузка снимков завершена");
-    }
-    catch(const std::exception & e){
-        Logger::me->log(QString("Не удалось загрузить снимок с устройства. Ошибка ") + e.what());
-        QMessageBox::warning(this, "error", e.what());
-    }
 }
 
 

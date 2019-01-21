@@ -27,10 +27,6 @@ public:
 
     void sendYML();
 
-
-signals:
-    void updateChessBoardImage();
-
 public slots:
     void setEnabled();
 
@@ -43,22 +39,20 @@ private:
     QPushButton * addButton;
     QPushButton * deleteButton;
     QPushButton * writeButton;
-    QPushButton * shotButton;
 
     map<Position, SizeEditWidget*> sizeEdits;
     QLabel* sizeLabel = new QLabel("Доска");
 
-    void listChessboardImages(const QString & name) const;
+    QLineEdit* cellSizeEdit = new QLineEdit;
 
-    Size parseSize(const Position pos);
+    void listChessboardImages(const QString & name) const;
 private slots:
     void onFindCornersButton();
     void onAddButton();
     void onDeleteButton();
     void onWriteButton();
-    void onShotButton();
-
-
+signals:
+    void updateChessBoardImage();
 };
 
 #endif // CALIBWIDGET_H

@@ -41,10 +41,10 @@ void ShotWidget::initPngWidgets(){
 
 void ShotWidget::update(){
     for(auto p : positions){
-       if(controller.cameras[p] == NULL)
-            continue;
+//UNCOMMENT       if(controller.cameras[p] == NULL)
+//UNCOMMENT            continue;
         try{
-            QString imageFile = controller.getImgFileName(p);
+            QString imageFile = controller.getImage(p);
             QPixmap pixmap(imageFile);
 
             pngLabels[p]->setPixmap(pixmap);

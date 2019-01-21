@@ -6,6 +6,9 @@
 #include "pingcontroller.h"
 #include "CameraIp.h"
 #include "logger.h"
+#include "opencv2/opencv.hpp"
+
+using namespace cv;
 
 /**
  * Контроллер графического интерфейса. Модель
@@ -14,9 +17,17 @@ class Controller
 {
 
 public:
-    Controller(Logger* & _logger);
+    Size resolution = Size(400, 600);
+    map<Position, Rect> rois;
 
-    void saveROI(const Position pos, const int resolutionWidth, const int resolutionHeight, const int x1, const int y1, const int x2, const int y2);
+    //изображения для калибровки
+    map<Position, QString> images;
+
+    CameraIp * cameras[2];
+
+    Controller();
+
+    void saveROI();
 
     void loadDebug(const Position position);
 
@@ -32,13 +43,9 @@ public:
 
     bool hasCameras();
 
-    QString getImgFileName(const Position position) const;
-
-    QString imagePattern = "/tmp/shot%1.png";
-
-    int width = 400, height = 300;
-
-    CameraIp * cameras[2];
+    QString getImage(Position p)const{
+        return images.at(p);
+    }
 
     friend class MainWindow;
 private:
@@ -46,8 +53,6 @@ private:
     SShController sshController;
 
     PingController pingController;
-
-    Logger* & logger;
 
 signals:
 

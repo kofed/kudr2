@@ -10,7 +10,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    controller(logger)
+    controller()
 {
     ui->setupUi(this);
 
@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ShotWidget *shotWidget = new ShotWidget(controller, *(calibWidget->calibController));
     shotLayout->addWidget(shotWidget);
 
-    connect(searchWidget, SIGNAL(ipSelected()), calibWidget, SLOT(setEnabled()));
+    connect(settingsWidget, SIGNAL(updateChessBoardImage()), calibWidget, SLOT(setEnabled()));
     connect(searchWidget, SIGNAL(ipSelected()), settingsWidget, SLOT(setEnabled()));
     connect(searchWidget, SIGNAL(ipSelected()), shotWidget, SLOT(updateIpLabels()));
     connect(calibWidget, SIGNAL(updateChessBoardImage()), shotWidget, SLOT(update()));

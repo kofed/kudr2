@@ -1,9 +1,14 @@
 #include "calibcontroller.h"
 #include <iostream>
 
-bool ChessBoardCenterIterator::next(){
-    iX = center.x;
-    iY = center.y;
+CalibCorner::CalibCorner(const Point2f & _pointL, const Point2f & _pointR, const Point2i & center)
+    :pointL(_pointL), pointR(_pointR), p(pointL.x - center.x, pointL.y - center.y){
+
+}
+
+bool SpiralIterator::next(){
+    iX = centerIndex.x;
+    iY = centerIndex.y;
 
     if(++phi == step * 8){
         ++step;
@@ -32,13 +37,29 @@ bool ChessBoardCenterIterator::next(){
     return true;
 }
 
-int ChessBoardCenterIterator::getIX(){
+int SpiralIterator::getIX(){
     return iX;
 }
 
-int ChessBoardCenterIterator::getIY(){
+int SpiralIterator::getIY(){
     return iY;
 }
+
+/**
+ * Class to iterate over CHess Board Find Corners result. Because there is a bug in findChessBoardResult
+ */
+class Vector2Iterator
+{
+    vector<vector<Point2f>> & v;
+
+    Size & size;
+public:
+    Vector2Iterator(vector<vector<Point2f>> & _v, Size _size):v(_v), size(_size) {}
+
+    Point2f get(int xIndx, int yIndx){
+        return v[0][xIndx*size.width + yIndx];
+    }
+};
 
 vector<vector<Point2f>> CalibController::findChessboardCorners(Mat & image, const Size & size){
     if(size.height < 1 || size.width < 1){
@@ -57,11 +78,8 @@ vector<vector<Point2f>> CalibController::findChessboardCorners(Mat & image, cons
 }
 
 void CalibController::findChessboardCorners(){
-    string fnameL = controller.getImgFileName(LEFT).toStdString();
-    string fnameR = controller.getImgFileName(RIGHT).toStdString();
-
-    Mat imageL = imread(fnameL);
-    Mat imageR = imread(fnameR);
+    Mat imageL = imread(controller.getImage(LEFT).toStdString());
+    Mat imageR = imread(controller.getImage(RIGHT).toStdString());
     if(!imageL.data || !imageR.data){
         throw runtime_error("Отсутствует файл с изображением шахматной доски");
     }
@@ -70,8 +88,8 @@ void CalibController::findChessboardCorners(){
 
     corners[RIGHT] = findChessboardCorners(imageR, sizes[RIGHT]);
 
-    imwrite(fnameL, imageL);
-    imwrite(fnameR, imageR);
+    imwrite(controller.getImage(LEFT).toStdString(), imageL);
+    imwrite(controller.getImage(RIGHT).toStdString(), imageR);
 
 }
 
@@ -79,27 +97,42 @@ void CalibController::deleteCorners(){
     corners.clear();
 }
 
-void CalibController::addCalibEntities(const int h){
+void CalibController::addCalibEntities(const int h, const int cellSize){
     if(corners.size() <= 0){
         throw runtime_error("Произвидите поиск углов");
     }
 
-    ChessBoardCenterIterator itL(centers[LEFT]);
-    ChessBoardCenterIterator itR(centers[RIGHT]);
-    while(itL.next() | itR.next()){
-        cache.push_back(
-                    CalibEntity(h,
-                                corners[LEFT][0][itL.getIX()*sizes[LEFT].width + itL.getIY()],
-                corners[RIGHT][0][itR.getIX()*sizes[RIGHT].width + itR.getIY()]));
+    if(cellSize <= 0){
+        throw runtime_error("Укажите размер доски");
+    }
+
+    for(auto p : positions){
+        if(centers[p].x == 0 || centers[p].y == 0){
+            throw runtime_error("Выделите центр на шахматной доске");
+        }
+    }
+
+    CalibShot shot(h, cellSize);
+
+    SpiralIterator itCentersL(findClosestCornerIndex(centers[LEFT], LEFT));
+    SpiralIterator itCentersR(findClosestCornerIndex(centers[RIGHT], RIGHT));
+
+    Vector2Iterator itCornersL(corners[LEFT], sizes[LEFT]);
+    Vector2Iterator itCornersR(corners[RIGHT], sizes[RIGHT]);
+
+    while(itCentersL.next() | itCentersR.next()){
+        shot.corners.push_back(
+                    CalibCorner(itCornersL.get(itCentersL.getIX(), itCentersL.getIY()),
+                itCornersR.get(itCentersR.getIX(), itCentersR.getIY()), centers[LEFT]));
     }
     corners.clear();
-
+    cache.push_back(shot);
 }
 
 void CalibController::saveYML(){
     FileStorage fs("/tmp/chessboard.yml", FileStorage::WRITE);
-    for(auto entity : cache ){
-            entity.toYml(fs);
+    for(auto shot : cache ){
+            shot.toYml(fs);
     }
     fs.release();
 }
@@ -125,21 +158,22 @@ Point2i CalibController::findClosestCornerIndex(const Point2i & point, const Pos
     int ix = 0, iy = 0;
     int d = 10000;
 
-    auto cornersPos = corners[pos];
+    Vector2Iterator it(corners[pos], sizes[pos]);
+    //auto cornersPos = corners[pos];
     while(true){
-        Point2i p = cornersPos[ix][iy];
-        int _d = (point.x - p.x)^2 + (point.y - p.y)^2;
+        Point2i p = it.get(ix, iy);
+        int _d = (point.x - p.x)*(point.x - p.x) + (point.y - p.y)*(point.y - p.y);
         if(_d < d){
             d = _d;
             index.x = ix;
             index.y = iy;
         }
         ++iy;
-        if(iy == cornersPos[ix].size()){
+        if(iy == sizes[pos].height){
             iy = 0;
             ++ix;
         }
-        if(ix == cornersPos.size()){
+        if(ix == sizes[pos].width){
             break;
         }
     }

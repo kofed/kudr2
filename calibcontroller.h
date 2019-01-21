@@ -10,10 +10,10 @@
 using namespace cv;
 using namespace std;
 
-class ChessBoardCenterIterator{
+class SpiralIterator{
 
 public:
-    ChessBoardCenterIterator(Point2i _center):step(1), phi(0), center(_center){
+    SpiralIterator(Point2i _centerIndex):step(1), phi(0), centerIndex(_centerIndex), iX(0), iY(0){
 
     }
 
@@ -24,7 +24,7 @@ public:
     int getIY();
 
 private:
-    Point2i center;
+    Point2i centerIndex;
 
     //отступ от центра в клетках
     int step;
@@ -36,34 +36,49 @@ private:
 
 };
 
-class CalibEntity{
 
-    //расстояние между плоскостями введенное оператором
-    const int h;
+class CalibCorner{
     //угол на левой/правой камере
     const Point2f pointL, pointR;
-    //disparity расчетное
-    //int disparity;
-
+    //местоположение точки относительно центра
+    const Point2f p;
 public:
-    CalibEntity(const int _h, const Point2f & _pointL, const Point2f & _pointR)
-        :h(_h), pointL(_pointL), pointR(_pointR){
-
-    }
-
-    //CalibEntity(){}
+    CalibCorner(const Point2f & _pointL, const Point2f & _pointR, const Point2i & center);
 
     void toYml(FileStorage & yml) const {
-        yml << "h" << h;
         yml << "pointL" << pointL;
         yml << "pointR" << pointR;
+        yml << "p" << p;
     }
 };
+
+//модель для сохранения в yml
+class CalibShot{
+public:
+    //расстояние между плоскостями введенное оператором
+    const int h;
+    //размер клетки шахматной доски мм
+    const int cellSize;
+    vector<CalibCorner> corners;
+
+    CalibShot(const int _h, const int _cellSize):h(_h), cellSize(_cellSize){
+
+    }
+
+    void toYml(FileStorage & yml){
+        yml << "h" << h;
+        yml << "cellSize" << cellSize;
+        for(auto c : corners){
+            c.toYml(yml);
+        }
+    }
+};
+
 
 class CalibController
 {
     // кеш калибровачный данных
-    vector<CalibEntity> cache;
+    vector<CalibShot> cache;
 
     //координаты углов на камере слева/справа
     map<Position, vector<vector<Point2f>>> corners;
@@ -82,7 +97,7 @@ public:
 
     void deleteCorners();
 
-    void addCalibEntities(const int h);
+    void addCalibEntities(const int h, const int cellSize);
 
     void saveYML();
 
