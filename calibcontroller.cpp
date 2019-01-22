@@ -91,6 +91,9 @@ void CalibController::findChessboardCorners(){
     imwrite(controller.getImage(LEFT).toStdString(), imageL);
     imwrite(controller.getImage(RIGHT).toStdString(), imageR);
 
+    if(corners[LEFT][0].size() == 0 || corners[RIGHT][0].size() == 0){
+        throw runtime_error("Не удалось найти углы. Возможно неверно указан размер доски");
+    }
 }
 
 void CalibController::deleteCorners(){

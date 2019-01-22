@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     shotLayout->addWidget(shotWidget);
 
     connect(settingsWidget, SIGNAL(updateChessBoardImage()), calibWidget, SLOT(setEnabled()));
+    connect(settingsWidget, SIGNAL(updateChessBoardImage()), shotWidget, SLOT(update()));
     connect(searchWidget, SIGNAL(ipSelected()), settingsWidget, SLOT(setEnabled()));
     connect(searchWidget, SIGNAL(ipSelected()), shotWidget, SLOT(updateIpLabels()));
     connect(calibWidget, SIGNAL(updateChessBoardImage()), shotWidget, SLOT(update()));

@@ -19,7 +19,7 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     writeButton->setEnabled(false);
 
     QLabel* hLabel = new QLabel("Высота");
-    hEdit->setInputMask("999");;
+    hEdit->setValidator(new QIntValidator());
 
 
     QVBoxLayout* layout = new QVBoxLayout;
@@ -64,8 +64,7 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
 }
 
 void CalibWidget::setEnabled(){
-    if(controller.hasCameras())
-        QWidget::setEnabled(true);
+    QWidget::setEnabled(true);
 }
 
 void CalibWidget::onFindCornersButton(){

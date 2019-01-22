@@ -66,11 +66,13 @@ void SettingsWidget::openFile(){
     fileOpenDialog.setNameFilter(tr("Изображение (*.png)"));
 
     if(fileOpenDialog.exec())
-        QStringList selectedFiles1 = fileOpenDialog.selectedFiles();
+        controller.images[LEFT] = fileOpenDialog.selectedFiles()[0];
 
     fileOpenDialog.setWindowTitle(tr("Выберите файл с изображением с правой камеры"));
     if(fileOpenDialog.exec())
-        QStringList selectedFiles2 = fileOpenDialog.selectedFiles();
+        controller.images[RIGHT] = fileOpenDialog.selectedFiles()[0];
+
+    emit updateChessBoardImage();
 }
 
 void SettingsWidget::onShotButton(){
