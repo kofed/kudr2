@@ -7,33 +7,26 @@ CalibCorner::CalibCorner(const Point2f & _pointL, const Point2f & _pointR, const
 }
 
 bool SpiralIterator::next(){
-    iX = centerIndex.x;
-    iY = centerIndex.y;
-
-    if(++phi == step * 8){
-        ++step;
+    double PI = 3.14159265;
+    if(PI - phi < 0.001){
         phi = 0;
-    }
+        ++step;
+    }        
+    double dPhi = PI/(4 * step);
 
-    int d = phi / step;
+    double dx = step * cos(phi);
+    double dy = step * sin(phi);
 
-    if(d >= 0 && d <= 2){
-        iX += step;
-    }else if(d >= 4 && d <= 6){
-        iX -=  step;
-    }
+    iX = centerIndex.x + round(dx);
+    iY = centerIndex.y + round(dy);
 
-    if(d >= 2 && d <= 4){
-        iY += step;
-    }else if(d >= 6 && d <= 8){
-        iY -= step;
-    }
+    if(iX < 0 || iY < 0)
+	return false;
+    
+    phi += dPhi;
 
     cout << phi << " " << step << " " << iX << " " << iY << endl;
 
-    if(iX < 0 || iY < 0){
-        return false;
-    }
     return true;
 }
 

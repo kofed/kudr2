@@ -65,6 +65,7 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
 
 void CalibWidget::setEnabled(){
     QWidget::setEnabled(true);
+    findCornersButton->setEnabled(true);
 }
 
 void CalibWidget::onFindCornersButton(){
