@@ -7,6 +7,7 @@
 #include "controller.h"
 #include "position.h"
 #include <utility>
+#include "imageviewer.h"
 
 using namespace std;
 
@@ -28,8 +29,7 @@ public slots:
 private:
     Controller & controller;
     CalibController & calibController;
-    map<Position, QLabel*> pngLabels;
-    map<Position, PngWidget*> pngWidgets;
+    map<Position, ImageViewer*> pngWidgets;
     map<Position, QLabel*> ipLabels;
 
 

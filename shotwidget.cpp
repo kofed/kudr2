@@ -3,12 +3,14 @@
 #include "shotwidget.h"
 #include <QMessageBox>
 #include <QApplication>
+#include <QImage>
 
 ShotWidget::ShotWidget(Controller & _controller, CalibController & _calibController):
     controller(_controller), calibController(_calibController), QWidget()
 {
-    pngLabels.insert(std::pair<Position, QLabel*> (LEFT, new QLabel));
-    pngLabels[RIGHT] = new QLabel();
+    for(auto p : positions){
+        pngWidgets[p] = new ImageViewer(new PngWidget(calibController.centers[p], this));
+    }
 
     QVBoxLayout * layout = new QVBoxLayout();
     QHBoxLayout * labelLayout = new QHBoxLayout();
@@ -18,8 +20,8 @@ ShotWidget::ShotWidget(Controller & _controller, CalibController & _calibControl
 
     QHBoxLayout * pngLayout = new QHBoxLayout();
     layout->addLayout(pngLayout);
-    pngLayout->addWidget(pngLabels[LEFT]);
-    pngLayout->addWidget(pngLabels[RIGHT]);
+    pngLayout->addWidget(pngWidgets[LEFT]);
+    pngLayout->addWidget(pngWidgets[RIGHT]);
 
     QHBoxLayout * ipLayout = new QHBoxLayout();
     for(auto p : positions){
@@ -29,14 +31,6 @@ ShotWidget::ShotWidget(Controller & _controller, CalibController & _calibControl
     layout->addLayout(ipLayout);
 
     setLayout(layout);
-
-    initPngWidgets();
-}
-
-void ShotWidget::initPngWidgets(){
-    for(auto p : positions){
-        pngWidgets[p] = new PngWidget(calibController.centers[p], pngLabels[p]);
-    }
 }
 
 void ShotWidget::update(){
@@ -45,10 +39,9 @@ void ShotWidget::update(){
 //UNCOMMENT            continue;
         try{
             QString imageFile = controller.getImage(p);
-            QPixmap pixmap(imageFile);
-
-            pngLabels[p]->setPixmap(pixmap);
-            pngWidgets[p]->resize(pixmap.size());
+            QPixmap pixmap1(imageFile);
+            pngWidgets[p]->setImage(pixmap1);
+            pngWidgets[p]->resize(pixmap1.size());
             pngWidgets[p]->show();
            QApplication::processEvents();
             emit imageUpdated();
