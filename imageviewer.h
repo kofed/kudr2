@@ -5,6 +5,7 @@
 #include <QScrollArea>
 #include <QAction>
 #include <QImage>
+#include <QWheelEvent>
 
 class ImageViewer : public QWidget
 {
@@ -15,7 +16,7 @@ public:
 
     void setImage(QPixmap & image);
 protected:
-    void wheelEvent(QWheelEvent & event);
+    void wheelEvent(QWheelEvent * event);
 private:
     QImage image;
     QScrollArea *scrollArea;

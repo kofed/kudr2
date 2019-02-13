@@ -89,5 +89,17 @@ void ImageViewer::adjustScrollBar(QScrollBar *scrollBar, double factor)
 }
 
 void ImageViewer::wheelEvent(QWheelEvent *event){
+    int i = event->angleDelta().y() / 40;
 
+    while(i > 0){
+        zoomIn();
+        --i;
+    }
+
+    while(i < 0){
+       zoomOut();
+       ++i;
+    }
+
+    event->accept();
 }
