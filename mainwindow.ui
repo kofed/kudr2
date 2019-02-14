@@ -23,14 +23,14 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="settingsWidget">
          <attribute name="title">
           <string>Настройки</string>
          </attribute>
         </widget>
-        <widget class="QWidget" name="shotWidget">
+        <widget class="QWidget" name="shotsWidget">
          <attribute name="title">
           <string>Снимки</string>
          </attribute>

@@ -1,40 +1,25 @@
 #ifndef SHOTWIDGET_H
 #define SHOTWIDGET_H
-#include <QWidget>
-#include <QLabel>
-#include <map>
-#include "pngwidget.h"
-#include "controller.h"
-#include "position.h"
-#include <utility>
+
 #include "imageviewer.h"
+#include "sizeeditwidget.h"
+#include <QRadioButton>
+#include "controller.h"
+#include "calibcontroller.h"
 
-using namespace std;
-
-class ShotWidget : public QWidget
+class ShotWidget
 {
-    Q_OBJECT
-public:
-    explicit ShotWidget(Controller & _controller, CalibController & _calibController);
-
-    virtual ~ShotWidget(){}
-
-signals:
-    void imageUpdated();
-
-public slots:
-    void updateIpLabels();
-    void update();
-
 private:
-    Controller & controller;
-    CalibController & calibController;
-    map<Position, ImageViewer*> pngWidgets;
-    map<Position, QLabel*> ipLabels;
+    ImageViewer * viewer;
 
+    SizeEditWidget * positionEdit;
 
-    void initPngWidgets();
+    QRadioButton * deleteRadioButton, addRadioButton;
 
+    //Controller & controller;
+    //CalibController & calibController;
+public:
+    ShotWidget();
 };
 
 #endif // SHOTWIDGET_H

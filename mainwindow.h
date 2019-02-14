@@ -10,7 +10,7 @@
 #include <QComboBox>
 #include <QPushButton>
 #include <QLineEdit>
-#include "shotwidget.h"
+#include "shotswidget.h"
 
 namespace Ui {
 class MainWindow;

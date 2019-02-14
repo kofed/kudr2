@@ -36,11 +36,12 @@ SOURCES += \
     calibcontroller.cpp \
     constants.cpp \
     settingswidget.cpp \
-    shotwidget.cpp \
     camerasearchwidget.cpp \
     ipwidget.cpp \
     sizeeditwidget.cpp \
-    imageviewer.cpp
+    imageviewer.cpp \
+    shotswidget.cpp \
+    shotwidget.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -54,11 +55,12 @@ HEADERS += \
     calibwidget.h \
     calibcontroller.h \
     settingswidget.h \
-    shotwidget.h \
     camerasearchwidget.h \
     ipwidget.h \
     sizeeditwidget.h \
-    imageviewer.h
+    imageviewer.h \
+    shotswidget.h \
+    shotwidget.h
 
 FORMS += \
         mainwindow.ui

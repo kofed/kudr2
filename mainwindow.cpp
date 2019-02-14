@@ -28,16 +28,16 @@ MainWindow::MainWindow(QWidget *parent) :
     settingsLayout->addWidget(logger);
 
     QVBoxLayout* shotLayout = new QVBoxLayout();
-    ui->shotWidget->setLayout(shotLayout);
+    ui->shotsWidget->setLayout(shotLayout);
 
-    ShotWidget *shotWidget = new ShotWidget(controller, *(calibWidget->calibController));
-    shotLayout->addWidget(shotWidget);
+    ShotsWidget *shotsWidget = new ShotsWidget(controller, *(calibWidget->calibController));
+    shotLayout->addWidget(shotsWidget);
 
     connect(settingsWidget, SIGNAL(updateChessBoardImage()), calibWidget, SLOT(setEnabled()));
-    connect(settingsWidget, SIGNAL(updateChessBoardImage()), shotWidget, SLOT(update()));
+    connect(settingsWidget, SIGNAL(updateChessBoardImage()), shotsWidget, SLOT(update()));
     connect(searchWidget, SIGNAL(ipSelected()), settingsWidget, SLOT(setEnabled()));
-    connect(searchWidget, SIGNAL(ipSelected()), shotWidget, SLOT(updateIpLabels()));
-    connect(calibWidget, SIGNAL(updateChessBoardImage()), shotWidget, SLOT(update()));
+    connect(searchWidget, SIGNAL(ipSelected()), shotsWidget, SLOT(updateIpLabels()));
+    connect(calibWidget, SIGNAL(updateChessBoardImage()), shotsWidget, SLOT(update()));
 
     //ui->horizontalLayout_2->addWidget(saveShotButton);
 

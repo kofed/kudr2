@@ -42,10 +42,6 @@ void ImageViewer::setImage(QPixmap & image){
     imageLabel->adjustSize();
 
     imageLabel->resize(imageLabel->pixmap()->size());//If the Fit to Window option is turned off
-
-
-    zoomIn();
-    zoomIn();
 }
 
 void ImageViewer::zoomIn()
