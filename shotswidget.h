@@ -8,6 +8,8 @@
 #include "position.h"
 #include <utility>
 #include "shotswidget.h"
+#include "shotswidget.h"
+#include "shotwidget.h"
 
 using namespace std;
 

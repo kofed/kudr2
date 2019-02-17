@@ -2,5 +2,11 @@
 
 ShotWidget::ShotWidget()
 {
-    QVBoxLayout
+    QVBoxLayout * vLayout = new QVBoxLayout();
+    vLayout.add(viewer);
+
+    QHBoxLayout * hLayout = new QHBoxLayout();
+    hLayout.addWidget(addRadioButton);
+    hLayout.addWidget(deleteRadioButton);
+
 }

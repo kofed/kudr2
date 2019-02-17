@@ -9,7 +9,7 @@ ShotsWidget::ShotsWidget(Controller & _controller, CalibController & _calibContr
     controller(_controller), calibController(_calibController), QWidget()
 {
     for(auto p : positions){
-        pngWidgets[p] = new ImageViewer(new PngWidget(calibController.centers[p], this));
+        pngWidgets[p] = new ShotWidget();
     }
 
     QVBoxLayout * layout = new QVBoxLayout();

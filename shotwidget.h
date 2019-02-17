@@ -12,9 +12,10 @@ class ShotWidget
 private:
     ImageViewer * viewer;
 
-    SizeEditWidget * positionEdit;
+    SizeEditWidget * positionEdit = new SizeEditWidget;
 
-    QRadioButton * deleteRadioButton, addRadioButton;
+    QRadioButton * deleteRadioButton = new QRadioButton("Удалить угол");
+    QRadioButton * addRadioButton = new QRadioButton("Добавить угол");
 
     //Controller & controller;
     //CalibController & calibController;
