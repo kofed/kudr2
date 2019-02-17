@@ -9,11 +9,11 @@ class PngWidget : public QLabel
 {
     Q_OBJECT
 public:
-    PngWidget(Point2i & _center, QWidget *parent = 0);
+    PngWidget(QWidget *parent = 0);
 
-    QRect selectionRect;
+    QRect getSelectionRect();
 
-    Point2i & center;
+    Point2i getCenter();
 
     virtual    ~PngWidget(){}
 protected:
@@ -22,12 +22,10 @@ protected:
     void mouseMoveEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
 private:
-
+    QRect selectionRect;
+    Point2i center;
     bool selectionStarted;
     void drawCircle();
-//private slots:
-//    void saveSlot();
-
 };
 
 #endif // PNGWIDGET_H

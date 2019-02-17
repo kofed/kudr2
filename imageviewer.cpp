@@ -1,6 +1,7 @@
 #include "imageviewer.h"
 #include <QScrollBar>
 #include <QVBoxLayout>
+#include "pngwidget.h"
 
 ImageViewer::ImageViewer()
     :ImageViewer(new QLabel)
@@ -23,7 +24,7 @@ ImageViewer::ImageViewer(QLabel * _imageLabel)
     scrollArea->setVisible(false);
 
     QVBoxLayout * layout = new QVBoxLayout();
-    //layout->addWidget(imageLabel);
+   // layout->addWidget(imageLabel);
     layout->addWidget(scrollArea);
     setLayout(layout);
 
@@ -41,7 +42,7 @@ void ImageViewer::setImage(const QPixmap & image){
     //if (!fitToWindowAct->isChecked())
     imageLabel->setPixmap(image);
     imageLabel->show();
-    //imageLabel->adjustSize();
+   // imageLabel->adjustSize();
 
     //imageLabel->resize(imageLabel->pixmap()->size());//If the Fit to Window option is turned off*/
 }

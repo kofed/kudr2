@@ -10,7 +10,7 @@
 class ShotWidget : public QWidget
 {
 private:
-    ImageViewer * viewer = new ImageViewer;
+    ImageViewer * viewer;
 
     SizeEditWidget * positionEdit = new SizeEditWidget;
 
@@ -21,6 +21,10 @@ private:
     CalibController & calibController;
 public:
     void setImage(const QPixmap & pixmap);
+
+    QRect getSelectionRect();
+
+    Point2i getCenter();
 
     ShotWidget(CalibController & _calibController);
 };

@@ -5,8 +5,7 @@
 #include <QAction>
 #include <QFileDialog>
 
-PngWidget::PngWidget(Point2i & _center, QWidget *parent)
-: center(_center), QLabel(parent)
+PngWidget::PngWidget(QWidget *parent): QLabel(parent)
 {
     selectionStarted=false;
 }
