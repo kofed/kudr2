@@ -29,19 +29,21 @@ ImageViewer::ImageViewer(QLabel * _imageLabel)
 
 }
 
-void ImageViewer::setImage(QPixmap & image){
+void ImageViewer::setImage(const QPixmap & image){
     if (image.isNull()) {
         throw new std::runtime_error("Image is null");
     }
+
 
     scaleFactor = 1.0;
     scrollArea->setVisible(true);
   //  fitToWindowAct->setEnabled(true);
     //if (!fitToWindowAct->isChecked())
     imageLabel->setPixmap(image);
-    imageLabel->adjustSize();
+    imageLabel->show();
+    //imageLabel->adjustSize();
 
-    imageLabel->resize(imageLabel->pixmap()->size());//If the Fit to Window option is turned off
+    //imageLabel->resize(imageLabel->pixmap()->size());//If the Fit to Window option is turned off*/
 }
 
 void ImageViewer::zoomIn()

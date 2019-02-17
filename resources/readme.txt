@@ -22,3 +22,10 @@ In the bottom of the file, type the follow:
 
 $USER ALL=(ALL) NOPASSWD: ALL
 
+
+сборка libssh2
+mkdir bin
+  cd bin
+  cmake ..
+cmake --build .
+cmake --build . --target install

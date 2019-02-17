@@ -58,6 +58,7 @@ void SettingsWidget::onResolutionEdit(){
 }
 
 void SettingsWidget::openFile(){
+    Logger::log("Загрузить изображение");
     QFileDialog fileOpenDialog(this);
     fileOpenDialog.setWindowTitle(tr("Выберите файл с изображением с левой камеры"));
     fileOpenDialog.setViewMode(QFileDialog::Detail);
@@ -73,6 +74,7 @@ void SettingsWidget::openFile(){
         controller.images[RIGHT] = fileOpenDialog.selectedFiles()[0];
 
     emit updateChessBoardImage();
+    Logger::log("Загрузить изображение успешно завершено");
 }
 
 void SettingsWidget::onShotButton(){

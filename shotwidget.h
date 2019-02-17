@@ -7,10 +7,10 @@
 #include "controller.h"
 #include "calibcontroller.h"
 
-class ShotWidget
+class ShotWidget : public QWidget
 {
 private:
-    ImageViewer * viewer;
+    ImageViewer * viewer = new ImageViewer;
 
     SizeEditWidget * positionEdit = new SizeEditWidget;
 
@@ -18,9 +18,11 @@ private:
     QRadioButton * addRadioButton = new QRadioButton("Добавить угол");
 
     //Controller & controller;
-    //CalibController & calibController;
+    CalibController & calibController;
 public:
-    ShotWidget();
+    void setImage(const QPixmap & pixmap);
+
+    ShotWidget(CalibController & _calibController);
 };
 
 #endif // SHOTWIDGET_H

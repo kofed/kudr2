@@ -14,7 +14,7 @@ public:
 
     ImageViewer(QLabel * _imageLabel);
 
-    void setImage(QPixmap & image);
+    void setImage(const QPixmap & image);
 protected:
     void wheelEvent(QWheelEvent * event);
 private:

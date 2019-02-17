@@ -34,9 +34,7 @@ private:
     map<Position, ShotWidget*> pngWidgets;
     map<Position, QLabel*> ipLabels;
 
-
     void initPngWidgets();
-
 };
 
 #endif // ShotsWidget_H
