@@ -22,8 +22,8 @@ protected:
     void mouseMoveEvent(QMouseEvent *e);
     void mouseReleaseEvent(QMouseEvent *e);
 private:
-    QRect selectionRect;
-    Point2i center;
+    QRect selectionRect = QRect(0, 0, 0, 0);
+    Point2i center = Point2i(0,0);
     bool selectionStarted;
     void drawCircle();
 };
