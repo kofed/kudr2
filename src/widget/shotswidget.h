@@ -3,7 +3,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <map>
-#include "pngwidget.h"
+#include "lib/pngwidget.h"
 #include "controller.h"
 #include "position.h"
 #include <utility>

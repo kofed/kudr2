@@ -2,8 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "controller.h"
-#include "pngwidget.h"
+#include "controller/controller.h"
+#include "lib/pngwidget.h"
 #include "position.h"
 #include "calibwidget.h"
 #include <QHBoxLayout>

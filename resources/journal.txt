@@ -9,4 +9,5 @@ DONE 8. one get shot
 DONE 9. one save roi
 DONE a. Check file exists when loaded
 DONE b. Draw chess board corners.
-c. add method 
+DONE c. add method 
+d. My current view. I have two widgets Library and custom. Custom widgets are unique and cannot be reused. They have a controller. Library widgets have a controller and can be reused.

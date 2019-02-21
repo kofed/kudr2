@@ -2,7 +2,7 @@
 #define SETTINGSWIDGET_H
 #include <QPushButton>
 #include <QWidget>
-#include "controller.h"
+#include "src/controller/controller.h"
 
 class SettingsWidget: public QWidget
 {

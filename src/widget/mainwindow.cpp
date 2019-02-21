@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QIntValidator>
-#include "pngwidget.h"
 #include <QMessageBox>
 #include <QTableWidget>
 #include "camerasearchwidget.h"

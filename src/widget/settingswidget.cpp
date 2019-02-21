@@ -66,12 +66,20 @@ void SettingsWidget::openFile(){
     fileOpenDialog.setOption(QFileDialog::DontUseNativeDialog);
     fileOpenDialog.setNameFilter(tr("Изображение (*.png)"));
 
-    if(fileOpenDialog.exec())
+    if(fileOpenDialog.exec()){
         controller.images[LEFT] = fileOpenDialog.selectedFiles()[0];
+    }else{
+        Logger::log("Загрузка изображения отменена");
+        return;
+    }
 
     fileOpenDialog.setWindowTitle(tr("Выберите файл с изображением с правой камеры"));
-    if(fileOpenDialog.exec())
+    if(fileOpenDialog.exec()){
         controller.images[RIGHT] = fileOpenDialog.selectedFiles()[0];
+    }else{
+        Logger::log("Загрузка изображения отменена");
+        return;
+    }
 
     emit updateChessBoardImage();
     Logger::log("Загрузить изображение успешно завершено");

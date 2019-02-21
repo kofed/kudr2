@@ -1,10 +1,9 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "CameraIp.h"
+#include "cameraip.h"
 #include "sshcontroller.h"
 #include "pingcontroller.h"
-#include "CameraIp.h"
 #include "logger.h"
 #include "opencv2/opencv.hpp"
 

@@ -1,7 +1,7 @@
 #include "shotwidget.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include "pngwidget.h"
+#include "lib/pngwidget.h"
 
 ShotWidget::ShotWidget(CalibController & _calibController)
     :calibController(_calibController), QWidget()

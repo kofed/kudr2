@@ -24,43 +24,43 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
-    controller.cpp \
-    sshcontroller.cpp \
-    pingcontroller.cpp \
-    cameraip.cpp \
-    pngwidget.cpp \
-    logger.cpp \
-    calibwidget.cpp \
-    calibcontroller.cpp \
-    constants.cpp \
-    settingswidget.cpp \
-    camerasearchwidget.cpp \
-    ipwidget.cpp \
-    sizeeditwidget.cpp \
-    imageviewer.cpp \
-    shotswidget.cpp \
-    shotwidget.cpp
+        src/main.cpp \
+        src/widget/mainwindow.cpp \
+    	src/controller/controller.cpp \
+    	src/controller/sshcontroller.cpp \
+    	src/controller/pingcontroller.cpp \
+    	src/model/cameraip.cpp \
+    	src/widget/lib/pngwidget.cpp \
+    	src/logger.cpp \
+    	src/widget/calibwidget.cpp \
+    	src/controller/calibcontroller.cpp \
+    	src/model/constants.cpp \
+    	src/widget/settingswidget.cpp \
+    	src/widget/camerasearchwidget.cpp \
+    	src/widget/ipwidget.cpp \
+    	src/widget/lib/sizeeditwidget.cpp \
+    	src/widget/lib/imageviewer.cpp \
+    	src/widget/shotswidget.cpp \
+    	src/widget/shotwidget.cpp
 
 HEADERS += \
-        mainwindow.h \
-    controller.h \
-    sshcontroller.h \
-    pingcontroller.h \
-    CameraIp.h \
-    pngwidget.h \
-    position.h \
-    logger.h \
-    calibwidget.h \
-    calibcontroller.h \
-    settingswidget.h \
-    camerasearchwidget.h \
-    ipwidget.h \
-    sizeeditwidget.h \
-    imageviewer.h \
-    shotswidget.h \
-    shotwidget.h
+        src/widget/mainwindow.h \
+    	src/controller/controller.h \
+    	src/controller/sshcontroller.h \
+    	src/controller/pingcontroller.h \
+    	src/model/cameraip.h \
+    	src/widget/lib/pngwidget.h \
+    	src/model/position.h \
+    	src/logger.h \
+    	src/widget/calibwidget.h \
+    	src/controller/calibcontroller.h \
+    	src/widget/settingswidget.h \
+    	src/widget/camerasearchwidget.h \
+    	src/widget/ipwidget.h \
+    	src/widget/lib/sizeeditwidget.h \
+    	src/widget/lib/imageviewer.h \
+    	src/shotswidget.h \
+    	src/shotwidget.h
 
 FORMS += \
         mainwindow.ui
@@ -71,6 +71,7 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-li
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/debug/ -lssh2
 else:unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -L/usr/local/lib/ -lssh2 -lopencv_calib3d -lopencv_core -lopencv_highgui -lopencv_imgcodecs
 
-DEPENDPATH += $$PWD/../../../usr/include
+DEPENDPATH += $$PWD/../../../usr/include 
+DEPENDPATH += $$PWD/src
 
-
+INCLUDEPATH += $$PWD/src $$PWD/src/controller $$PWD/src/model $$PWD/src/widget

@@ -2,7 +2,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
-#include "CameraIp.h"
+#include "cameraip.h"
 
 CameraSearchWidget::CameraSearchWidget(Controller & _controller, QWidget *parent):
     controller(_controller), QWidget(parent)

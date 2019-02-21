@@ -1,8 +1,8 @@
 #ifndef SHOTWIDGET_H
 #define SHOTWIDGET_H
 
-#include "imageviewer.h"
-#include "sizeeditwidget.h"
+#include "lib/imageviewer.h"
+#include "lib/sizeeditwidget.h"
 #include <QRadioButton>
 #include "controller.h"
 #include "calibcontroller.h"

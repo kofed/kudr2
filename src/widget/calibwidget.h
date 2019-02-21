@@ -6,11 +6,11 @@
 #include <QTableWidget>
 #include <QHBoxLayout>
 #include <QPushButton>
-#include "pngwidget.h"
+#include "lib/pngwidget.h"
 #include "calibcontroller.h"
 #include "controller.h"
 #include <QLineEdit>
-#include <sizeeditwidget.h>
+#include "lib/sizeeditwidget.h"
 
 class CalibWidget : public QWidget{
     Q_OBJECT
