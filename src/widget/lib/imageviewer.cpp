@@ -1,7 +1,7 @@
 #include "imageviewer.h"
 #include <QScrollBar>
 #include <QVBoxLayout>
-#include "pngwidget.h"
+#include "lib/selectiveImageLabel.h"
 
 ImageViewer::ImageViewer()
     :ImageViewer(new QLabel)

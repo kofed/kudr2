@@ -6,7 +6,7 @@
 #include <QTableWidget>
 #include <QHBoxLayout>
 #include <QPushButton>
-#include "lib/pngwidget.h"
+#include "lib/selectiveImageLabel.h"
 #include "calibcontroller.h"
 #include "controller.h"
 #include <QLineEdit>

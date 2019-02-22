@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include "controller/controller.h"
-#include "lib/pngwidget.h"
+#include "lib/selectiveImageLabel.h"
 #include "position.h"
 #include "calibwidget.h"
 #include <QHBoxLayout>

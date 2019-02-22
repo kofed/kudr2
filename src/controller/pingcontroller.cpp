@@ -1,5 +1,5 @@
 #include "pingcontroller.h"
-#include "CameraIp.h"
+#include "cameraip.h"
 #include <QtDebug>
 
 PingController::PingController()

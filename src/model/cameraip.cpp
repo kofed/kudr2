@@ -1,4 +1,4 @@
-#include "CameraIp.h"
+#include "cameraip.h"
 #include <QStringList>
 #include <sstream>
 #include <QtDebug>

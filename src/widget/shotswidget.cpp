@@ -5,11 +5,11 @@
 #include <QApplication>
 #include <QImage>
 
-ShotsWidget::ShotsWidget(Controller & _controller, CalibController & _calibController):
-    controller(_controller), calibController(_calibController), QWidget()
+ShotsWidget::ShotsWidget(Controller & _controller, CalibController & _calibController):QWidget(),
+    controller(_controller), calibController(_calibController)
 {
     for(auto p : positions){
-        pngWidgets[p] = new ShotWidget(_calibController);
+        pngWidgets[p] = new ShotWidget(p, _calibController);
     }
 
     QVBoxLayout * layout = new QVBoxLayout();

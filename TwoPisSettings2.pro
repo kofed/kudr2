@@ -30,7 +30,7 @@ SOURCES += \
     	src/controller/sshcontroller.cpp \
     	src/controller/pingcontroller.cpp \
     	src/model/cameraip.cpp \
-    	src/widget/lib/pngwidget.cpp \
+    	src/widget/lib/selectiveImageLabel.cpp \
     	src/logger.cpp \
     	src/widget/calibwidget.cpp \
     	src/controller/calibcontroller.cpp \
@@ -49,7 +49,7 @@ HEADERS += \
     	src/controller/sshcontroller.h \
     	src/controller/pingcontroller.h \
     	src/model/cameraip.h \
-    	src/widget/lib/pngwidget.h \
+    	src/widget/lib/selectiveImageLabel.h \
     	src/model/position.h \
     	src/logger.h \
     	src/widget/calibwidget.h \
@@ -59,8 +59,8 @@ HEADERS += \
     	src/widget/ipwidget.h \
     	src/widget/lib/sizeeditwidget.h \
     	src/widget/lib/imageviewer.h \
-    	src/shotswidget.h \
-    	src/shotwidget.h
+        src/widget/shotswidget.h \
+        src/widget/shotwidget.h
 
 FORMS += \
         mainwindow.ui

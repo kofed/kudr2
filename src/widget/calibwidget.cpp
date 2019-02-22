@@ -8,7 +8,7 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     :QWidget(parent),
       controller(_controller) {
 
-    calibController = new CalibController(controller);
+    calibController = new CalibController(controller, controller.rois);
     findCornersButton = new QPushButton("Найти углы", parent);
     findCornersButton->setEnabled(true);
     addButton = new QPushButton("Добавить", parent);

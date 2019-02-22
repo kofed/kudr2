@@ -6,27 +6,33 @@
 #include <QRadioButton>
 #include "controller.h"
 #include "calibcontroller.h"
+#include "lib/selectiveImageLabel.h"
 
 class ShotWidget : public QWidget
 {
+    Q_OBJECT
+
 private:
+    const Position position;
+
     ImageViewer * viewer;
+    SelectiveImageLabel * imageLabel;
 
     SizeEditWidget * positionEdit = new SizeEditWidget;
 
     QRadioButton * deleteRadioButton = new QRadioButton("Удалить угол");
     QRadioButton * addRadioButton = new QRadioButton("Добавить угол");
 
-    //Controller & controller;
     CalibController & calibController;
 public:
     void setImage(const QPixmap & pixmap);
 
-    QRect getSelectionRect();
+    ShotWidget(Position _position, CalibController & _calibController);
 
-    Point2i getCenter();
+private slots:
+    void onRectSelected(const QRect & rect);
 
-    ShotWidget(CalibController & _calibController);
+    void onCenterSelected(Point2i & center);
 };
 
 #endif // SHOTWIDGET_H

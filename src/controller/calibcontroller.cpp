@@ -54,6 +54,11 @@ public:
     }
 };
 
+CalibController::CalibController(const Controller & _controller, map<Position, Rect> & _rois)
+    :controller(_controller), rois(_rois){
+
+}
+
 vector<vector<Point2f>> CalibController::findChessboardCorners(Mat & image, const Size & size){
     if(size.height < 1 || size.width < 1){
         throw std::runtime_error("Размер доски меньше нуля\n");
