@@ -76,21 +76,17 @@ vector<vector<Point2f>> CalibController::findChessboardCorners(Mat & image, cons
 }
 
 void CalibController::findChessboardCorners(){
-    Mat imageL = imread(controller.getImage(LEFT).toStdString());
-    Mat imageR = imread(controller.getImage(RIGHT).toStdString());
-    if(!imageL.data || !imageR.data){
-        throw runtime_error("Отсутствует файл с изображением шахматной доски");
-    }
+    for(auto p : positions){
+        if(!images[p].data){
+            throw runtime_error("Отсутствует файл с изображением шахматной доски");
+        }
 
-    corners[LEFT] = findChessboardCorners(imageL, sizes[LEFT]);
+        corners[p] = findChessboardCorners(images[p], sizes[p]);
+        imwrite(controller.getImage(p).toStdString(), images[p]);
 
-    corners[RIGHT] = findChessboardCorners(imageR, sizes[RIGHT]);
-
-    imwrite(controller.getImage(LEFT).toStdString(), imageL);
-    imwrite(controller.getImage(RIGHT).toStdString(), imageR);
-
-    if(corners[LEFT][0].size() == 0 || corners[RIGHT][0].size() == 0){
-        throw runtime_error("Не удалось найти углы. Возможно неверно указан размер доски");
+        if(corners[p][0].size() == 0){
+            throw runtime_error("Не удалось найти углы. Возможно неверно указан размер доски");
+        }
     }
 }
 
@@ -181,3 +177,12 @@ Point2i CalibController::findClosestCornerIndex(const Point2i & point, const Pos
     return index;
 }
 
+void CalibController::openImage(const Position & pos, const QString &path){
+    Mat image = imread(path);
+
+    if(!image.data){
+        throw runtime_error(QString("Не удалось открыть файл %1").arg(path).toStdString());
+    }
+
+    images[pos] = image;
+}

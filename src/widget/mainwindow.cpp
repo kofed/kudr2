@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QVBoxLayout* settingsLayout = new QVBoxLayout();
     ui->settingsWidget->setLayout(settingsLayout);
     settingsLayout->addWidget(searchWidget);
-    SettingsWidget* settingsWidget = new SettingsWidget(controller);
+    SettingsWidget* settingsWidget = new SettingsWidget(controller, *(calibWidget->calibController));
     settingsLayout->addWidget(settingsWidget);
     settingsLayout->addWidget(calibWidget);
     settingsLayout->addWidget(logger);

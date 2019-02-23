@@ -82,6 +82,9 @@ class CalibController
 
     //координаты углов на камере слева/справа
     map<Position, vector<vector<Point2f>>> corners; 
+
+    map<Position, Mat> images;
+
     const Controller & controller;
 
 public:
@@ -103,6 +106,8 @@ public:
     void saveYML();
 
     void sendYML();
+
+    void openImage(const Position pos, const QString & path);
 
 private:
     vector<vector<Point2f>> findChessboardCorners(Mat & image,const Size & size);

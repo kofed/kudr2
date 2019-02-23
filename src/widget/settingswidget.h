@@ -9,7 +9,7 @@ class SettingsWidget: public QWidget
     Q_OBJECT
 
 public:
-    SettingsWidget(Controller & _controller);
+    SettingsWidget(Controller & _controller, CalibController & _calibController);
 
     virtual ~SettingsWidget(){}
 
@@ -18,6 +18,8 @@ public slots:
 
 private:
     Controller & controller;
+
+    Controller & calibController;
 
     QPushButton * shotButton;
 

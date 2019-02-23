@@ -35,6 +35,8 @@ private:
     CalibController & calibController;
     map<Position, ShotWidget*> pngWidgets;
     map<Position, QLabel*> ipLabels;
+
+    void mat2QPixmap(const Mat & image);
 };
 
 #endif // ShotsWidget_H

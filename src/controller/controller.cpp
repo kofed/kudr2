@@ -52,16 +52,16 @@ void Controller::loadShot( ){
         }
         QString & file = images[pos];
         QString ip = cameras[pos]->toString();
-//UNCOMMENT        sshController.init(ip, "pi", "raspberry");
+        sshController.init(ip, "pi", "raspberry");
         try{
-//UNCOMMENT            sshController.command(QString("raspistill -e png -w %1 -h %2 -o %3").arg(resolution.width).arg(resolution.height).arg(file));
-//UNCOMMENT            sshController.fileFrom(file, file);
-//UNCOMMENT            sshController.command(QString("rm %1").arg(file));
+            sshController.command(QString("raspistill -e png -w %1 -h %2 -o %3").arg(resolution.width).arg(resolution.height).arg(file));
+            sshController.fileFrom(file, file);
+            sshController.command(QString("rm %1").arg(file));
         }catch(std::exception & e){
             Logger::log(QString("Невозможно получить снимок для %1").arg(ip));
         }
 
-//UNCOMMENT         sshController.shutdown();
+         sshController.shutdown();
     }
 
 }

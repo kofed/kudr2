@@ -67,7 +67,7 @@ void SettingsWidget::openFile(){
     fileOpenDialog.setNameFilter(tr("Изображение (*.png)"));
 
     if(fileOpenDialog.exec()){
-        controller.images[LEFT] = fileOpenDialog.selectedFiles()[0];
+        calibController.openImage(LEFT, fileOpenDialog.selectedFiles()[0]);
     }else{
         Logger::log("Загрузка изображения отменена");
         return;
@@ -75,7 +75,7 @@ void SettingsWidget::openFile(){
 
     fileOpenDialog.setWindowTitle(tr("Выберите файл с изображением с правой камеры"));
     if(fileOpenDialog.exec()){
-        controller.images[RIGHT] = fileOpenDialog.selectedFiles()[0];
+        calibController.openImage(RIGHT, fileOpenDialog.selectedFiles()[0]);
     }else{
         Logger::log("Загрузка изображения отменена");
         return;

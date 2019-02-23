@@ -42,9 +42,9 @@ public:
 
     bool hasCameras();
 
-    QString getImage(Position p)const{
-        return images.at(p);
-    }
+   // QString getImage(Position p)const{
+   //     return images.at(p);
+   // }
 
     friend class MainWindow;
 private:
