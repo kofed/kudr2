@@ -13,7 +13,8 @@ using namespace std;
 class SpiralIterator{
 
 public:
-    SpiralIterator(Point2i _centerIndex):step(1), phi(0), centerIndex(_centerIndex), iX(0), iY(0){
+    SpiralIterator(Point2i _centerIndex, const Size _size)
+        :size(_size), step(1), phi(0), centerIndex(_centerIndex), iX(0), iY(0){
 
     }
 
@@ -33,6 +34,8 @@ private:
     //абсолютные индексы для итерации вокруг центра
     int iX;
     int iY;
+
+    const Size size;
 
 };
 

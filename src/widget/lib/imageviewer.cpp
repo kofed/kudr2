@@ -42,7 +42,7 @@ void ImageViewer::setImage(const QPixmap & image){
     //if (!fitToWindowAct->isChecked())
     imageLabel->setPixmap(image);
     imageLabel->show();
-   // imageLabel->adjustSize();
+    imageLabel->adjustSize();
 
     //imageLabel->resize(imageLabel->pixmap()->size());//If the Fit to Window option is turned off*/
 }

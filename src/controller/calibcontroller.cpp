@@ -20,12 +20,12 @@ bool SpiralIterator::next(){
     iX = centerIndex.x + round(dx);
     iY = centerIndex.y + round(dy);
 
-    if(iX < 0 || iY < 0)
+    if(iX < 0 || iY < 0 || iX >= size.width || iY >= size.height)
 	return false;
     
-    phi += dPhi;
-
     cout << phi << " " << step << " " << iX << " " << iY << endl;
+
+    phi += dPhi;
 
     return true;
 }
@@ -110,8 +110,8 @@ void CalibController::addCalibEntities(const int h, const int cellSize){
 
     CalibShot shot(h, cellSize);
 
-    SpiralIterator itCentersL(findClosestCornerIndex(centers[LEFT], LEFT));
-    SpiralIterator itCentersR(findClosestCornerIndex(centers[RIGHT], RIGHT));
+    SpiralIterator itCentersL(findClosestCornerIndex(centers[LEFT], LEFT), sizes[LEFT]);
+    SpiralIterator itCentersR(findClosestCornerIndex(centers[RIGHT], RIGHT), sizes[RIGHT]);
 
     Vector2Iterator itCornersL(corners[LEFT], sizes[LEFT]);
     Vector2Iterator itCornersR(corners[RIGHT], sizes[RIGHT]);
