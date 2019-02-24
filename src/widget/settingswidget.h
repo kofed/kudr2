@@ -2,7 +2,8 @@
 #define SETTINGSWIDGET_H
 #include <QPushButton>
 #include <QWidget>
-#include "src/controller/controller.h"
+#include "controller/controller.h"
+#include "calibcontroller.h"
 
 class SettingsWidget: public QWidget
 {
@@ -19,7 +20,7 @@ public slots:
 private:
     Controller & controller;
 
-    Controller & calibController;
+    CalibController & calibController;
 
     QPushButton * shotButton;
 

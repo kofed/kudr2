@@ -3,7 +3,7 @@
 
 #include <QLabel>
 #include <QMenu>
-#include "opencv2/opencv.hpp"
+
 
 using namespace std;
 
@@ -15,12 +15,12 @@ public:
 
     QRect getSelectionRect();
 
-    cv::Point2i getCenter();
+    QPoint getCenter();
 
     virtual    ~SelectiveImageLabel(){}
 signals:
     void rectSelected(const QRect & rect);
-    void centerSelected(const cv::Point2i  & center);
+    void centerSelected(const QPoint  & center);
 
 
 protected:
@@ -30,11 +30,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent *e);
 private:
     QRect selectionRect = QRect(0, 0, 0, 0);
-    cv::Point2i center = cv::Point2i(0,0);
+    QPoint center = QPoint(0,0);
     bool selectionStarted;
     void drawCircle();
 };
-
-Q_DECLARE_METATYPE(cv::Point2i)
-
 #endif // PNGWIDGET_H

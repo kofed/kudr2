@@ -82,7 +82,6 @@ void CalibController::findChessboardCorners(){
         }
 
         corners[p] = findChessboardCorners(images[p], sizes[p]);
-        imwrite(controller.getImage(p).toStdString(), images[p]);
 
         if(corners[p][0].size() == 0){
             throw runtime_error("Не удалось найти углы. Возможно неверно указан размер доски");
@@ -177,8 +176,8 @@ Point2i CalibController::findClosestCornerIndex(const Point2i & point, const Pos
     return index;
 }
 
-void CalibController::openImage(const Position & pos, const QString &path){
-    Mat image = imread(path);
+void CalibController::openImage(const Position pos, const QString &path){
+    Mat image = imread(path.toStdString());
 
     if(!image.data){
         throw runtime_error(QString("Не удалось открыть файл %1").arg(path).toStdString());

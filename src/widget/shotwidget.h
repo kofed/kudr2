@@ -29,10 +29,10 @@ public:
 
     ShotWidget(Position _position, CalibController & _calibController);
 
-private slots:
+public slots:
     void onRectSelected(const QRect & rect);
 
-    void onCenterSelected(Point2i & center);
+    void onCenterSelected(const QPoint & center);
 };
 
 #endif // SHOTWIDGET_H

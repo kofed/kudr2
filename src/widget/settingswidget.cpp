@@ -5,8 +5,8 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-SettingsWidget::SettingsWidget(Controller & _controller):
-    controller(_controller), QWidget()
+SettingsWidget::SettingsWidget(Controller & _controller, CalibController & _calibController):
+    QWidget(), controller(_controller), calibController(_calibController)
 {
     QPushButton* saveROIButton = new QPushButton("сохр ROI");
     QPushButton* loadImageButton = new QPushButton("Загрузить изображение");

@@ -21,7 +21,7 @@ ShotWidget::ShotWidget(
     setLayout(vLayout);
 
     connect(imageLabel, SIGNAL(rectSelected(QRect)), this, SLOT(onRectSelected(QRect)));
-    connect(imageLabel, SIGNAL(centerSelected(Point2i)), this, SLOT(onCenterSelected(Point2i)));
+    connect(imageLabel, SIGNAL(centerSelected(QPoint)), this, SLOT(onCenterSelected(QPoint)));
 }
 
 void ShotWidget::setImage(const QPixmap &pixmap){
@@ -32,6 +32,6 @@ void ShotWidget::onRectSelected(const QRect & rect){
     calibController.rois[position] = Rect(rect.x(), rect.y(), rect.width(), rect.height());
 }
 
-void ShotWidget::onCenterSelected(Point2i & center){
-    calibController.centers[position] = center;
+void ShotWidget::onCenterSelected(const QPoint & center){
+    calibController.centers[position] = Point2i(center.x(), center.y());
 }

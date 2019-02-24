@@ -58,7 +58,7 @@ void ShotsWidget::updateIpLabels(){
 
 QPixmap ShotsWidget::mat2QPixmap(const Mat & image){
     if(!image.data){
-        return QPixmap;
+        return QPixmap();
     }
 
     return QPixmap::fromImage(QImage((unsigned char*) image.data, image.cols, image.rows, QImage::Format_RGB888));

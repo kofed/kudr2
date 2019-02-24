@@ -25,8 +25,7 @@ void SelectiveImageLabel::paintEvent(QPaintEvent *e)
 void SelectiveImageLabel::mousePressEvent(QMouseEvent *e)
 {
     if (e->button()==Qt::RightButton){        
-        center.x = e->x();
-        center.y = e->y();
+        center = e->pos();
 
         repaint();
         emit centerSelected(center);
@@ -60,7 +59,7 @@ void SelectiveImageLabel::drawCircle(){
     QPainter painter(this);
     painter.setPen(QPen(QBrush(QColor(255,0,0,180)),1,Qt::DashLine));
     painter.setBrush(QBrush(QColor(255,0,255,120)));
-    painter.drawEllipse(QRect(center.x - diameter/2, center.y -diameter / 2, diameter, diameter));
+    painter.drawEllipse(QRect(center.x() - diameter/2, center.y() -diameter / 2, diameter, diameter));
 
 }
 
@@ -72,8 +71,8 @@ QRect SelectiveImageLabel::getSelectionRect(){
     return selectionRect;
 }
 
-cv::Point2i SelectiveImageLabel::getCenter(){
-    if(center.x <= 0 || center.y <= 0){
+QPoint SelectiveImageLabel::getCenter(){
+    if(center.x() <= 0 || center.y() <= 0){
         throw new runtime_error("Выделите центр на рисунке");
     }
 
