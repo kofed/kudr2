@@ -12,6 +12,8 @@ class SizeEditWidget : public QLineEdit
 public:
     SizeEditWidget();
 
+    SizeEditWidget(QString label);
+
     Size getSize();
 };
 

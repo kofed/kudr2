@@ -1,4 +1,13 @@
 #include "sizeeditwidget.h"
+#include <QHBoxLayout>
+#include <QLabel>
+
+SizeEditWidget::SizeEditWidget(QString label):SizeEditWidget(){
+   // QHBoxLayout * layout = new QHBoxLayout;
+   // layout->addWidget(new QLabel(label));
+   // layout->addWidget(this);
+   // setLayout(layout);
+}
 
 SizeEditWidget::SizeEditWidget():QLineEdit()
 {
@@ -11,7 +20,7 @@ SizeEditWidget::SizeEditWidget():QLineEdit()
 Size SizeEditWidget::getSize(){
     QStringList sl = text().split(":");
     if(sl.size() != 2){
-        throw std::runtime_error("заполните размер шахматной доски");
+        throw std::runtime_error("заполните размер");
     }
     return Size(sl.at(0).toInt(), sl.at(1).toInt());
 }

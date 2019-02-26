@@ -15,12 +15,12 @@ public:
 
     QRect getSelectionRect();
 
-    QPoint getCenter();
+    QPoint getPoint();
 
     virtual    ~SelectiveImageLabel(){}
 signals:
     void rectSelected(const QRect & rect);
-    void centerSelected(const QPoint  & center);
+    void pointSelected(const QPoint  & center);
 
 
 protected:
@@ -30,7 +30,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *e);
 private:
     QRect selectionRect = QRect(0, 0, 0, 0);
-    QPoint center = QPoint(0,0);
+    QPoint point = QPoint(0,0);
     bool selectionStarted;
     void drawCircle();
 };

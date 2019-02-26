@@ -70,9 +70,7 @@ vector<vector<Point2f>> CalibController::findChessboardCorners(Mat & image, cons
     bool patternWasFound =
             cv::findChessboardCorners( image, size, corners[0], CV_CALIB_CB_ADAPTIVE_THRESH );
 
-    drawChessboardCorners(image, size, Mat(corners[0]), patternWasFound);
-
-    return corners;
+        return corners;
 }
 
 void CalibController::findChessboardCorners(){
@@ -85,6 +83,10 @@ void CalibController::findChessboardCorners(){
 
         if(corners[p][0].size() == 0){
             throw runtime_error("Не удалось найти углы. Возможно неверно указан размер доски");
+        }
+
+        if(!patternWasFound(p)){
+            throw runtime_error("Не удалось найти все углы. Пожалуйста, исправьте результат с помощью кнопок Добавить/Удалить");
         }
     }
 }
@@ -184,4 +186,46 @@ void CalibController::openImage(const Position pos, const QString &path){
     }
 
     images[pos] = image;
+}
+
+Mat CalibController::getImageWithCorners(const Position pos){
+    if(corners[pos].size() != 0){
+        Mat cornersImage;
+        images[pos].copyTo(cornersImage);
+        drawChessboardCorners(cornersImage, sizes[pos], Mat(corners[pos][0]), true);
+        return cornersImage;
+    }else{
+        return images[pos];
+    }
+
+}
+
+bool CalibController::patternWasFound(Position pos){
+    return (int)corners[pos].size() != sizes[pos].area();
+}
+
+void CalibController::addCorner(const Position pos, const Point2i corner, const Size index){
+    vector<Point2f> & _corners = corners[pos][0];
+    _corners.insert(_corners.begin() + index.width * sizes[pos].width + index.height, corner);
+    sortCorners(pos);
+}
+
+void CalibController::sortCorners(const Position pos){
+    vector<Point2f> & _corners = corners[pos][0];
+    sort(_corners.begin(), _corners.end(),
+        [](const Point2f & a, const Point2f & b) -> bool
+    {
+        float dy = a.y - b.y;
+        if(abs(dy) < 20){
+            float dx = a.x - b.x;
+            return dx < 0;
+        }
+
+        return a.y - b.y < 0;
+    });
+}
+
+void CalibController::deleteCorner(const Position pos, const Point2i corner){
+    Point2i index = findClosestCornerIndex(corner, pos);
+    corners[pos][0].erase(corners[pos][0].begin() + index.x * sizes[pos].width + index.y);
 }

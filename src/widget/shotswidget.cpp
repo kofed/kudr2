@@ -36,16 +36,13 @@ ShotsWidget::ShotsWidget(Controller & _controller, CalibController & _calibContr
 void ShotsWidget::update(){
     for(auto p : positions){
         try{
-            QPixmap pixmap1 = mat2QPixmap(calibController.images[p]);
-            pngWidgets[p]->setImage(pixmap1);
-            pngWidgets[p]->resize(pixmap1.size());
-            pngWidgets[p]->show();
-           QApplication::processEvents();
-            emit imageUpdated();
+            pngWidgets[p]->update();
+
         }catch(const std::exception & e){
             QMessageBox::warning(this, "Невозможно найти локальный файл", "Невозможно найти локальный файл. Возможно на устройстве он не был записан.");
         }
     }
+    emit imageUpdated();
 }
 
 void ShotsWidget::updateIpLabels(){
@@ -54,12 +51,4 @@ void ShotsWidget::updateIpLabels(){
         if(cameraIp != NULL)
             ipLabels[p]->setText(cameraIp->toString());
     }
-}
-
-QPixmap ShotsWidget::mat2QPixmap(const Mat & image){
-    if(!image.data){
-        return QPixmap();
-    }
-
-    return QPixmap::fromImage(QImage((unsigned char*) image.data, image.cols, image.rows, QImage::Format_RGB888));
 }

@@ -41,7 +41,8 @@ SOURCES += \
     	src/widget/lib/sizeeditwidget.cpp \
     	src/widget/lib/imageviewer.cpp \
     	src/widget/shotswidget.cpp \
-    	src/widget/shotwidget.cpp
+    	src/widget/shotwidget.cpp \
+    src/controller/cornerssorter.cpp
 
 HEADERS += \
         src/widget/mainwindow.h \
@@ -60,7 +61,8 @@ HEADERS += \
     	src/widget/lib/sizeeditwidget.h \
     	src/widget/lib/imageviewer.h \
         src/widget/shotswidget.h \
-        src/widget/shotwidget.h
+        src/widget/shotwidget.h \
+    src/controller/cornerssorter.h
 
 FORMS += \
         mainwindow.ui

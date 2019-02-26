@@ -74,16 +74,18 @@ void CalibWidget::onFindCornersButton(){
         for(auto p : positions){
             calibController->sizes[p] = sizeEdits[p]->getSize();
         }
-
        calibController->findChessboardCorners();
-       findCornersButton->setEnabled(false);
-       addButton->setEnabled(true);
-       emit updateChessBoardImage();
+
     }catch(const std::exception & e){
         QMessageBox::warning(this, e.what(), e.what());
+        Logger::me->log(e.what());
+        emit updateChessBoardImage();
         return;
     }
-    Logger::me->log("Поиск углов шахматной доски успешно завершен");
+    emit updateChessBoardImage();
+    findCornersButton->setEnabled(false);
+    addButton->setEnabled(true);
+    Logger::me->log("Поиск углов шахматной доски завершен");
 }
 
 

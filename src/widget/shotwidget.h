@@ -22,17 +22,22 @@ private:
 
     QRadioButton * deleteRadioButton = new QRadioButton("Удалить угол");
     QRadioButton * addRadioButton = new QRadioButton("Добавить угол");
+    QRadioButton * selectCenterRadioButton = new QRadioButton("Выделить центр");
+
+    SizeEditWidget * addedCornerIndex = new SizeEditWidget("Позиция добавленного угла");
 
     CalibController & calibController;
 public:
-    void setImage(const QPixmap & pixmap);
+    void update();
 
     ShotWidget(Position _position, CalibController & _calibController);
+
+    QPixmap mat2QPixmap(const Mat & image);
 
 public slots:
     void onRectSelected(const QRect & rect);
 
-    void onCenterSelected(const QPoint & center);
+    void onPointSelected(const QPoint & point);
 };
 
 #endif // SHOTWIDGET_H

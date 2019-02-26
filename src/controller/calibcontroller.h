@@ -14,7 +14,7 @@ class SpiralIterator{
 
 public:
     SpiralIterator(Point2i _centerIndex, const Size _size)
-        :size(_size), step(1), phi(0), centerIndex(_centerIndex), iX(0), iY(0){
+        :step(1),  phi(0), size(_size), centerIndex(_centerIndex), iX(0), iY(0){
 
     }
 
@@ -109,10 +109,20 @@ public:
 
     void openImage(const Position pos, const QString & path);
 
+    Mat getImageWithCorners(const Position pos);
+
+    void addCorner(const Position pos, const Point2i corner, const Size index);
+
+    void deleteCorner(const Position pos, const Point2i corner);
+
 private:
     vector<vector<Point2f>> findChessboardCorners(Mat & image,const Size & size);
 
     Point2i findClosestCornerIndex(const Point2i & point, const Position & pos);
+
+    bool patternWasFound(Position pos);
+
+    void sortCorners(const Position pos);
 };
 
 #endif // CVCONTROLLER_H
