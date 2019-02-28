@@ -1,6 +1,7 @@
 #include "calibcontroller.h"
 #include <iostream>
 #include "opencv2/calib3d.hpp"
+#include "chessboard.hpp"
 
 CalibCorner::CalibCorner(const Point2f & _pointL, const Point2f & _pointR, const Point2i & center)
     :pointL(_pointL), pointR(_pointR), p(pointL.x - center.x, pointL.y - center.y){
@@ -211,10 +212,13 @@ void CalibController::addCorner(const Position pos, const Point2i corner, const 
     sortCorners(pos);
 }
 
+#include "chessboard.hpp"
+
 void CalibController::sortCorners(const Position pos){
     vector<Point2f> & _corners = corners[pos][0];
 
-    Board board;
+
+    details::Chessboard::Board board;
     /*sort(_corners.begin(), _corners.end(),
         [](const Point2f & a, const Point2f & b) -> bool
     {

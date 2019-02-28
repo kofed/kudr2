@@ -23,9 +23,11 @@ private:
 
     Point2f findBotRight();
 
-    int findNext(const Point2f & point );
+    int findNext(const int  point );
 
-    void swap(const int i, const int j);
+ //   void swap(const int i, const int j);
+
+    float dist(const int i, const int j);
 };
 
 #endif // CORNERSSORTER_H

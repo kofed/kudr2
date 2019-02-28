@@ -30,7 +30,8 @@ SOURCES += \
     	src/controller/sshcontroller.cpp \
     	src/controller/pingcontroller.cpp \
     	src/model/cameraip.cpp \
-    	src/widget/lib/selectiveImageLabel.cpp \
+        src/model/chessboard.cpp \
+        src/widget/lib/selectiveImageLabel.cpp \
     	src/logger.cpp \
     	src/widget/calibwidget.cpp \
     	src/controller/calibcontroller.cpp \
@@ -50,6 +51,8 @@ HEADERS += \
     	src/controller/sshcontroller.h \
     	src/controller/pingcontroller.h \
     	src/model/cameraip.h \
+        src/model/chessboard.hpp \
+        src/model/precomp.hpp \
     	src/widget/lib/selectiveImageLabel.h \
     	src/model/position.h \
     	src/logger.h \
@@ -71,7 +74,7 @@ CONFIG += c++11
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/release/ -lssh2
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../usr/lib/x86_64-linux-gnu/debug/ -lssh2
-else:unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -L/usr/local/lib/ -lssh2 -lopencv_calib3d -lopencv_core -lopencv_highgui -lopencv_imgcodecs
+else:unix: LIBS += -L/usr/lib/x86_64-linux-gnu/ -L/usr/local/lib/ -lssh2 -lopencv_calib3d -lopencv_core -lopencv_highgui -lopencv_imgcodecs -lopencv_features2d -lopencv_flann -lopencv_imgproc
 
 DEPENDPATH += $$PWD/../../../usr/include 
 DEPENDPATH += $$PWD/src
