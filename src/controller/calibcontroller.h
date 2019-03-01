@@ -118,7 +118,7 @@ public:
 private:
     vector<vector<Point2f>> findChessboardCorners(Mat & image,const Size & size);
 
-    Point2i findClosestCornerIndex(const Point2i & point, const Position & pos);
+    Point2i findClosestCornerIndex(const Point2f & point, const Position & pos);
 
     bool patternWasFound(Position pos);
 

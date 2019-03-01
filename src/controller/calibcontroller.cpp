@@ -48,12 +48,34 @@ class Vector2Iterator
     vector<vector<Point2f>> & v;
 
     Size & size;
+
+    int xIndx = -1, yIndx = 0;
+
+    Point2f get(int xIndx, int yIndx){
+        return v[0][xIndx+ size.width*yIndx];
+    }
 public:
     Vector2Iterator(vector<vector<Point2f>> & _v, Size _size):v(_v), size(_size) {}
 
-    Point2f get(int xIndx, int yIndx){
-        return v[0][xIndx*size.width + yIndx];
+    Point2f get(){
+        return get(xIndx, yIndx);
     }
+
+    bool next(){
+        ++xIndx;
+        if(xIndx == size.width){
+            xIndx = 0;
+            ++yIndx;
+        }
+        if(yIndx == size.height){
+            return false;
+        }
+
+        return true;
+    }
+
+    int getIX(){return xIndx;}
+    int getIY(){return yIndx;}
 };
 
 CalibController::CalibController(const Controller & _controller, map<Position, Rect> & _rois)
@@ -90,6 +112,8 @@ void CalibController::findChessboardCorners(){
         if(!patternWasFound(p)){
             throw runtime_error("Не удалось найти все углы. Пожалуйста, исправьте результат с помощью кнопок Добавить/Удалить");
         }
+
+        sortCorners(p);
     }
 }
 
@@ -122,8 +146,8 @@ void CalibController::addCalibEntities(const int h, const int cellSize){
 
     while(itCentersL.next() | itCentersR.next()){
         shot.corners.push_back(
-                    CalibCorner(itCornersL.get(itCentersL.getIX(), itCentersL.getIY()),
-                itCornersR.get(itCentersR.getIX(), itCentersR.getIY()), centers[LEFT]));
+                    CalibCorner(itCornersL.get(),
+                itCornersR.get(), centers[LEFT]));
     }
     corners.clear();
     cache.push_back(shot);
@@ -153,29 +177,21 @@ void CalibController::sendYML(){
     }
 }
 //Возвращает индексы угла по координатам
-Point2i CalibController::findClosestCornerIndex(const Point2i & point, const Position & pos){
+Point2i CalibController::findClosestCornerIndex(const Point2f & point, const Position & pos){
     Point2i index(0, 0);
-    int ix = 0, iy = 0;
-    int d = 10000;
+    float d = 10000.0f;
 
     Vector2Iterator it(corners[pos], sizes[pos]);
     //auto cornersPos = corners[pos];
-    while(true){
-        Point2i p = it.get(ix, iy);
-        int _d = (point.x - p.x)*(point.x - p.x) + (point.y - p.y)*(point.y - p.y);
+    while(it.next()){
+        Point2i p = it.get();
+        float _d = (point.x - p.x)*(point.x - p.x) + (point.y - p.y)*(point.y - p.y);
         if(_d < d){
             d = _d;
-            index.x = ix;
-            index.y = iy;
+            index.x = it.getIX();
+            index.y = it.getIY();
         }
-        ++iy;
-        if(iy == sizes[pos].height){
-            iy = 0;
-            ++ix;
-        }
-        if(ix == sizes[pos].width){
-            break;
-        }
+
     }
     return index;
 }
@@ -208,17 +224,20 @@ bool CalibController::patternWasFound(Position pos){
 
 void CalibController::addCorner(const Position pos, const Point2i corner, const Size index){
     vector<Point2f> & _corners = corners[pos][0];
-    _corners.insert(_corners.begin() + index.width * sizes[pos].width + index.height, corner);
+    _corners.insert(_corners.begin() + sizes[pos].width * index.height + index.width, corner);
     sortCorners(pos);
 }
-
-#include "chessboard.hpp"
 
 void CalibController::sortCorners(const Position pos){
     vector<Point2f> & _corners = corners[pos][0];
 
+    while(_corners.size() < sizes[pos].width * sizes[pos].height){
+        throw runtime_error("Добавьте угол");
+    }
 
-    details::Chessboard::Board board;
+    details::Chessboard::Board board(sizes[pos], _corners);
+   // board.init(_corners);
+    corners[pos][0] = board.getCorners();
     /*sort(_corners.begin(), _corners.end(),
         [](const Point2f & a, const Point2f & b) -> bool
     {
@@ -235,4 +254,5 @@ void CalibController::sortCorners(const Position pos){
 void CalibController::deleteCorner(const Position pos, const Point2i corner){
     Point2i index = findClosestCornerIndex(corner, pos);
     corners[pos][0].erase(corners[pos][0].begin() + index.x * sizes[pos].width + index.y);
+    sortCorners(pos);
 }

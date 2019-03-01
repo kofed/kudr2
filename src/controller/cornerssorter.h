@@ -7,27 +7,43 @@
 using namespace std;
 using namespace cv;
 
-class CornerSorter{
-public:
-    CornerSorter(vector<Point2f> & _corners, const Size & _size);
-
-    vector<Point2f> sort();
+class ChessBoard{
 private:
-    vector<Point2f> & corners;
+
 
     const Size size;
+    class Corner{
+    private:
+        Point2f point;
+        vector<Corner*> neighbors;
 
-    float findRadius();
+        void setNeighborhood(vector<Corner*> corners);
+    public:
+        enum Neighborhood{
+            LEFT,
+            RIGHT,
+            BOT,
+            UP,
+            UPLEFT,
+            UPRIGHT,
+            BOTLEFT,
+            BOTRIGHT
+        };
 
-    int findTopLeft();
+        Corner(Point2f & point);
+        Point2f getPoint() const;
+        Corner* getNeighbor(Neighborhood n);
 
-    Point2f findBotRight();
+        vector<Corner> removeOutstanging(vector<Point2f> corners);
+        float dist(const Corner & c);
+    };
 
-    int findNext(const int  point );
+    vector<Corner> corners;
+    ChessBoard(vector<Point2f> corners, const Size & size);
 
- //   void swap(const int i, const int j);
+    float dist(const Point2f & p1, const Point2f & p2);
 
-    float dist(const int i, const int j);
+
 };
 
 #endif // CORNERSSORTER_H
