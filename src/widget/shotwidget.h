@@ -18,16 +18,13 @@ private:
     ImageViewer * viewer;
     SelectiveImageLabel * imageLabel;
 
-    SizeEditWidget * positionEdit = new SizeEditWidget;
-
     QRadioButton * deleteRadioButton = new QRadioButton("Удалить угол");
     QRadioButton * addRadioButton = new QRadioButton("Добавить угол");
     QRadioButton * selectCenterRadioButton = new QRadioButton("Выделить центр");
 
-    SizeEditWidget * addedCornerIndex = new SizeEditWidget("Позиция добавленного угла");
-
     CalibController & calibController;
 public:
+    void init();
     void update();
 
     ShotWidget(Position _position, CalibController & _calibController);

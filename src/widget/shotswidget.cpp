@@ -45,6 +45,18 @@ void ShotsWidget::update(){
     emit imageUpdated();
 }
 
+void ShotsWidget::init(){
+    for(auto p : positions){
+        try{
+            pngWidgets[p]->init();
+
+        }catch(const std::exception & e){
+            QMessageBox::warning(this, "Невозможно найти локальный файл", "Невозможно найти локальный файл. Возможно на устройстве он не был записан.");
+        }
+    }
+    emit imageUpdated();
+}
+
 void ShotsWidget::updateIpLabels(){
     for(auto p : positions){
         CameraIp* cameraIp = controller.cameras[p];

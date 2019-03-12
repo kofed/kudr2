@@ -9,12 +9,19 @@
 
 class ImageViewer : public QWidget
 {
+    Q_OBJECT
 public:
     ImageViewer();
 
     ImageViewer(QLabel * _imageLabel);
 
+    virtual ~ImageViewer(){}
+
     void setImage(const QPixmap & image);
+    void updateImage(const QPixmap & image);
+
+signals:
+    void scaleFactorChanged(double scaleFactor);
 protected:
     void wheelEvent(QWheelEvent * event);
 private:
@@ -29,7 +36,7 @@ private:
     void adjustScrollBar(QScrollBar *scrollBar, double factor);
 
 private slots:
-    void open();
+    //void open();
     void zoomIn();
     void zoomOut();
     void normalSize();

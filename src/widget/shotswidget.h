@@ -29,6 +29,7 @@ public:
 public slots:
     void updateIpLabels();
     void update();
+    void init();
 
 private:
     Controller & controller;

@@ -95,8 +95,6 @@ public:
 
     CalibController(const Controller & _controller, map<Position, Rect> & _rois);
 
-    void calibrateCamera();
-
     void findChessboardCorners();
 
     void deleteCorners();
@@ -111,16 +109,18 @@ public:
 
     Mat getImageWithCorners(const Position pos);
 
-    void addCorner(const Position pos, const Point2i corner, const Size index);
+    void addCorner(const Position pos, const Point2f corner);
 
-    void deleteCorner(const Position pos, const Point2i corner);
+    void deleteCorner(const Position pos, const Point2f corner);
+
+    int patternWasFound(Position pos);
 
 private:
     vector<vector<Point2f>> findChessboardCorners(Mat & image,const Size & size);
 
-    Point2i findClosestCornerIndex(const Point2f & point, const Position & pos);
+    Point2i findClosestCornerIndexSorted(const Point2f & point, const Position & pos);
 
-    bool patternWasFound(Position pos);
+    vector<Point2f>::iterator findClosestCorner(const Point2f & point, const Position & pos);
 
     void sortCorners(const Position pos);
 };

@@ -8,6 +8,7 @@
 SelectiveImageLabel::SelectiveImageLabel(QWidget *parent): QLabel(parent)
 {
     selectionStarted=false;
+    scaleFactor = 1;
 }
 
 void SelectiveImageLabel::paintEvent(QPaintEvent *e)
@@ -28,7 +29,7 @@ void SelectiveImageLabel::mousePressEvent(QMouseEvent *e)
         point = e->pos();
 
         repaint();
-        emit pointSelected(point);
+        emit pointSelected(getPoint());
     }
     else{
         selectionStarted=true;
@@ -49,7 +50,7 @@ void SelectiveImageLabel::mouseReleaseEvent(QMouseEvent *e)
 {
     selectionStarted=false;
     if(e->button()==Qt::LeftButton){
-        emit rectSelected(selectionRect);
+        emit rectSelected(getSelectionRect());
     }
 }
 
@@ -66,7 +67,7 @@ QRect SelectiveImageLabel::getSelectionRect(){
         throw new runtime_error("Выделите прямоугольник на рисунке");
     }
 
-    return selectionRect;
+    return scaleRect(1/scaleFactor);
 }
 
 QPoint SelectiveImageLabel::getPoint(){
@@ -74,5 +75,22 @@ QPoint SelectiveImageLabel::getPoint(){
         throw new runtime_error("Выделите точку на рисунке");
     }
 
-    return point;
+    return scalePoint(1/scaleFactor);
+}
+
+QRect SelectiveImageLabel::scaleRect(const double scaleFactor){
+    return QRect(selectionRect.x() * scaleFactor,
+                     selectionRect.y() * scaleFactor,
+                     selectionRect.width() * scaleFactor,
+                     selectionRect.height() * scaleFactor);
+}
+
+QPoint SelectiveImageLabel::scalePoint(const double scaleFactor){
+    return QPoint(point.x() * scaleFactor, point.y() * scaleFactor);
+}
+
+void SelectiveImageLabel::setScaleFactor(double _scaleFactor){
+    point = scalePoint(_scaleFactor / scaleFactor);
+    selectionRect = scaleRect(_scaleFactor / scaleFactor);
+    scaleFactor = _scaleFactor;
 }

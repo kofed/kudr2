@@ -92,6 +92,7 @@ void CalibWidget::onFindCornersButton(){
 void CalibWidget::onDeleteButton(){
     calibController->deleteCorners();
     deleteButton->setEnabled(false);
+    emit updateChessBoardImage();
 }
 
 void CalibWidget::onWriteButton(){
