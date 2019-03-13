@@ -1,5 +1,6 @@
 #Установка qt
 sudo apt-get install qtcreator
+sudo apt install qt5-default
 #Установка компилятора g++
 apt install g++-7
 #Установка libssh2-1
