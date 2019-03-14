@@ -35,6 +35,7 @@ void ShotWidget::update(){
     viewer->show();
     QApplication::processEvents();
    // viewer->setImage(pixmap);
+
 }
 
 void ShotWidget::init(){
