@@ -227,10 +227,6 @@ void CalibController::openImage(const Position pos, const QString &path){
 }
 
 Mat CalibController::getImageWithCorners(const Position pos){
-    if(sizes[pos].area() == 0){
-        throw runtime_error("Укажите размер доски");
-    }
-
     if(corners[pos].size() != 0){
         Mat cornersImage;
         images[pos].copyTo(cornersImage);
@@ -247,6 +243,10 @@ int CalibController::patternWasFound(const Position pos){
 }
 
 void CalibController::addCorner(const Position pos, const Point2f corner){
+    if(sizes[pos].area() == 0){
+        throw runtime_error("Укажите размер доски");
+    }
+
     corners[pos][0].push_back(corner);
     sortCorners(pos);
 }
