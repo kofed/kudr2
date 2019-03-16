@@ -107,7 +107,8 @@ void CalibController::findChessboardCorners(){
         corners[p] = findChessboardCorners(images[p], sizes[p]);
 
         if(corners[p][0].size() == 0){
-            Logger::log("Не удалось найти углы. Возможно неверно указан размер доски");
+            Logger::log(p, "Алгоритм opencv не смог найти углы. Возможно неверно указан размер доски");
+            continue;
         }
 
         if(!patternWasFound(p)){
@@ -275,6 +276,7 @@ void CalibController::sortCorners(const Position pos){
 
 void CalibController::deleteCorner(const Position pos, const Point2f click){
     auto it = findClosestCorner(click, pos);
-    corners[pos][0].erase(it);
+   // corners[pos][0].erase(it);
+    corners[pos][0].pop_back();
     sortCorners(pos);
 }

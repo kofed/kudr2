@@ -18,3 +18,11 @@ void Logger::_log(QString message){
 void Logger::log(const QString & message){
     me->_log(message);
 }
+
+void Logger::log(const Position p, const QString & message){
+    if(p == LEFT){
+        log(QString("Камера слева: ") + message);
+    }else{
+        log(QString("Камера справа: ") + message);
+    }
+}
