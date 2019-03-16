@@ -113,7 +113,7 @@ public:
 
     void deleteCorner(const Position pos, const Point2f corner);
 
-    int patternWasFound(Position pos);
+    int patternWasFound(Position pos);    
 
 private:
     vector<vector<Point2f>> findChessboardCorners(Mat & image,const Size & size);

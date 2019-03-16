@@ -82,6 +82,8 @@ public:
 CalibController::CalibController(const Controller & _controller, map<Position, Rect> & _rois)
     :controller(_controller), rois(_rois){
 
+    corners[LEFT].push_back(vector<Point2f>());
+    corners[RIGHT].push_back(vector<Point2f>());
 }
 
 vector<vector<Point2f>> CalibController::findChessboardCorners(Mat & image, const Size & size){
@@ -242,6 +244,10 @@ int CalibController::patternWasFound(const Position pos){
 }
 
 void CalibController::addCorner(const Position pos, const Point2f corner){
+    if(sizes[pos].area() == 0){
+        throw runtime_error("Укажите размер доски");
+    }
+
     corners[pos][0].push_back(corner);
     sortCorners(pos);
 }
