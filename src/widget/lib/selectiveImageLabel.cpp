@@ -64,7 +64,7 @@ void SelectiveImageLabel::drawCircle(){
 
 QRect SelectiveImageLabel::getSelectionRect(){
     if(selectionRect.width() <= 0 || selectionRect.height() <= 0){
-        throw new runtime_error("Выделите прямоугольник на рисунке");
+        throw runtime_error("Выделите прямоугольник на рисунке");
     }
 
     return scaleRect(1/scaleFactor);
@@ -72,7 +72,7 @@ QRect SelectiveImageLabel::getSelectionRect(){
 
 QPoint SelectiveImageLabel::getPoint(){
     if(point.x() <= 0 || point.y() <= 0){
-        throw new runtime_error("Выделите точку на рисунке");
+        throw runtime_error("Выделите точку на рисунке");
     }
 
     return scalePoint(1/scaleFactor);

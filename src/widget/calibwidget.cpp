@@ -83,7 +83,6 @@ void CalibWidget::onFindCornersButton(){
         return;
     }
     emit updateChessBoardImage();
-    findCornersButton->setEnabled(false);
     addButton->setEnabled(true);
     Logger::me->log("Поиск углов шахматной доски завершен");
 }

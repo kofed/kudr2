@@ -231,7 +231,9 @@ Mat CalibController::getImageWithCorners(const Position pos){
     if(corners[pos].size() != 0){
         Mat cornersImage;
         images[pos].copyTo(cornersImage);
-        drawChessboardCorners(cornersImage, sizes[pos], Mat(corners[pos][0]), true);
+        vector<Point2f> _corners;
+        _corners.insert(_corners.begin(), corners[pos][0].begin(), corners[pos][0].end());
+        drawChessboardCorners(cornersImage, sizes[pos], Mat(_corners), true);
         return cornersImage;
     }else{
         return images[pos];
@@ -282,7 +284,6 @@ void CalibController::sortCorners(const Position pos){
 
 void CalibController::deleteCorner(const Position pos, const Point2f click){
     auto it = findClosestCorner(click, pos);
-   // corners[pos][0].erase(it);
-    corners[pos][0].pop_back();
+    corners[pos][0].erase(it);
     sortCorners(pos);
 }
