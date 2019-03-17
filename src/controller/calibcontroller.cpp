@@ -45,20 +45,20 @@ int SpiralIterator::getIY(){
  */
 class Vector2Iterator
 {
-    vector<vector<Point2f>> & v;
+    const vector<vector<Point2f>> & v;
 
-    Size & size;
+    const Size size;
 
     int xIndx = -1, yIndx = 0;
 
 public:
-    Vector2Iterator(vector<vector<Point2f>> & _v, Size _size):v(_v), size(_size) {}
+    Vector2Iterator(const vector<vector<Point2f>> & _v, const Size _size):v(_v), size(_size) {}
 
-    Point2f get(){
+    Point2f get() const{
         return get(xIndx, yIndx);
     }
 
-    Point2f get(int xIndx, int yIndx){
+    Point2f get(int xIndx, int yIndx) const {
         return v[0][xIndx+ size.width*yIndx];
     }
 
@@ -75,8 +75,8 @@ public:
         return true;
     }
 
-    int getIX(){return xIndx;}
-    int getIY(){return yIndx;}
+    int getIX() const {return xIndx;}
+    int getIY() const {return yIndx;}
 };
 
 CalibController::CalibController(const Controller & _controller, map<Position, Rect> & _rois)
