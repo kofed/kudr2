@@ -113,7 +113,7 @@ void CalibController::findChessboardCorners(){
             continue;
         }
 
-        if(!patternWasFound(p)){
+        if(patternWasFound(p) != 0){
             Logger::log("Не удалось найти все углы. Пожалуйста, исправьте результат с помощью кнопок Добавить/Удалить");
         }
 
