@@ -3,11 +3,6 @@
 #include "opencv2/calib3d.hpp"
 #include "cornerssorter.h"
 
-CalibCorner::CalibCorner(const Point2f & _pointL, const Point2f & _pointR, const Point2i & center)
-    :pointL(_pointL), pointR(_pointR), p(pointL.x - center.x, pointL.y - center.y){
-
-}
-
 bool SpiralIterator::next(){
     double PI = 3.14159265;
     if(PI - phi < 0.001){
@@ -144,7 +139,7 @@ void CalibController::addCalibEntities(const int h, const int cellSize){
         }
     }
 
-    CalibShot shot(h, cellSize);
+
 
     SpiralIterator itCentersL(findClosestCornerIndexSorted(centers[LEFT], LEFT), sizes[LEFT]);
     SpiralIterator itCentersR(findClosestCornerIndexSorted(centers[RIGHT], RIGHT), sizes[RIGHT]);
@@ -152,13 +147,14 @@ void CalibController::addCalibEntities(const int h, const int cellSize){
     Vector2Iterator itCornersL(corners[LEFT], sizes[LEFT]);
     Vector2Iterator itCornersR(corners[RIGHT], sizes[RIGHT]);
 
+    map<Point2f, Point2f> cornersMap;
     while(itCentersL.next() | itCentersR.next()){
-        shot.corners.push_back(
-                    CalibCorner(itCornersL.get(itCentersL.getIX(),itCentersL.getIY()),
-                itCornersR.get(itCentersR.getIX(),itCentersR.getIY()), centers[LEFT]));
+        cornersMap[itCornersL.get(itCentersL.getIX(),itCentersL.getIY())] =
+                itCornersR.get(itCentersR.getIX(),itCentersR.getIY());
     }
+    Surface surface(h, centers[LEFT], centers[RIGHT], cornersMap);
     corners.clear();
-    cache.push_back(shot);
+    cache.surfaces.push_back(surface);
 }
 
 void CalibController::saveYML(){

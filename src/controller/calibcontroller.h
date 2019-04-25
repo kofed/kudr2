@@ -43,7 +43,6 @@ private:
 class CalibController
 {
     // кеш калибровачный данных
-    //vector<CalibShot> cache;
 	CalibData cache;
 
     //координаты углов на камере слева/справа

@@ -1,49 +1,56 @@
+#include <map>
+#include "opencv2/opencv.hpp"
+
+using namespace cv;
+using namespace std;
+
 class Surface{
 private:
     //расстояние между плоскостями введенное оператором
     const int h;
-
+    //координаты центра. Введены оператором
+    const Point2f centerL, centerR;
     //угол на левой/правой камере
     map<Point2f, Point2f> corners;
-
-    Surface(){};
 public:
-    Surface(const Point2f & _pointL, const Point2f & _pointR);
+    Surface(const int & h, const Point2f & _centerL, const Point2f & _centerR, const map<Point2f, Point2f> corners);
 
     void toYml(FileStorage & yml) const {
     	yml << "h" << h;
     	yml << "corners" << "[";
 
     	for(auto c : corners){
-    		yml << "{:" << "pointL" << c->first << "pointR" << c->second;
+                yml << "{:" << "pointL" << c.first << "pointR" << c.second;
     	}
 
 		yml << "]";
     }
 
-    static Surface fromYml(FileNode & fn){
-    	Surface surface;
-    	fn["h"] >> h;
+    static Surface fromYml(FileNodeIterator & fn){
+        float _h;
+        (*fn)["h"] >> _h;
+        Point2f _centerL, _centerR;
+        (*fn)["centerL"] >> _centerL;
+        (*fn)["centerR"] >> _centerR;
 
-    	FileNode fnCorners = yml["corners"];
+        map<Point2f, Point2f> corners;
+        FileNode fnCorners = (*fn)["corners"];
     	for(FileNodeIterator it = fnCorners.begin() ; it != fnCorners.end(); ++it){
-    		surface.corners[*it["pointL"]] = *it["pointR"];
+            Point2f left, right;
+            (*it)["pointL"] >> left;
+            (*it)["pointR"] >> right;
+            corners[left] = right;
     	}
-    	return surface;
+        return Surface(_h, _centerL, _centerR, corners);
     }
 };
 
 //модель для сохранения в yml
 class CalibData{
-private:
-	CalibData(){};
 public:
 
     //размер клетки шахматной доски мм
-    const int cellSize;
-    //координаты центра px
-    const Point2i center;
-
+    int cellSize;
     //высота между плоскостями к углам
     vector<Surface> surfaces;
 
@@ -56,37 +63,41 @@ public:
     	//pointSm(Point px, disparity)
     }
 
-    CalibShot(const int _h, const int _cellSize, const Point2i _center):h(_h),
-    		cellSize(_cellSize), center(_center){
+    CalibData(){
 
     }
 
-    void toYml(FileStorage & yml){
-        yml << "h" << h;
+    CalibData(const int _cellSize):
+                cellSize(_cellSize){
+
+    }
+
+    void toYml(FileStorage & yml) const{
         yml << "cellSize" << cellSize;
-        yml << "center" << center;
-        yml << "corners" << "[";
-        for(auto c : corners){
-            c.toYml(yml);
+        yml << "surfaces" << "[";
+        for(auto s : surfaces){
+            s.toYml(yml);
         }
         yml << "]";
     }
 
-    static CalibShot fromYml(string & name){
-    	CalibShot cs;
-
-    	FileStorage yml(name, FileStorage::WRITE);
+    static CalibData fromYml(const string & name){
+        FileStorage yml(name, FileStorage::WRITE);
     	if(!yml.isOpened()){
     		throw runtime_error("не могу загрузить калибровочные данные. Файл не открыт");
     	}
 
-    	yml["h"] >> h;
+        float h;
+        int cellSize;
+        Point2i center;
     	yml["cellSize"] >> cellSize;
     	yml["center"] >> center;
 
+        CalibData cs(cellSize);
+
     	FileNode fnCorners = yml["corners"];
     	for(FileNodeIterator it = fnCorners.begin() ; it != fnCorners.end(); ++it){
-    		cs.push_back(CalibCorner::fromYml(*it));
+                cs.surfaces.push_back(Surface::fromYml(it));
     	}
     }
 };

@@ -43,7 +43,8 @@ SOURCES += \
     	src/widget/lib/imageviewer.cpp \
     	src/widget/shotswidget.cpp \
     	src/widget/shotwidget.cpp \
-    src/controller/cornerssorter.cpp
+    src/controller/cornerssorter.cpp \
+    src/model/calibshot.cpp
 
 HEADERS += \
         src/widget/mainwindow.h \
