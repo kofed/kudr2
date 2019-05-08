@@ -147,21 +147,23 @@ void CalibController::addCalibEntities(const int h, const int cellSize){
     Vector2Iterator itCornersL(corners[LEFT], sizes[LEFT]);
     Vector2Iterator itCornersR(corners[RIGHT], sizes[RIGHT]);
 
-    map<Point2f, Point2f> cornersMap;
+    vector<pair<Point2f, Point2f>> cornersMap;
     while(itCentersL.next() | itCentersR.next()){
-        cornersMap[itCornersL.get(itCentersL.getIX(),itCentersL.getIY())] =
-                itCornersR.get(itCentersR.getIX(),itCentersR.getIY());
+        cornersMap.push_back(make_pair(itCornersL.get(itCentersL.getIX(),itCentersL.getIY()),
+                itCornersR.get(itCentersR.getIX(),itCentersR.getIY())));
     }
     Surface surface(h, centers[LEFT], centers[RIGHT], cornersMap);
     corners.clear();
     cache.surfaces.push_back(surface);
 }
 
+Surface::Corner build(Point2f left, Point2f right, Point2i index){
+
+}
+
 void CalibController::saveYML(){
     FileStorage fs("/tmp/chessboard.yml", FileStorage::WRITE);
-    for(auto shot : cache ){
-            shot.toYml(fs);
-    }
+    cache.toYml(fs);
     fs.release();
 }
 

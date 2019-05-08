@@ -1,5 +1,5 @@
-#include <map>
 #include "opencv2/opencv.hpp"
+#include <utility>
 
 using namespace cv;
 using namespace std;
@@ -10,11 +10,24 @@ private:
     const int h;
     //координаты центра. Введены оператором
     const Point2f centerL, centerR;
-    //угол на левой/правой камере
-    map<Point2f, Point2f> corners;
-public:
-    Surface(const int & h, const Point2f & _centerL, const Point2f & _centerR, const map<Point2f, Point2f> corners);
 
+    //chess board with disparity
+    map<int, ChessBoard> height2cbPx;
+
+    map<int, ChessBoard> height2cbSm;
+
+
+
+
+
+
+    //угол на левой/правой камере
+    vector<Corner> corners;
+public:
+Surface::Surface(const int & _h, const Point2f & _centerL, const Point2f & _centerR, const vector<pair<Point2f, Point2f>> & _corners)
+    :centerL(_centerL), centerR(_centerR), corners(_corners), h(_h){
+
+}
     void toYml(FileStorage & yml) const {
     	yml << "h" << h;
     	yml << "corners" << "[";
@@ -33,13 +46,13 @@ public:
         (*fn)["centerL"] >> _centerL;
         (*fn)["centerR"] >> _centerR;
 
-        map<Point2f, Point2f> corners;
+        vector<pair<Point2f, Point2f>> corners;
         FileNode fnCorners = (*fn)["corners"];
     	for(FileNodeIterator it = fnCorners.begin() ; it != fnCorners.end(); ++it){
             Point2f left, right;
             (*it)["pointL"] >> left;
             (*it)["pointR"] >> right;
-            corners[left] = right;
+            corners.push_back(make_pair(left, right));
     	}
         return Surface(_h, _centerL, _centerR, corners);
     }
@@ -53,15 +66,6 @@ public:
     int cellSize;
     //высота между плоскостями к углам
     vector<Surface> surfaces;
-
-    Point3f getPointSm(const Point2f lPoint, const float disparity) const{
-    	// height(Point2f, disparity)
-    	//map[Point3, h]
-    	//find closest
-
-    	//calculate Point2f px to Point2f in sm
-    	//pointSm(Point px, disparity)
-    }
 
     CalibData(){
 
