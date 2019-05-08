@@ -12,14 +12,10 @@ private:
     const Point2f centerL, centerR;
 
     //chess board with disparity
-    map<int, ChessBoard> height2cbPx;
-
-    map<int, ChessBoard> height2cbSm;
-
-
-
-
-
+    ChessBoard leftPx;
+    ChessBoard rightPx;
+    ChessBoard leftSm;
+    ChessBoard rightSm;
 
     //угол на левой/правой камере
     vector<Corner> corners;
