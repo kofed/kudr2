@@ -1,5 +1,10 @@
+#ifndef CALIB_DATA_H
+#define CALIB_DATA_H
+
 #include "opencv2/opencv.hpp"
 #include <utility>
+#include <vector>
+#include "chessBoard.h"
 
 using namespace cv;
 using namespace std;
@@ -7,9 +12,9 @@ using namespace std;
 class Surface{
 private:
     //расстояние между плоскостями введенное оператором
-    const int h;
+    int h;
     //координаты центра. Введены оператором
-    const Point2f centerL, centerR;
+    Point2f centerL, centerR;
 
     //chess board with disparity
     ChessBoard leftPx;
@@ -17,40 +22,55 @@ private:
     ChessBoard leftSm;
     ChessBoard rightSm;
 
-    //угол на левой/правой камере
-    vector<Corner> corners;
+    //размер клетки шахматной доски мм
+        int cellSize;
+    Surface(){};
+
 public:
-Surface::Surface(const int & _h, const Point2f & _centerL, const Point2f & _centerR, const vector<pair<Point2f, Point2f>> & _corners)
-    :centerL(_centerL), centerR(_centerR), corners(_corners), h(_h){
+    Surface(const int & _h,
+		const Point2f & _centerL,
+		const Point2f & _centerR,
+		const ChessBoard & _leftPx,
+		const ChessBoard & _rightPx,
+		const ChessBoard & _leftSm,
+		const ChessBoard & _rightSm)
+    :h(_h),
+     centerL(_centerL),
+	 centerR(_centerR),
+	 leftPx(_leftPx),
+	 rightPx(_rightPx),
+	 leftSm(_leftSm),
+	 rightSm(_rightSm){
 
 }
+	ChessBoard * getLeftPx(){return &leftPx;}
+	ChessBoard * getRightPx(){return &rightPx;}
+	ChessBoard * getLeftSm(){return &leftSm;}
+	ChessBoard * getRightSm(){return &rightSm;}
+	const int getHeight(){return h;}
+
     void toYml(FileStorage & yml) const {
     	yml << "h" << h;
-    	yml << "corners" << "[";
-
-    	for(auto c : corners){
-                yml << "{:" << "pointL" << c.first << "pointR" << c.second;
-    	}
-
-		yml << "]";
+    	yml << "centerL" << centerL;
+    	yml << "centerR" << centerR;
+    	leftPx.toYml(yml);
+    	rightPx.toYml(yml);
+    	leftSm.toYml(yml);
+    	rightSm.toYml(yml);
     }
 
-    static Surface fromYml(FileNodeIterator & fn){
-        float _h;
-        (*fn)["h"] >> _h;
-        Point2f _centerL, _centerR;
-        (*fn)["centerL"] >> _centerL;
-        (*fn)["centerR"] >> _centerR;
+    static Surface fromYml(FileNode & fn){
+        Surface surface;
+    	fn["h"] >> surface.h;
+    	fn["cellSize"] >> surface.cellSize;
+        fn["centerL"] >> surface.centerL;
+        fn["centerR"] >> surface.centerR;
+        fn["leftPx"] >> surface.leftPx;
+        fn["rightPx"] >> surface.rightPx;
+        fn["leftSm"] >> surface.leftSm;
+        fn["rightSm"] >> surface.rightSm;
 
-        vector<pair<Point2f, Point2f>> corners;
-        FileNode fnCorners = (*fn)["corners"];
-    	for(FileNodeIterator it = fnCorners.begin() ; it != fnCorners.end(); ++it){
-            Point2f left, right;
-            (*it)["pointL"] >> left;
-            (*it)["pointR"] >> right;
-            corners.push_back(make_pair(left, right));
-    	}
-        return Surface(_h, _centerL, _centerR, corners);
+        return surface;
     }
 };
 
@@ -58,8 +78,6 @@ Surface::Surface(const int & _h, const Point2f & _centerL, const Point2f & _cent
 class CalibData{
 public:
 
-    //размер клетки шахматной доски мм
-    int cellSize;
     //высота между плоскостями к углам
     vector<Surface> surfaces;
 
@@ -67,13 +85,7 @@ public:
 
     }
 
-    CalibData(const int _cellSize):
-                cellSize(_cellSize){
-
-    }
-
     void toYml(FileStorage & yml) const{
-        yml << "cellSize" << cellSize;
         yml << "surfaces" << "[";
         for(auto s : surfaces){
             s.toYml(yml);
@@ -82,23 +94,19 @@ public:
     }
 
     static CalibData fromYml(const string & name){
-        FileStorage yml(name, FileStorage::WRITE);
+        FileStorage yml(name, FileStorage::READ);
     	if(!yml.isOpened()){
     		throw runtime_error("не могу загрузить калибровочные данные. Файл не открыт");
     	}
+        CalibData cs;
 
-        float h;
-        int cellSize;
-        Point2i center;
-    	yml["cellSize"] >> cellSize;
-    	yml["center"] >> center;
-
-        CalibData cs(cellSize);
-
-    	FileNode fnCorners = yml["corners"];
+    	FileNode fnCorners = yml["surfaces"];
     	for(FileNodeIterator it = fnCorners.begin() ; it != fnCorners.end(); ++it){
-                cs.surfaces.push_back(Surface::fromYml(it));
+            FileNode fn = *it;
+    		cs.surfaces.push_back(Surface::fromYml(fn));
     	}
+    	return cs;
     }
 };
 
+#endif

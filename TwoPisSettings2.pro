@@ -30,7 +30,8 @@ SOURCES += \
     	src/controller/sshcontroller.cpp \
     	src/controller/pingcontroller.cpp \
     	src/model/cameraip.cpp \
-        src/model/chessboard.cpp \
+        src/model/chessBoard.cpp \
+        src/model/constants.cpp \
         src/widget/lib/selectiveImageLabel.cpp \
     	src/logger.cpp \
     	src/widget/calibwidget.cpp \
@@ -43,8 +44,7 @@ SOURCES += \
     	src/widget/lib/imageviewer.cpp \
     	src/widget/shotswidget.cpp \
     	src/widget/shotwidget.cpp \
-    src/controller/cornerssorter.cpp \
-    src/model/calibshot.cpp
+    src/controller/cornerssorter.cpp
 
 HEADERS += \
         src/widget/mainwindow.h \
@@ -52,10 +52,11 @@ HEADERS += \
     	src/controller/sshcontroller.h \
     	src/controller/pingcontroller.h \
     	src/model/cameraip.h \
-        src/model/chessboard.hpp \
-        src/model/precomp.hpp \
-    	src/widget/lib/selectiveImageLabel.h \
-    	src/model/position.h \
+        src/model/calibData.h \
+        src/model/cameraip.h \
+        src/model/chessBoard.h \
+        src/model/position.h \
+        src/widget/lib/selectiveImageLabel.h \
     	src/logger.h \
     	src/widget/calibwidget.h \
     	src/controller/calibcontroller.h \

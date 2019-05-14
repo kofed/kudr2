@@ -6,7 +6,6 @@
 #include <map>
 #include "position.h"
 #include "controller.h"
-#include "calibshot.h"
 
 using namespace cv;
 using namespace std;
