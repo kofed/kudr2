@@ -47,7 +47,7 @@ public:
 	ChessBoard * getRightPx(){return &rightPx;}
 	ChessBoard * getLeftSm(){return &leftSm;}
 	ChessBoard * getRightSm(){return &rightSm;}
-	const int getHeight(){return h;}
+    int getHeight(){return h;}
 
     void toYml(FileStorage & yml) const {
     	yml << "h" << h;

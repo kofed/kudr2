@@ -6,6 +6,7 @@
 #include <map>
 #include "position.h"
 #include "controller.h"
+#include "calibData.h"
 
 using namespace cv;
 using namespace std;
@@ -14,7 +15,7 @@ class SpiralIterator{
 
 public:
     SpiralIterator(Point2i _centerIndex, const Size _size)
-        :step(1),  phi(0), size(_size), centerIndex(_centerIndex), iX(0), iY(0){
+        :centerIndex(_centerIndex), step(1), phi(0),  iX(0), iY(0), size(_size){
 
     }
 

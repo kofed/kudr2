@@ -7,7 +7,7 @@
 using namespace std;
 using namespace cv;
 
-class ChessBoard{
+class ChessBoardCornerSorter{
 private:
     const Size size;
     class Corner{
@@ -53,7 +53,7 @@ private:
 
 
 public:
-    ChessBoard(const Size & size, const vector<Point2f> & corners);
+    ChessBoardCornerSorter(const Size & size, const vector<Point2f> & corners);
 
     vector<vector<Point2f>> getSortedCornerPoints();
     vector<vector<Corner*>> getSortedCorners();

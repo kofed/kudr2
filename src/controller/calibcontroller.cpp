@@ -89,8 +89,7 @@ vector<vector<Point2f>> CalibController::findChessboardCorners(Mat & image, cons
         throw runtime_error("изображение отсутствует.");
     }
     vector<vector<cv::Point2f>> corners(1);
-    bool patternWasFound =
-            cv::findChessboardCorners( image, size, corners[0], CV_CALIB_CB_ADAPTIVE_THRESH );
+    cv::findChessboardCorners( image, size, corners[0], CV_CALIB_CB_ADAPTIVE_THRESH );
 
         return corners;
 }
