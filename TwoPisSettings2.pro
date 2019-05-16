@@ -36,7 +36,6 @@ SOURCES += \
     	src/logger.cpp \
     	src/widget/calibwidget.cpp \
     	src/controller/calibcontroller.cpp \
-    	src/model/constants.cpp \
     	src/widget/settingswidget.cpp \
     	src/widget/camerasearchwidget.cpp \
     	src/widget/ipwidget.cpp \

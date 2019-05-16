@@ -13,36 +13,41 @@ class Surface{
 private:
     //расстояние между плоскостями введенное оператором
     int h;
-    //координаты центра. Введены оператором
-    Point2f centerL, centerR;
 
+    //размер клетки шахматной доски мм
+        int cellSize;
     //chess board with disparity
     ChessBoard leftPx;
     ChessBoard rightPx;
     ChessBoard leftSm;
     ChessBoard rightSm;
 
-    //размер клетки шахматной доски мм
-        int cellSize;
     Surface(){};
 
 public:
     Surface(const int & _h,
-		const Point2f & _centerL,
-		const Point2f & _centerR,
 		const ChessBoard & _leftPx,
 		const ChessBoard & _rightPx,
 		const ChessBoard & _leftSm,
 		const ChessBoard & _rightSm)
     :h(_h),
-     centerL(_centerL),
-	 centerR(_centerR),
 	 leftPx(_leftPx),
 	 rightPx(_rightPx),
 	 leftSm(_leftSm),
-	 rightSm(_rightSm){
+	 rightSm(_rightSm){}
 
-}
+    Surface(const int _h,
+            const int _cellSize,
+            const ChessBoard & _leftPx,
+            const ChessBoard & _rightPx)
+        :h(_h),
+          cellSize(_cellSize),
+        leftPx(_leftPx),
+        rightPx(_rightPx),
+        leftSm(_leftPx.toSm()),
+        rightSm(_rightPx.toSm()){
+    }
+
 	ChessBoard * getLeftPx(){return &leftPx;}
 	ChessBoard * getRightPx(){return &rightPx;}
 	ChessBoard * getLeftSm(){return &leftSm;}
@@ -50,21 +55,24 @@ public:
     int getHeight(){return h;}
 
     void toYml(FileStorage & yml) const {
-    	yml << "h" << h;
-    	yml << "centerL" << centerL;
-    	yml << "centerR" << centerR;
-    	leftPx.toYml(yml);
-    	rightPx.toYml(yml);
-    	leftSm.toYml(yml);
-    	rightSm.toYml(yml);
+        //yml << "surface {:";
+        yml << "h" << h;
+        yml << "cellSize" << cellSize;
+        yml << "leftPx";
+        leftPx.toYml(yml);
+        yml << "rightPx";
+        rightPx.toYml(yml);
+        yml << "leftSm";
+        leftSm.toYml(yml);
+        yml << "rightSm";
+        rightSm.toYml(yml);
+        //yml << "}";
     }
 
     static Surface fromYml(FileNode & fn){
         Surface surface;
     	fn["h"] >> surface.h;
-    	fn["cellSize"] >> surface.cellSize;
-        fn["centerL"] >> surface.centerL;
-        fn["centerR"] >> surface.centerR;
+        fn["cellSize"] >> surface.cellSize;
         fn["leftPx"] >> surface.leftPx;
         fn["rightPx"] >> surface.rightPx;
         fn["leftSm"] >> surface.leftSm;
@@ -88,7 +96,9 @@ public:
     void toYml(FileStorage & yml) const{
         yml << "surfaces" << "[";
         for(auto s : surfaces){
+            yml << "{:";
             s.toYml(yml);
+            yml << "}";
         }
         yml << "]";
     }

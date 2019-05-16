@@ -37,6 +37,7 @@ int SpiralIterator::getIY(){
 
 /**
  * Class to iterate over CHess Board Find Corners result. Because there is a bug in findChessBoardResult
+ * Резльтаты поиска углов cv возвращает как двумерный вектор v[i][j], причем все углы находятся в v[0]
  */
 class Vector2Iterator
 {
@@ -138,7 +139,15 @@ void CalibController::addCalibEntities(const int h, const int cellSize){
         }
     }
 
+    ChessBoard cbL(corners[LEFT][0], sizes[LEFT]);
+    Point2i centerL = findClosestCornerIndexSorted(centers[LEFT], LEFT);
+    ChessBoard cbR(corners[RIGHT][0], sizes[RIGHT]);
+    Point2i centerR = findClosestCornerIndexSorted(centers[RIGHT], RIGHT);
 
+    cbL = cbL.trim(centerL - centerR);
+    cbR = cbR.trim(centerR - centerL);
+
+  /*  Point2i center = findClosestCornerIndexSorted(centers[LEFT], LEFT);
 
     SpiralIterator itCentersL(findClosestCornerIndexSorted(centers[LEFT], LEFT), sizes[LEFT]);
     SpiralIterator itCentersR(findClosestCornerIndexSorted(centers[RIGHT], RIGHT), sizes[RIGHT]);
@@ -150,15 +159,12 @@ void CalibController::addCalibEntities(const int h, const int cellSize){
     while(itCentersL.next() | itCentersR.next()){
         cornersMap.push_back(make_pair(itCornersL.get(itCentersL.getIX(),itCentersL.getIY()),
                 itCornersR.get(itCentersR.getIX(),itCentersR.getIY())));
-    }
-    Surface surface(h, centers[LEFT], centers[RIGHT], cornersMap);
+    }*/
+    Surface surface(h, cellSize, cbL, cbR);
     corners.clear();
     cache.surfaces.push_back(surface);
 }
 
-Surface::Corner build(Point2f left, Point2f right, Point2i index){
-
-}
 
 void CalibController::saveYML(){
     FileStorage fs("/tmp/chessboard.yml", FileStorage::WRITE);
@@ -168,7 +174,7 @@ void CalibController::saveYML(){
 
 void CalibController::sendYML(){
     for(auto camera : controller.cameras){
-        if(camera == NULL){
+        if(camera == nullptr){
             continue;
         }
         SShController sshController;
@@ -263,7 +269,7 @@ void CalibController::sortCorners(const Position pos){
         return;
     }
 
-    ChessBoard board(sizes[pos], _corners);
+    ChessBoardCornerSorter board(sizes[pos], _corners);
    // board.init(_corners);
     corners[pos][0] = board.getSortedCornerPoints1D();
     /*sort(_corners.begin(), _corners.end(),

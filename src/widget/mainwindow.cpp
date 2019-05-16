@@ -47,8 +47,8 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 void MainWindow::update(){
-    bool isLNull = controller.cameras[LEFT] == NULL;
-    bool isRNull = controller.cameras[RIGHT] == NULL;
+    bool isLNull = controller.cameras[LEFT] == nullptr;
+    bool isRNull = controller.cameras[RIGHT] == nullptr;
     bool isNull = isLNull || isRNull;
 
     /*settingsWidget->setEnabled(!isNull);
