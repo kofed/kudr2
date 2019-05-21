@@ -54,19 +54,15 @@ public:
 	ChessBoard * getRightSm(){return &rightSm;}
     int getHeight(){return h;}
 
-    void toYml(FileStorage & yml) const {
+    void toYml(FileStorage & fs) const {
         //yml << "surface {:";
-        yml << "h" << h;
-        yml << "cellSize" << cellSize;
-        yml << "leftPx";
-        leftPx.toYml(yml);
-        yml << "rightPx";
-        rightPx.toYml(yml);
-        yml << "leftSm";
-        leftSm.toYml(yml);
-        yml << "rightSm";
-        rightSm.toYml(yml);
-        //yml << "}";
+        Size sizeT(12, 12);
+        fs << "h" << h;
+        fs << "cellSize" << cellSize;
+        fs << "leftPx" << leftPx;
+        fs << "rightPx" << rightPx;
+        fs << "leftSm" << leftSm;
+        fs << "rightSm" << rightSm;
     }
 
     static Surface fromYml(FileNode & fn){

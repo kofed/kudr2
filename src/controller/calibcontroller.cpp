@@ -134,15 +134,16 @@ void CalibController::addCalibEntities(const int h, const int cellSize){
     }
 
     for(auto p : positions){
-        if(centers[p].x == 0 || centers[p].y == 0){
+        if(centers[p].x < 10.0f || centers[p].y < 10.0f){
             throw runtime_error("Выделите центр на шахматной доске");
         }
     }
 
-    ChessBoard cbL(corners[LEFT][0], sizes[LEFT]);
     Point2i centerL = findClosestCornerIndexSorted(centers[LEFT], LEFT);
-    ChessBoard cbR(corners[RIGHT][0], sizes[RIGHT]);
+    ChessBoard cbL(corners[LEFT][0], sizes[LEFT], centers[LEFT], centerL, cellSize, images[LEFT].size());
+
     Point2i centerR = findClosestCornerIndexSorted(centers[RIGHT], RIGHT);
+    ChessBoard cbR(corners[RIGHT][0], sizes[RIGHT], centers[RIGHT], centerR, cellSize, images[RIGHT].size());
 
     cbL = cbL.trim(centerL - centerR);
     cbR = cbR.trim(centerR - centerL);
@@ -167,7 +168,7 @@ void CalibController::addCalibEntities(const int h, const int cellSize){
 
 
 void CalibController::saveYML(){
-    FileStorage fs("/tmp/chessboard.yml", FileStorage::WRITE);
+    FileStorage fs("/tmp/chessboard.json", FileStorage::WRITE);
     cache.toYml(fs);
     fs.release();
 }
@@ -189,8 +190,8 @@ void CalibController::sendYML(){
 }
 
 vector<Point2f>::iterator CalibController::findClosestCorner(const Point2f & point, const Position & pos){
-    float d = 100000.0f;
-    vector<Point2f>::iterator closest = corners[pos][0].begin();
+    float d = MAXFLOAT;
+    vector<Point2f>::iterator closest = corners[pos][0].end();
     for(vector<Point2f>::iterator it = corners[pos][0].begin(); it != corners[pos][0].end(); ++it){
         float _d = (point.x - it->x)*(point.x - it->x) + (point.y - it->y)*(point.y - it->y);
         if(_d < d){
@@ -287,6 +288,9 @@ void CalibController::sortCorners(const Position pos){
 
 void CalibController::deleteCorner(const Position pos, const Point2f click){
     auto it = findClosestCorner(click, pos);
+    if(it == corners[pos][0].end()){
+        throw runtime_error("Нет угла для удаления");
+    }
     corners[pos][0].erase(it);
     sortCorners(pos);
 }

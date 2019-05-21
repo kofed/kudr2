@@ -50,7 +50,7 @@ class CalibController
     const Controller & controller;
 
 public:
-    map<Position, Point2i> centers;
+    map<Position, Point2f> centers;
     map<Position, Rect> & rois;
     map<Position, Mat> images;
 

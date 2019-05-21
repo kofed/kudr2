@@ -16,21 +16,22 @@ protected:
 	vector<vector<Point2f>> corners;
 
 	Size resolution;
-
-    //sm
-	float cellSize;
-
     Point2f center;
     Point2i centerIndex;
 
     Size size;
+    //sm
+    float cellSize;
+
+
 public:
-    ChessBoard(const vector<vector<Point2f>> & _corners,
-               const Point2f _center, const Point2i _centerIndex);
+    ChessBoard(const vector<vector<Point2f>> & _corners,  const Size _size,
+               const Point2f _center, const Point2i _centerIndex, const float _cellSize, const Size _resolution);
 
-    ChessBoard(const vector<Point2f> & corners, const Size _size, const Point2f _center, const Point2i _centerIndex);
+    ChessBoard(const vector<Point2f> & corners, const Size _size,
+               const Point2f _center, const Point2i _centerIndex, const float _cellSize, const Size _resolution);
 
-	ChessBoard(){};
+    ChessBoard(){}
 
 	const Point2f get(Point2i index) const;
 
@@ -51,9 +52,14 @@ public:
 
 	static ChessBoard fromYml(cv::FileNode & fn);
 
-    inline float getCellSize(){return cellSize;}
+    inline float getCellSize() const{return cellSize;}
+    inline Size getSize() const{return size;}
+    inline Point2f getCenter() const{return center;}
+    inline Point2i getCenterIndex() const{return centerIndex;}
+    inline Size getResolution() const {return resolution;}
 
     friend void operator>>(const FileNode & fn, ChessBoard & cb);
+    friend FileStorage & operator<<(FileStorage & fn, const ChessBoard & cb);
 };
 
 //namespace cv{

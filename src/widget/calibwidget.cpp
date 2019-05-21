@@ -31,7 +31,7 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     buttonsLayout->addWidget(writeButton);
     buttonsLayout->addWidget(sizeLabel);
     for(auto p : positions){
-        sizeEdits[p] = new SizeEditWidget();
+        sizeEdits[p] = new SizeEditWidget("ш/в");
         buttonsLayout->addWidget(sizeEdits[p]);
     }
     buttonsLayout->addWidget(hLabel);

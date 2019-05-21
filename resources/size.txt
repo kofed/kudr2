@@ -1,12 +1,14 @@
-1calph003_800x600.png 11:7
+﻿1calph002_800x600.png 7:4
+1calph003_800x600.png 10:6
 1calph004_800x600.png 13;9 
 1calph005_800x600.png 14:11
 1calph007_800x600.png
 1calph009_800x600.png
 1calph011_800x600.png
+2calph002_800x600.png 6:4
 2calph003_800x600.png 10:6
-2calph004_800x600.png 14:8
-2calph005_800x600.png 14:11
+2calph004_800x600.png 13:8
+2calph005_800x600.png 14:10
 2calph007_800x600.png
 2calph009_800x600.png
 2calph011_800x600.png

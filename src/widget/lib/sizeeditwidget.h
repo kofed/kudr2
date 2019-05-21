@@ -6,15 +6,22 @@
 
 using namespace cv;
 
-class SizeEditWidget : public QLineEdit
+class SizeEditWidget : public QWidget
 {
     Q_OBJECT
+
+private:
+    QLineEdit * edit;
 public:
     SizeEditWidget();
 
     SizeEditWidget(QString label);
 
     Size getSize();
+
+    QString text();
+
+    void clear();
 };
 
 #endif // SIZEEDITWIDGET_H
