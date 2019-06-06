@@ -77,8 +77,8 @@ ChessBoard ChessBoard::trim(Point2i index) const{
 ChessBoard ChessBoard::toSm() const{
     vector<vector<Point2f>> _corners;
     _corners.resize(corners.size());
-    for(int i = 0; i < corners.size(); ++i){
-        for(int j = 0; j < corners[i].size(); ++j ){
+    for(unsigned i = 0; i < corners.size(); ++i){
+        for(unsigned j = 0; j < corners[i].size(); ++j ){
             Point2f p(center.x + (j - centerIndex.x) * cellSize,
                                     center.y + (i - centerIndex.y) * cellSize);
             _corners[i].push_back( p );
