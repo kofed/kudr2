@@ -50,7 +50,15 @@ void SelectiveImageLabel::mouseReleaseEvent(QMouseEvent *e)
 {
     selectionStarted=false;
     if(e->button()==Qt::LeftButton){
-        emit rectSelected(getSelectionRect());
+        if(selectionRect.width() <= 0 || selectionRect.height() <= 0){
+            //throw runtime_error("Выделите прямоугольник на рисунке");
+            return;
+        }
+
+        scaleRect(1/scaleFactor);
+
+
+        emit rectSelected(selectionRect);
     }
 }
 
@@ -60,14 +68,6 @@ void SelectiveImageLabel::drawCircle(){
     painter.setPen(QPen(QBrush(QColor(255,0,0,180)),1,Qt::DashLine));
     painter.setBrush(QBrush(QColor(255,0,255,120)));
     painter.drawEllipse(QRect(point.x() - diameter/2, point.y() -diameter / 2, diameter, diameter));
-}
-
-QRect SelectiveImageLabel::getSelectionRect(){
-    if(selectionRect.width() <= 0 || selectionRect.height() <= 0){
-        throw runtime_error("Выделите прямоугольник на рисунке");
-    }
-
-    return scaleRect(1/scaleFactor);
 }
 
 QPoint SelectiveImageLabel::getPoint(){

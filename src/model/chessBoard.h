@@ -8,7 +8,9 @@ using namespace cv;
 using namespace std;
 
 
-
+/**
+ * Шахматная доска для сохранения в тексте
+ */
 class ChessBoard{
 
 protected:
@@ -45,6 +47,7 @@ public:
     * должно быть refIndex < index ибо не будем создавать пустые строки или столбцы
     */
     ChessBoard trim(Point2i index) const;
+    ChessBoard trim(const Point2i _centerIndex, const Size _size) const;
 
     ChessBoard toSm() const;
 
@@ -62,8 +65,5 @@ public:
     friend FileStorage & operator<<(FileStorage & fn, const ChessBoard & cb);
 };
 
-//namespace cv{
-//void operator>>(const FileNode & fn, ChessBoard & cb);
-//}
 
 #endif

@@ -1,0 +1,6 @@
+left-100.png 14 8
+right-100.png 14 8
+left-200.png 22 15
+right-200.png 22 15
+left-300.png 28 22
+right-300.png 27 21

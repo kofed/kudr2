@@ -64,7 +64,7 @@ void ShotWidget::onPointSelected(const QPoint & point){
         if(selectCenterRadioButton->isChecked()){
             calibController.centers[position] = point;
         }
-        addRadioButton->setEnabled(calibController.patternWasFound(position) < 0);
+        //addRadioButton->setEnabled(calibController.patternWasFound(position) < 0);
         update();
     } catch (exception & e) {
         QMessageBox::warning(this, e.what(), e.what());

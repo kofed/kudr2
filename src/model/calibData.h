@@ -8,7 +8,9 @@
 
 using namespace cv;
 using namespace std;
-
+/**
+ * Набор калибровачных данных для одной высоты
+ */
 class Surface{
 private:
     //расстояние между плоскостями введенное оператором
@@ -34,7 +36,11 @@ public:
 	 leftPx(_leftPx),
 	 rightPx(_rightPx),
 	 leftSm(_leftSm),
-	 rightSm(_rightSm){}
+     rightSm(_rightSm){
+        assert(leftPx.getSize() == rightPx.getSize() );
+        assert(rightPx.getSize() == rightSm.getSize());
+        assert(leftSm.getSize() == rightSm.getSize());
+    }
 
     Surface(const int _h,
             const int _cellSize,
@@ -46,6 +52,9 @@ public:
         rightPx(_rightPx),
         leftSm(_leftPx.toSm()),
         rightSm(_rightPx.toSm()){
+        assert(leftPx.getSize() == rightPx.getSize() );
+        assert(rightPx.getSize() == rightSm.getSize());
+        assert(leftSm.getSize() == rightSm.getSize());
     }
 
 	ChessBoard * getLeftPx(){return &leftPx;}
@@ -56,7 +65,7 @@ public:
 
     void toYml(FileStorage & fs) const {
         //yml << "surface {:";
-        Size sizeT(12, 12);
+
         fs << "h" << h;
         fs << "cellSize" << cellSize;
         fs << "leftPx" << leftPx;
@@ -85,11 +94,14 @@ public:
     //высота между плоскостями к углам
     vector<Surface> surfaces;
 
+    Point2i resolution;
+
     CalibData(){
 
     }
 
     void toYml(FileStorage & yml) const{
+        yml << "resolution" << resolution;
         yml << "surfaces" << "[";
         for(auto s : surfaces){
             yml << "{:";
@@ -106,6 +118,7 @@ public:
     	}
         CalibData cs;
 
+        yml["resolution"] >> cs.resolution;
     	FileNode fnCorners = yml["surfaces"];
     	for(FileNodeIterator it = fnCorners.begin() ; it != fnCorners.end(); ++it){
             FileNode fn = *it;

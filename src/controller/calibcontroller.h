@@ -10,7 +10,9 @@
 
 using namespace cv;
 using namespace std;
-
+/**
+ * спиральный итератор по шахматной доске. Не используется
+ */
 class SpiralIterator{
 
 public:
@@ -39,7 +41,9 @@ private:
     const Size size;
 
 };
-
+/**
+ * контроллер калибровки
+ */
 class CalibController
 {
     // кеш калибровачный данных
@@ -60,8 +64,6 @@ public:
 
     void findChessboardCorners();
 
-    void deleteCorners();
-
     void addCalibEntities(const int h, const int cellSize);
 
     void saveYML();
@@ -76,7 +78,10 @@ public:
 
     void deleteCorner(const Position pos, const Point2f corner);
 
-    int patternWasFound(Position pos);    
+    int patternWasFound(Position pos);
+
+    void clear();
+
 
 private:
     vector<vector<Point2f>> findChessboardCorners(Mat & image,const Size & size);

@@ -43,11 +43,11 @@ const Point2f ChessBoard::get(const int x, const int y) const{
 
 ChessBoard ChessBoard::trim(Point2i index) const{
     vector<vector<Point2f>> _corners;
-    unsigned _sizeY = corners.size() - abs(index.y);
 
     unsigned dXBegin = 0;
     unsigned dXEnd = 0;
-    unsigned dY = 0;
+    unsigned dYBegin = 0;
+    unsigned dYEnd = 0;
 
 
     if(index.x > 0){
@@ -56,31 +56,43 @@ ChessBoard ChessBoard::trim(Point2i index) const{
         dXEnd = -index.x;
     }
 
-    if(index.y < 0){
-        dY = -index.y;
+    if(index.y > 0){
+        dYBegin = index.y;
+    }else{
+        dYEnd = -index.y;
     }
 
-    _corners.resize(_sizeY);
-    for(unsigned i = 0; i < _sizeY; ++i){
+    _corners.resize(corners.size() - abs(index.y));
+    for(unsigned i = 0; i < _corners.size(); ++i){
         _corners[i].insert(_corners[i].begin(),
-                corners[i + dY].begin() + dXBegin,
-                corners[i + dY].end() - dXEnd);
+                corners[i + dYBegin].begin() + dXBegin,
+                corners[i + dYBegin].end() - dXEnd);
     }
 
-    Point2i _centerIndex(centerIndex.x - dXBegin,
-                         index.y > 0 ? centerIndex.y - index.y: centerIndex.y );
+    Point2i _centerIndex(centerIndex.x - dXBegin, centerIndex.y - dYBegin);
 
 
     return ChessBoard(_corners, size,  center,  _centerIndex, cellSize, resolution);
 }
 
+ChessBoard ChessBoard::trim(const Point2i _centerIndex, const Size _size) const{
+    Point2i dCenter =  centerIndex - _centerIndex;
+    ChessBoard cb = trim(Point2i(dCenter.x > 0 ? dCenter.x: 0,
+         dCenter.y > 0 ? dCenter.y: 0));
+
+    Size dSize = size - _size;
+    cb = cb.trim(Point2i(dSize.width > 0? -dSize.width: 0, dSize.height > 0? -dSize.height: 0));
+    return cb;
+}
+
 ChessBoard ChessBoard::toSm() const{
     vector<vector<Point2f>> _corners;
     _corners.resize(corners.size());
-    for(unsigned i = 0; i < corners.size(); ++i){
-        for(unsigned j = 0; j < corners[i].size(); ++j ){
-            Point2f p(center.x + (j - centerIndex.x) * cellSize,
-                                    center.y + (i - centerIndex.y) * cellSize);
+    for(int i = 0; i < corners.size(); ++i){
+        for(int j = 0; j < corners[i].size(); ++j ){
+            float x = center.x + (j - centerIndex.x) * cellSize;
+            float y = center.y + (i - centerIndex.y) * cellSize;
+            Point2f p(x, y);
             _corners[i].push_back( p );
         }
 
@@ -93,17 +105,10 @@ void ChessBoard::toYml(FileStorage & yml) const{
 }
 
 
-//namespace cv{
 void operator>>(const FileNode & fn, ChessBoard & cb){
         vector<vector<Point2f>> corners;
         fn["corners"] >> corners;
-        //FileNode fnCorners = fn["corners"];
-        //for(FileNodeIterator it = fnCorners.begin() ; it != fnCorners.end(); ++it){
-        //    FileNode fn = *it;
-        //    Point2f p;
-        //    fn >> p;
-         //   corners.push_back(p);
-        //}
+
         Point2f center;
         Point2i centerIndex;
         Size size;
@@ -120,15 +125,7 @@ void operator>>(const FileNode & fn, ChessBoard & cb){
 
 FileStorage & operator<<( FileStorage & fs, const ChessBoard & cb){
    fs <<  "{";
-   /*fs << "corners" << "[:";
-    for(auto row : cb.corners){
-        for(auto c : row){
-          // yml << "{:";
-           fs << c;
-        //   yml << "}";
-        }
-     }
-    fs << "]";*/
+
     fs << "corners" << cb.corners;
     fs << "center" << cb.center;
     fs << "centerIndex" << cb.centerIndex;
@@ -138,5 +135,3 @@ FileStorage & operator<<( FileStorage & fs, const ChessBoard & cb){
     fs << "}";
     return fs;
 }
-
-//}

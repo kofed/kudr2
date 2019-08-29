@@ -51,6 +51,9 @@ private slots:
     void onAddButton();
     void onDeleteButton();
     void onWriteButton();
+
+    void onLeftSizeRedactionFinished();
+    void onRightSizeRedactionFinished();
 signals:
     void updateChessBoardImage();
 };

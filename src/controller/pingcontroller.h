@@ -5,7 +5,9 @@
 #include <QProcess>
 #include "logger.h"
 
-
+/**
+ * контроллер пинга камера
+ */
 class PingController
 {
     const int MAX_DOOR = 8;

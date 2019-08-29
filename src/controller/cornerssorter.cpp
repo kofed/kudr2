@@ -33,32 +33,36 @@ vector<vector<Point2f>> ChessBoardCornerSorter::getSortedCornerPoints(){
 
         points.push_back(row);
     }
-    vector<Point2f> unsorted;
-    for(auto itUnsorted = cornersSet.begin(); itUnsorted != cornersSet.end(); ++itUnsorted){
-        unsorted.push_back((*itUnsorted)->point);
-    }
+    //vector<Point2f> unsorted;
+    //for(auto itUnsorted = cornersSet.begin(); itUnsorted != cornersSet.end(); ++itUnsorted){
+    //    unsorted.push_back((*itUnsorted)->point);
+    //}
     
-    points.push_back(unsorted);
+    //points.push_back(unsorted);
     return points;
 }
 
 vector<vector<ChessBoardCornerSorter::Corner*>> ChessBoardCornerSorter::getSortedCorners(){
     vector<vector<Corner*>> sortedCorners;
-    Corner * botRight = findTopLeft();
-    Corner * rowStart = botRight;
-    
-    for(int i = 0; i < size.height; ++i){
-        vector<Corner*> row = getRow(rowStart);
-        sortedCorners.push_back(row);
-        rowStart = rowStart->getNeighbor(Corner::UP);
-        if(rowStart == nullptr && i != size.height - 1){
-            Logger::log("Отсутствует угол снизу. Скорректируйте положение углов");
-            break;
+
+    vector<Corner*> botRights = findBotRights();
+
+    int i = 0;
+    for(Corner* rowStart : botRights){
+        for(; i < size.height; ++i){
+            vector<Corner*> row = getRow(rowStart);
+            sortedCorners.push_back(row);
+            rowStart = const_cast<Corner*>(rowStart->getNeighbor(Corner::UP));
+            if(rowStart == nullptr && i != size.height - 1){
+                Logger::log("Отсутствует угол сверху. Скорректируйте положение углов");
+                break;
+            }
         }
+        if(rowStart != nullptr){
+            Logger::log("Столбец содержит больше строк чем ожидается. Скорректируйте положение углов");
+        }
+
     }
-    if(rowStart != nullptr){
-        Logger::log("Столбец содержит больше строк чем ожидается. Скорректируйте положение углов");
-    }       
 
     return sortedCorners;
 }
@@ -78,9 +82,9 @@ vector<ChessBoardCornerSorter::Corner*> ChessBoardCornerSorter::getRow(Corner * 
 
     for(int i = 0; i < size.width; ++i){
         row.push_back(corner);
-        corner = corner->getNeighbor(Corner::LEFT);
+        corner = const_cast<Corner*> (corner->getNeighbor(Corner::LEFT));
         if(corner == nullptr && i != size.width - 1){
-            Logger::log("Отсутствует угол справа. Скорректируйте положение углов");
+            Logger::log("Отсутствует угол слева. Скорректируйте положение углов");
             break;
 
         }
@@ -95,13 +99,20 @@ ChessBoardCornerSorter::Corner::Corner(const Point2f & _point):point(_point){
 
 }
 
-ChessBoardCornerSorter::Corner* ChessBoardCornerSorter::findTopLeft(){
-    return &*find_if(corners.begin(), corners.end(), [](Corner & c){
-        return c.getNeighbor(Corner::LEFT) != nullptr &&
-                c.getNeighbor(Corner::RIGHT) == nullptr &&
-                c.getNeighbor(Corner::BOT) == nullptr &&
-                c.getNeighbor(Corner::UP) != nullptr;
-    });
+vector<ChessBoardCornerSorter::Corner*> ChessBoardCornerSorter::findBotRights(){
+    vector<Corner*> botRights;
+
+    for(unsigned i = 0; i != corners.size(); ++i){
+        if( corners[i].getNeighbor(Corner::LEFT) != nullptr &&
+                corners[i].getNeighbor(Corner::RIGHT) == nullptr &&
+                corners[i].getNeighbor(Corner::BOT) == nullptr &&
+                corners[i].getNeighbor(Corner::UP) != nullptr){
+            botRights.push_back(&corners[0] + i);
+        }
+    }
+    sort(botRights.begin(), botRights.end(), ChessBoardCornerSorter::Corner::cmp);
+
+    return botRights;
 }
 
 float ChessBoardCornerSorter::Corner::dist(const Corner *c){
@@ -109,57 +120,103 @@ float ChessBoardCornerSorter::Corner::dist(const Corner *c){
                 + pow(c->point.y - point.y, 2.0f));
 }
 
-ChessBoardCornerSorter::Corner::Neighborhood ChessBoardCornerSorter::Corner::findNeighborhood(const Corner* c){
-    float dx = c->point.x - point.x;
+void ChessBoardCornerSorter::Corner::compareAndSet(Neighborhood n, const Corner* c){
+    float t = tang(c);
+
+    if(neighbors[n] == nullptr
+            || /*tgDelta(n, nbh2tg[n] , t)*/ hashDelta(n, neighbors[n], c) > 0){
+        nbh2tg[n] = t;
+        neighbors[n] = c;
+    };
+}
+
+float ChessBoardCornerSorter::Corner::hashDelta(Neighborhood n, const Corner * c,const Corner * c1){
+    return 2*(abs(deltaAngle(n, c)) - abs(deltaAngle(n, c1))) / PI + (1 - pow(dist(c1), 2.0f) / pow(dist(c), 2.0f));
+}
+
+float ChessBoardCornerSorter::Corner::tang(const Corner * c){
     float dy = c->point.y - point.y;
-    float tg = dy/dx;
+    float dx = c->point.x - point.x;
+    return dy / dx;
+}
+
+float ChessBoardCornerSorter::Corner::deltaAngle(Neighborhood n, const Corner * c){
+    switch (n) {
+        case LEFT:
+            return PI/2 - angle(c);
+        case RIGHT:
+            return 3*PI/2 - angle(c);
+        case UP:
+            return PI -angle(c);
+        case BOT:
+            return angle(c);
+    }
+}
+
+float ChessBoardCornerSorter::Corner::angle(const Corner * c){
+    float dy = c->point.y - point.y;
+    float dx = c->point.x - point.x;
+    float tg = dy / dx;
+    if(dx > 0){
+        return PI/2 + atan(tg);
+    }else{
+        return 3*PI/2 + atan(tg);
+    }
+}
+
+void ChessBoardCornerSorter::Corner::trySetNeighborhood(const Corner* c){
+
+    float dy = c->point.y - point.y;
+    float dx = c->point.x - point.x;
+    float tg = dy / dx;
 
     //DEBUG
     corner2tgs[const_cast<Corner*> (c)] = tg;
 
-    const float TG_45_MAX = 1.8f;
-    const float TG_45_MIN = 0.68f;
-    const float TG_90_MAX = 0.48f;
-    const float TG_0 = 3.0f;
+    const float TG_45_MAX = 2.2f;
+    const float TG_45_MIN = 0.65f;
+    const float TG_90_MAX = 1.0f;
+    const float TG_0 = 1.0f;
 
     if(dy >= 0){
-        if(tg < -TG_0 || tg > TG_0){
-            return UP;
-        }else if(tg > TG_45_MIN && tg < TG_45_MAX){
-            return UPRIGHT;
-        }else if(tg > -TG_45_MAX && tg < -TG_45_MIN){
-            return UPLEFT;
+        if((tg < -TG_0 || tg > TG_0)){
+            compareAndSet(UP, c);
         }else if(tg > -TG_90_MAX && tg < TG_90_MAX){
             if(dx > 0){
-                return LEFT;
+                compareAndSet(LEFT, c);
             }else{
-                return RIGHT;
+                compareAndSet(RIGHT, c);
             }
 
         }
     }else{
         if(tg < -TG_0 || tg > TG_0){
-            return BOT;
-        }else if(tg > TG_45_MIN && tg < TG_45_MAX){
-            return BOTLEFT;
-        }else if(tg > -TG_45_MAX && tg < -TG_45_MIN){
-            return BOTRIGHT;
+            return compareAndSet(BOT, c);
         }else if(tg > -TG_90_MAX && tg < TG_90_MAX){
             if(dx > 0){
-                return LEFT;
+                return compareAndSet(LEFT, c);
             }else{
-                return RIGHT;
+                return compareAndSet(RIGHT, c);
             }
         }
     }
-    return BOTRIGHT;
+}
+
+float ChessBoardCornerSorter::Corner::tgDelta(Neighborhood n, const Corner * c, const Corner * c1){
+    switch (n) {
+    case UP:
+    case BOT:
+        return abs(tang(c1)) - tang(c);
+    case LEFT:
+    case RIGHT:
+        return abs(tang(c)) - abs(tang(c1));
+    }
 }
 
 void ChessBoardCornerSorter::Corner::findAndSetNeighborhood(
         const vector<Corner>::iterator neibBegin,
         const vector<Corner>::iterator  neibEnd){
 
-    vector<float> distancis;
     map<float, Corner*> distToCorner;
     for(auto it = neibBegin; it != neibEnd; ++it){
         if(&*it == this){
@@ -167,36 +224,18 @@ void ChessBoardCornerSorter::Corner::findAndSetNeighborhood(
         }
         float d = dist(&*it);
         distToCorner[d] = &*it;
-        distancis.push_back(d);
     }
-    sort(distancis.begin(), distancis.end(),
-         [](const float & f1, const float & f2){
-        return f1 < f2;
-    });
-    if(distancis.size() < 3){
-        throw  runtime_error("Ошибка алгоритма. У угла соседей меньше трех");
-    }else  if(distancis.size() >8){
-            distancis.erase(distancis.begin() + 8, distancis.end());
+    map<float, Corner*> tg2corner;
+    auto it = distToCorner.begin();
+    for(int i = 0; i < 8; ++i, ++it){
+        trySetNeighborhood(it->second);
     }
-
-    float maxDist = distancis[0] * 2.5f;
-    for(auto i = 0; i < distancis.size(); ++i){
-        if(distancis[i] > maxDist){
-            if(i < 3){
-              //  throw runtime_error("Число соседей меньше трех. Остальные углы находятся далее чем d max");
-            }
-            break;
-        }
-
-        auto neib = distToCorner[distancis[i]];
-        Neighborhood n = findNeighborhood(neib);
-
-        setNeighbor(n, neib);
-
-    }
-
 }
+/*
+void ChessBoardCornerSorter::Corner::setNeighborhood(map<float, Corner*> & tg2corner){
 
+}*/
+/*
 bool ChessBoardCornerSorter::Corner::checkNeighborhood(const Neighborhood n, const Corner* corner){
     if(n == LEFT || n == RIGHT || n == BOT || n == UP){
         for(auto neibIt = neighbors.begin(); neibIt != neighbors.end(); ++neibIt){
@@ -233,7 +272,7 @@ bool ChessBoardCornerSorter::Corner::checkNeighborhood(const Neighborhood n, con
     }
     return true;
 }
-
+*//*
 void ChessBoardCornerSorter::Corner::setNeighbor(const Neighborhood n, Corner* corner){
     if(neighbors.find(n) != neighbors.end()){
         return;
@@ -245,8 +284,8 @@ void ChessBoardCornerSorter::Corner::setNeighbor(const Neighborhood n, Corner* c
 
     neighbors[n] = corner;
     distances[n] = dist(corner);
-}
+}*/
 
-ChessBoardCornerSorter::Corner* ChessBoardCornerSorter::Corner::getNeighbor(const Neighborhood n)  {
+const ChessBoardCornerSorter::Corner* ChessBoardCornerSorter::Corner::getNeighbor(const Neighborhood n)  {
     return neighbors[n];
 }

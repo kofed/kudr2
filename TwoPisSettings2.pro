@@ -43,7 +43,8 @@ SOURCES += \
     	src/widget/lib/imageviewer.cpp \
     	src/widget/shotswidget.cpp \
     	src/widget/shotwidget.cpp \
-    src/controller/cornerssorter.cpp
+    	src/controller/cornerssorter.cpp 
+
 
 HEADERS += \
         src/widget/mainwindow.h \
@@ -66,7 +67,8 @@ HEADERS += \
     	src/widget/lib/imageviewer.h \
         src/widget/shotswidget.h \
         src/widget/shotwidget.h \
-    src/controller/cornerssorter.h
+    	src/controller/cornerssorter.h \
+	src/algorithm/algorithm.h
 
 FORMS += \
         mainwindow.ui

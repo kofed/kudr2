@@ -12,11 +12,11 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     findCornersButton = new QPushButton("Найти углы", parent);
     findCornersButton->setEnabled(true);
     addButton = new QPushButton("Добавить", parent);
-    addButton->setEnabled(false);
+  //  addButton->setEnabled(false);
     deleteButton = new QPushButton("Удалить", parent);
-    deleteButton->setEnabled(false);
+  //  deleteButton->setEnabled(false);
     writeButton = new QPushButton("Записать", parent);
-    writeButton->setEnabled(false);
+ //   writeButton->setEnabled(false);
 
     QLabel* hLabel = new QLabel("Высота");
     hEdit->setValidator(new QIntValidator());
@@ -55,6 +55,9 @@ CalibWidget::CalibWidget(Controller & _controller, QWidget * parent)
     connect(addButton, SIGNAL (released()), this, SLOT (onAddButton()));
     connect(deleteButton, SIGNAL (released()), this, SLOT (onDeleteButton()));
     connect(writeButton, SIGNAL (released()), this, SLOT (onWriteButton()));
+    connect(sizeEdits[LEFT], SIGNAL(redactionFinished()), this, SLOT(onLeftSizeRedactionFinished()));
+    connect(sizeEdits[RIGHT], SIGNAL(redactionFinished()), this, SLOT(onRightSizeRedactionFinished()));
+
 
     QWidget::setEnabled(false);
     layout->addLayout(buttonsLayout);
@@ -89,7 +92,7 @@ void CalibWidget::onFindCornersButton(){
 
 
 void CalibWidget::onDeleteButton(){
-    calibController->deleteCorners();
+    calibController->clear();
     deleteButton->setEnabled(false);
     emit updateChessBoardImage();
 }
@@ -172,5 +175,12 @@ void CalibWidget::onAddButton(){
     Logger::me->log("Углы добавлены. Укажите расстояние между плоскостями");
 }
 
+void CalibWidget::onLeftSizeRedactionFinished(){
+    calibController->sizes[LEFT] = sizeEdits[LEFT]->getSize();
+}
 
+void CalibWidget::onRightSizeRedactionFinished(){
+    calibController->sizes[RIGHT] = sizeEdits[RIGHT]->getSize();
+
+}
 

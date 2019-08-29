@@ -89,10 +89,10 @@ vector<vector<Point2f>> CalibController::findChessboardCorners(Mat & image, cons
     if(image.cols < 1 || image.rows < 1){
         throw runtime_error("изображение отсутствует.");
     }
-    vector<vector<cv::Point2f>> corners(1);
-    cv::findChessboardCorners( image, size, corners[0], CV_CALIB_CB_ADAPTIVE_THRESH );
+    vector<vector<cv::Point2f>> _corners(1);
+    cv::findChessboardCorners( image, size, _corners[0], CV_CALIB_CB_ADAPTIVE_THRESH );
 
-        return corners;
+        return _corners;
 }
 
 void CalibController::findChessboardCorners(){
@@ -110,14 +110,11 @@ void CalibController::findChessboardCorners(){
 
         if(patternWasFound(p) != 0){
             Logger::log("Не удалось найти все углы. Пожалуйста, исправьте результат с помощью кнопок Добавить/Удалить");
+            continue;
         }
 
         sortCorners(p);
     }
-}
-
-void CalibController::deleteCorners(){
-    corners.clear();
 }
 
 void CalibController::addCalibEntities(const int h, const int cellSize){
@@ -145,24 +142,11 @@ void CalibController::addCalibEntities(const int h, const int cellSize){
     Point2i centerR = findClosestCornerIndexSorted(centers[RIGHT], RIGHT);
     ChessBoard cbR(corners[RIGHT][0], sizes[RIGHT], centers[RIGHT], centerR, cellSize, images[RIGHT].size());
 
-    cbL = cbL.trim(centerL - centerR);
-    cbR = cbR.trim(centerR - centerL);
+    cbR = cbR.trim(centerL, cbL.getSize() );
+    cbL = cbL.trim(centerR, cbR.getSize() );
 
-  /*  Point2i center = findClosestCornerIndexSorted(centers[LEFT], LEFT);
-
-    SpiralIterator itCentersL(findClosestCornerIndexSorted(centers[LEFT], LEFT), sizes[LEFT]);
-    SpiralIterator itCentersR(findClosestCornerIndexSorted(centers[RIGHT], RIGHT), sizes[RIGHT]);
-
-    Vector2Iterator itCornersL(corners[LEFT], sizes[LEFT]);
-    Vector2Iterator itCornersR(corners[RIGHT], sizes[RIGHT]);
-
-    vector<pair<Point2f, Point2f>> cornersMap;
-    while(itCentersL.next() | itCentersR.next()){
-        cornersMap.push_back(make_pair(itCornersL.get(itCentersL.getIX(),itCentersL.getIY()),
-                itCornersR.get(itCentersR.getIX(),itCentersR.getIY())));
-    }*/
     Surface surface(h, cellSize, cbL, cbR);
-    corners.clear();
+    clear();
     cache.surfaces.push_back(surface);
 }
 
@@ -171,6 +155,7 @@ void CalibController::saveYML(){
     FileStorage fs("/tmp/chessboard.json", FileStorage::WRITE);
     cache.toYml(fs);
     fs.release();
+    cache = CalibData();
 }
 
 void CalibController::sendYML(){
@@ -222,22 +207,36 @@ Point2i CalibController::findClosestCornerIndexSorted(const Point2f & point, con
 }
 
 void CalibController::openImage(const Position pos, const QString &path){
-    Mat image = imread(path.toStdString());
+    clear();
 
-    if(!image.data){
+    images[pos] = imread(path.toStdString());
+
+    if(!images[pos].data){
         throw runtime_error(QString("Не удалось открыть файл %1").arg(path).toStdString());
     }
 
-    images[pos] = image;
+}
+
+void CalibController::clear(){
+
+
+    corners[LEFT][0].clear();
+    corners[RIGHT][0].clear();
+
+
+    centers.clear();
+    rois.clear();
+
+    sizes.clear();
 }
 
 Mat CalibController::getImageWithCorners(const Position pos){
     if(corners[pos].size() != 0){
         Mat cornersImage;
         images[pos].copyTo(cornersImage);
-        vector<Point2f> _corners;
-        _corners.insert(_corners.begin(), corners[pos][0].begin(), corners[pos][0].end());
-        drawChessboardCorners(cornersImage, sizes[pos], Mat(_corners), true);
+       // vector<Point2f> _corners;
+      //  _corners.insert(_corners.begin(), corners[pos][0].begin(), corners[pos][0].end());
+        drawChessboardCorners(cornersImage, sizes[pos], Mat(corners[pos][0]), true);
         return cornersImage;
     }else{
         return images[pos];
@@ -261,29 +260,21 @@ void CalibController::addCorner(const Position pos, const Point2f corner){
 void CalibController::sortCorners(const Position pos){
     vector<Point2f> & _corners = corners[pos][0];
 
-    if(_corners.size() < sizes[pos].width * sizes[pos].height){
-        Logger::log("Добавьте угол");
+    int diff = patternWasFound(pos);
+
+    if(diff < 0){
+        Logger::log("Добавьте угол" + QString::number(diff));
         return;
-    }
-    if(_corners.size() > sizes[pos].width * sizes[pos].height){
-        Logger::log("Удалите лишние углы");
+    }else
+    if(diff > 0){
+        Logger::log("Удалите лишние углы" + QString::number(diff));
         return;
     }
 
     ChessBoardCornerSorter board(sizes[pos], _corners);
    // board.init(_corners);
-    corners[pos][0] = board.getSortedCornerPoints1D();
-    /*sort(_corners.begin(), _corners.end(),
-        [](const Point2f & a, const Point2f & b) -> bool
-    {
-        float dy = a.y - b.y;
-        if(abs(dy) < 20){
-            float dx = a.x - b.x;
-            return dx < 0;
-        }
+//    corners[pos][0] = /*board.getSortedCornerPoints1D();*/_corners;
 
-        return a.y - b.y < 0;
-    });*/
 }
 
 void CalibController::deleteCorner(const Position pos, const Point2f click){

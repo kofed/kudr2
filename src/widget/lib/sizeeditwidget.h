@@ -12,6 +12,10 @@ class SizeEditWidget : public QWidget
 
 private:
     QLineEdit * edit;
+
+private slots:
+    void onEditFocusLost(const QString &);
+
 public:
     SizeEditWidget();
 
@@ -22,6 +26,11 @@ public:
     QString text();
 
     void clear();
+
+
+
+signals:
+    void redactionFinished();
 };
 
 #endif // SIZEEDITWIDGET_H
